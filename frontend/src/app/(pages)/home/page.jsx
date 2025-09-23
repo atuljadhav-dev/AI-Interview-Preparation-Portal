@@ -23,7 +23,7 @@ const home = () => {
         <div className="bg-gray-950 w-[100vw] h-[100vh] ">
             <div className="h-full w-full flex-row sm:flex items-center justify-evenly">
                 {/*this is left */}
-                <button onClick={handleLogout}>logout</button>
+              
                 <div className="h-full w-6/12  sm:justify-center items-center flex flex-col mx-5">
                     <div className="w-full h-[40vh] ">
                         <Image
@@ -41,9 +41,8 @@ const home = () => {
                             Preparation Portal
                         </p>
                     </div>
-                    <p className="text-gray-600 sm:text-2xl  font-sans font-semibold ">
-                        Practice mock interviews with voice, get instant
-                        feedback, and track your score.
+                    <p className="text-gray-500 sm:text-2xl  font-sans font-semibold ">
+                        Practice mock interviews with voice, receive instant personalized feedback, track progress with scores, and build the confidence needed for real interviews.
                     </p>
                 </div>
                 <div className=" h-full w-6/12  flex justify-center sm:items-center flex-col">

@@ -1,20 +1,20 @@
 from utils.db import db
-def getProfile(user_id):
-    user=db.profiles.find_one({"userID":user_id})
+def getProfile(userId):
+    user=db.profiles.find_one({"userId":userId})
     return user
-def createProfile(user_id, resume):
+def createProfile(userId, resume):
     profile={
-        "userID":user_id,
+        "userId":userId,
         "resume":resume
         }
     res=db.profiles.insert_one(profile)
     profile["_id"] = res.inserted_id
     return profile
-def updateProfile(user_id, resume):
+def updateProfile(userId, resume):
     profile={
-        "userID":user_id,
+        "userId":userId,
         "resume":resume
         }
-    res=db.profiles.update_one({"userID":user_id},{"$set":profile},upsert=True)
+    res=db.profiles.update_one({"userId":userId},{"$set":profile},upsert=True)
     profile["_id"] = res.upserted_id
     return profile

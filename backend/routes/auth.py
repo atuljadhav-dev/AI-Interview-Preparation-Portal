@@ -8,9 +8,9 @@ auth_bp = Blueprint('auth', __name__)
 
 SECRET_KEY = os.getenv("JWT_SECRET")  # keep secret in env
 
-def create_jwt(user_id):
+def create_jwt(userId):
     payload = {
-        "user_id": str(user_id),
+        "userId": str(userId),
         "exp": datetime.datetime.utcnow() + datetime.timedelta(days=7)  # 7-day expiry
     }
     return jwt.encode(payload, SECRET_KEY, algorithm="HS256")
@@ -60,7 +60,7 @@ def signup():
         "authToken",
         token,
         httponly=True,
-        samesite="Strict",
+        samesite="None",
         secure=True
     )
     return response
@@ -69,7 +69,6 @@ def signup():
 @auth_bp.route("/signin", methods=["POST"])
 def signin():
     data = request.get_json()
-    print(SECRET_KEY)
     if not data:
         return jsonify({"success": False, "error": "No data provided"}), 400
     
@@ -92,7 +91,7 @@ def signin():
         "authToken",
         token,
         httponly=True,
-        samesite="Strict",
+        samesite="None",
         secure=True
     )
     return response
@@ -104,7 +103,7 @@ def signout():
         "success": True,
         "message": "User signed out successfully!"
     }), 200)
-    response.set_cookie("authToken", "", expires=0, httponly=True, samesite="Strict", secure=True)
+    response.set_cookie("authToken", "", expires=0, httponly=True, samesite="None", secure=True)
     return response
 
 # ---------------------- VERIFY ---------------------- #
@@ -119,8 +118,8 @@ def verify():
     if not decoded:
         return jsonify({"success": False, "error": "Unauthorized"}), 401
 
-    user = FindUserById(decoded["user_id"])
-    print(decoded["user_id"])
+    user = FindUserById(decoded["userId"])
+    print(decoded["userId"])
     if not user:
         return jsonify({"success": False, "error": "Unauthorized"}), 401
 

@@ -17,7 +17,7 @@ const page = () => {
         setFormData({
             ...formData,
             ["resume"]: resume,
-            ["user_id"]: user?._id,
+            ["userId"]: user?._id,
         });
     }, [resume, user]);
     const handleFormChange = (e) => {
@@ -27,6 +27,7 @@ const page = () => {
         });
     };
     const handleSubmit = async (e) => {
+       // router.push("/interview/68cbb1e153eb2e9757eedede");
         e.preventDefault();
         if (!formData.resume) {
             return;
@@ -43,11 +44,11 @@ const page = () => {
     };
     return (
         <>
-            <div className="bg-gray-950 min-h-screen flex items-center justify-center p-6">
+            <div className="bg-gray-950 min-h-screen flex items-center  justify-center p-6">
                 <form
                     method="POST"
                     onSubmit={handleSubmit}
-                    className="w-full max-w-4xl bg-gray-900 rounded-xl shadow-lg p-8 space-y-8">
+                    className="w-full max-w-4xl bg-gray-900 border-2 border-purple-900  shadow-md shadow-purple-500 rounded-xl  p-8 space-y-8">
                     <div className="p-6 rounded-lg border-2 border-gray-700 hover:border-purple-600 transition-colors">
                         <h2 className="text-xl font-bold text-white mb-2">
                             Job Role
@@ -90,7 +91,7 @@ const page = () => {
 
                     <div className="text-center">
                         <button
-                            className="bg-gradient-to-r from-purple-600 to-purple-800 text-white font-bold text-lg px-10 py-4 rounded-full shadow-lg 
+                            className="bg-gradient-to-r from-purple-600 to-purple-800 text-white font-bold text-lg px-10 py-4 rounded-xl shadow-lg 
                      hover:from-purple-700 hover:to-purple-900 transform hover:scale-105 transition duration-300 ease-in-out">
                             Submit
                         </button>

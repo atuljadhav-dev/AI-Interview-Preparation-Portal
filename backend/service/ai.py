@@ -82,7 +82,7 @@ def AIInterviewStimulation(questions,resume,jobDescription,round_name,content):
     }
     response = AIClient(content, config)
     return response.text
-def generateSummary(resume, questionAnswer, userAnswer, job_description, round_name) :
+def generateSummary(jobTitle,resume, questionAnswer, userAnswer, job_description, round_name) :
     return f"""
     You are an AI interview assistant. 
     Your role is to evaluate candidate answers strictly and fairly.
@@ -103,7 +103,7 @@ def generateSummary(resume, questionAnswer, userAnswer, job_description, round_n
 
     {{
         "roundName": "{round_name}",
-        "jobTitle": "<job title extracted from job description>",
+        "jobTitle": "{jobTitle}",
         "evaluation": {{
             "strengths": ["..."],
             "weaknesses": ["..."],
@@ -112,8 +112,8 @@ def generateSummary(resume, questionAnswer, userAnswer, job_description, round_n
         }}
     }}
     """
-def generateFeedback(resume, questionAnswer, userAnswer, job_description, round_name) :
-    prompt=generateSummary(resume, questionAnswer, userAnswer, job_description, round_name)
+def generateFeedback(jobTitle,resume, questionAnswer, userAnswer, job_description, round_name) :
+    prompt=generateSummary(jobTitle,resume, questionAnswer, userAnswer, job_description, round_name)
     config={
         "response_mime_type": "application/json",
         "response_schema": {

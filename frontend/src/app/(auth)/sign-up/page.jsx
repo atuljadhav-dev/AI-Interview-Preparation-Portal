@@ -2,6 +2,7 @@
 
 import { useUser } from "@/utils/UserData";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const signup = () => {
@@ -12,6 +13,7 @@ const signup = () => {
         confirmPassword: "",
         phone: "",
     });
+    const router = useRouter();
     const [error, setError] = useState("");
     const handleFormChange = (e) => {
         setFormData({
@@ -28,18 +30,16 @@ const signup = () => {
                 formData,
                 { withCredentials: true }
             );
-            if (res.data.success) {
-                setUser(res.data.data);
-                window.location.href = "/home";
-            } else {
-            }
+
+            setUser(res.data.data);
+            router.push("/home");
         } catch (err) {
             console.log(err.response.data.error);
             setError(err.response.data.error);
         }
     };
     return (
-        <div className="w-full h-screen bg-gradient-to-r from-gray-600 to-black-500 flex justify-center items-center flex-col sm:flex-row  ">
+        <div className="w-full h-screen bg-gradient-to-r from-gray-900 to-black-700 flex justify-center items-center flex-col sm:flex-row  ">
             <div className="w-full h-screen flex  items-center  flex-col sm:w-6/12">
                 <h1 className="text-5xl font-sans my-10 font-bold">SIGN-UP</h1>
                 <form
@@ -95,7 +95,6 @@ const signup = () => {
                     </p>
                 </form>
             </div>
-            
         </div>
     );
 };

@@ -4,9 +4,9 @@ from service.profile import getProfile, createProfile,updateProfile
 import json
 from service.ai import convertTextToJSON
 profile_bp = Blueprint('profile', __name__)
-@profile_bp.route("/profile/<user_id>", methods=["GET"])
-def get_profile(user_id):
-    user = getProfile(user_id)
+@profile_bp.route("/profile/<userId>", methods=["GET"])
+def get_profile(userId):
+    user = getProfile(userId)
     if not user:
         return jsonify({
             "success": False,
@@ -28,10 +28,10 @@ def create_profile():
             "success": False,
             "error": "No selected file"
         }), 400
-    if not data or 'user_id' not in data :
+    if not data or 'userId' not in data :
         return jsonify({
             "success": False,
-            "error": "user_id and resume are required"
+            "error": "userId and resume are required"
         }), 400
     try:
         reader = PdfReader(file)
@@ -47,7 +47,7 @@ def create_profile():
     ai=convertTextToJSON(extracted_text)
     resume=json.loads(ai.text)
     try:
-        profile = createProfile(data['user_id'], resume)
+        profile = createProfile(data['userId'], resume)
         if "_id" in profile:
             profile["_id"] = str(profile["_id"])
     except Exception as e:
@@ -72,10 +72,10 @@ def update_profile():
             "success": False,
             "error": "No selected file"
         }), 400
-    if not data or 'user_id' not in data :
+    if not data or 'userId' not in data :
         return jsonify({
             "success": False,
-            "error": "user_id and resume are required"
+            "error": "userId and resume are required"
         }), 400
     
     try:
@@ -93,7 +93,7 @@ def update_profile():
     ai=convertTextToJSON(extracted_text)
     resume=json.loads(ai.text)
     try:
-        profile = updateProfile(data['user_id'], resume)
+        profile = updateProfile(data['userId'], resume)
         if "_id" in profile:
             profile["_id"] = str(profile["_id"])
     except Exception as e:

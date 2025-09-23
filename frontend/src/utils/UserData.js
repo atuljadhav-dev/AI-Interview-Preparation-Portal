@@ -42,7 +42,9 @@ export const UserProvider = ({ children }) => {
             }
         };
 
-        fetchUserAndResume();
+        if (!user) {
+            fetchUserAndResume();
+        }
     }, []);
 
     return (

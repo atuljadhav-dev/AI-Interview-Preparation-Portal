@@ -16,12 +16,13 @@ def feedbackGeneration():
         resume=data['resume']
         questionAnswer=data['questionAnswer']
         userAnswer=data['userAnswer']
+        jobTitle=data["jobTitle"]
         job_description=data['jobDescription']
         round_name=data['roundName']
-        response=generateFeedback(resume, questionAnswer, userAnswer, job_description, round_name)
+        response=generateFeedback(jobTitle,resume, questionAnswer, userAnswer, job_description, round_name)
         return jsonify({
             "success":True,
-            "data":response
+            "data":json.loads(response)
             }),200
     except Exception as e:
         return jsonify({

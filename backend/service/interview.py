@@ -1,8 +1,8 @@
 from utils.db import db
 from bson import ObjectId
-def createInterview(user_id,title,round_name,description,question_answer):
+def createInterview(userId,title,round_name,description,question_answer):
     interview={
-        "user_id":user_id,
+        "userId":userId,
         "title":title,
         "roundName":round_name,
         "jobDescription":description,
@@ -12,10 +12,15 @@ def createInterview(user_id,title,round_name,description,question_answer):
     res=db.interviews.insert_one(interview)
     interview["_id"] = res.inserted_id
     return interview
-def getInterview(user_id):
-    interview=db.interviews.find({"userID":user_id})
+def getInterview(userId):
+    interview=db.interviews.find({"userId":userId})
     return interview
-def getSpecificInterview(interview_id):
-    id=ObjectId(interview_id)
+def getSpecificInterview(interviewId):
+    id=ObjectId(interviewId)
     interview=db.interviews.find_one({"_id":id})
+
+    return interview
+def setFeedback(interviewId,feedbackId):
+    id=ObjectId(interviewId)
+    interview=db.interviews.find_one_and_update({"_id":id},{"$set": {"feedbackId": feedbackId, "status": "Done"}})
     return interview

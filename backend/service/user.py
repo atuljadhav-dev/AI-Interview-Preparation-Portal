@@ -32,9 +32,9 @@ def Login(identifier,password):
     if is_match:
         return res
     return None
-def FindUserById(user_id):
+def FindUserById(userId):
     try:
-        user_obj_id = ObjectId(user_id)
+        user_obj_id = ObjectId(userId)
         res = db.users.find_one({"_id": user_obj_id})
         res['_id']=str(res['_id'])
         print(res)

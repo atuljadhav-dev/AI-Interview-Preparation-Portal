@@ -10,10 +10,10 @@ def create_conversation():
             "error": "No data provided"
         }), 400
     try:
-        user_id = data['user_id']
-        interview_id = data['interview_id']
+        userId = data['userId']
+        interviewId = data['interviewId']
         conversations = data['conversations']
-        response = createConversation(conversations, user_id, interview_id)
+        response = createConversation(conversations, userId, interviewId)
         return jsonify({
             "success": True,
             "data": response
@@ -26,15 +26,15 @@ def create_conversation():
         }), 500
 @con_bp.route("/conversation", methods=["GET"])
 def get_conversation():
-    user_id = request.args.get('user_id')
-    interview_id = request.args.get('interview_id')
-    if not user_id or not interview_id:
+    userId = request.args.get('userId')
+    interviewId = request.args.get('interviewId')
+    if not userId or not interviewId:
         return jsonify({
             "success": False,
-            "error": "user_id and interview_id are required"
+            "error": "userId and interviewId are required"
         }), 400
     try:
-        response = getConversation(user_id, interview_id)
+        response = getConversation(userId, interviewId)
         return jsonify({
             "success": True,
             "data": response

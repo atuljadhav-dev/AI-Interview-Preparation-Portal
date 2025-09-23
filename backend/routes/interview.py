@@ -15,7 +15,7 @@ def create_interview():
         job_description=data['jobDescription']
         round_name=data['round_name']
         resume=data['resume']
-        user_id=data['user_id']
+        userId=data['userId']
         title=data["jobRole"]
         response=generateQuestions(job_description,round_name,resume)
         response=json.loads(response.text)
@@ -26,7 +26,7 @@ def create_interview():
             "details":str(e)
             }),500
     try:
-        interview = createInterview(user_id, title,round_name,description=job_description,question_answer=response)
+        interview = createInterview(userId, title,round_name,description=job_description,question_answer=response)
         
         if "_id" in interview:
             interview["_id"] = str(interview["_id"])
@@ -41,10 +41,10 @@ def create_interview():
         "message": "Interview created successfully!",
         "data": interview
     }), 201
-@interview_bp.route("/interview/<user_id>", methods=["GET"])
-def get_All_interview(user_id):
+@interview_bp.route("/interview/<userId>", methods=["GET"])
+def get_All_interview(userId):
     try:
-        interviews = getInterview(user_id)
+        interviews = getInterview(userId)
         interview_list = []
         for interview in interviews:
             if "_id" in interview:
@@ -61,10 +61,10 @@ def get_All_interview(user_id):
         "data": interview_list
     }), 200
 
-@interview_bp.route("/interview/specific/<interview_id>", methods=["GET"])
-def get_specific_interview(interview_id):
+@interview_bp.route("/interview/specific/<interviewId>", methods=["GET"])
+def get_specific_interview(interviewId):
     try:
-        interview = getSpecificInterview(interview_id)
+        interview = getSpecificInterview(interviewId)
         if not interview:
             return jsonify({
                 "success": False,

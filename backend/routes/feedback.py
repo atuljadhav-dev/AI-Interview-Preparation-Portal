@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from service.feedback import addFeedback, getFeedBack
-
+from service.interview import setFeedback
 feedback_bp = Blueprint("feedback", __name__)
 
 @feedback_bp.route("/feedback", methods=["POST"])
@@ -15,6 +15,7 @@ def add_feedback():
         interviewId = data["interviewId"]
         feedback = data["feedback"]
         response = addFeedback(interviewId, feedback)
+        setFeedback(interviewId,response["_id"])
         return jsonify({
             "success": True,
             "data": response
