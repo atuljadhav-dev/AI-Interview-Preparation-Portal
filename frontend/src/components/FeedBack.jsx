@@ -48,7 +48,7 @@ const FeedBack = ({ id }) => {
             <h1 className="text-5xl font-sans mt-10 pt-5 font-bold text-center">
                 Feedback
             </h1>
-            <div className="bg-gray-950 min-h-screen flex items-start justify-center text-white">
+            <div className="bg-gray-950 min-h-screen flex items-start flex-col justify-center text-white">
                 <div className="">
                     <h2>Job Title: {feedback?.jobTitle}</h2>
                     <h2>Round Name: {feedback?.roundName}</h2>

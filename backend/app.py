@@ -7,7 +7,7 @@ from routes.conversation import con_bp
 from routes.feedback import feedback_bp
 from flask_cors import CORS
 app = Flask(__name__)
-CORS(app, supports_credentials=True,origins=["https://techinterviewbuddy.vercel.app/","http://localhost:3000"])
+CORS(app, supports_credentials=True,origins=["https://techinterviewbuddy.vercel.app/","http://localhost:3000","https://placementready.vercel.app"])
 app.register_blueprint(auth_bp)
 app.register_blueprint(profile_bp)
 app.register_blueprint(interview_bp)
