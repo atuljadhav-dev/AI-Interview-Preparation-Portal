@@ -8,13 +8,15 @@ const page = () => {
                 className="absolute inset-0   bg-cover bg-center"
                 style={{
                     backgroundImage:
-                        "linear-gradient(to right, rgba(200, 68, 68, 1), rgba(59, 130, 255, 1))')",
+                        "linear-gradient(to right, rgba(200, 68, 68, 1), rgba(59, 130, 255, 1))",
                 }}>
                 <video
                     autoPlay
                     loop
                     muted
+                    playsInline
                     className="w-full h-screen object-fill opacity-70">
+                    <source src="/finalbg.webm" type="video/webm" />
                     <source src="/finalbg.mp4" type="video/mp4" />
                     Your browser does not support the video tag.
                 </video>

@@ -53,7 +53,9 @@ const Interview = ({ id }) => {
                 role: "model",
                 parts: [{ text: res.data.data }],
             };
-
+            const finalConversation = [...updatedConversation, aiResponse];
+            setConversation(finalConversation);
+            setLastAIResponse(res.data.data);
             if (res.data.data.includes("quit")) {
                 await axios.post(
                     `${process.env.NEXT_PUBLIC_BASE_URL}/conversation`,
@@ -85,9 +87,6 @@ const Interview = ({ id }) => {
                 );
                 router.push(`/feedback/${interview._id}`);
             }
-            const finalConversation = [...updatedConversation, aiResponse];
-            setConversation(finalConversation);
-            setLastAIResponse(res.data.data);
         } catch (e) {
             console.error("Interview error:", e);
         }
