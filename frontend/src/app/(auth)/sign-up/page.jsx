@@ -4,6 +4,7 @@ import { useUser } from "@/utils/UserData";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 const signup = () => {
     const [formData, setFormData] = useState({
@@ -30,11 +31,12 @@ const signup = () => {
                 formData,
                 { withCredentials: true }
             );
-
+            toast.success("Registration Successfully");
             setUser(res.data.data);
             router.push("/home");
         } catch (err) {
             console.log(err.response.data.error);
+            toast.error(err.response.data.error);
             setError(err.response.data.error);
         }
     };
@@ -44,14 +46,14 @@ const signup = () => {
                 <h1 className="text-5xl font-sans my-10 font-bold">SIGN-UP</h1>
                 <form
                     onSubmit={handleSubmit}
-                    className="h-[65vh] w-[85vw] sm:w-[50vh] flex items-center justify-evenly flex-col rounded-2xl border-purple-500 border-1 bg-gray-950/30 backdrop-blur-none shadow-md shadow-purple-500">
+                    className="h-[65vh] w-[85vw] sm:w-[50vh] flex items-center justify-evenly flex-col rounded-2xl border-purple-500 border bg-gray-950/30 backdrop-blur-none shadow-md shadow-purple-500">
                     <input
                         type="text"
                         placeholder="Enter your name"
                         name="name"
                         onChange={handleFormChange}
                         value={formData.name}
-                        className=" border-1 border-gray-500 px-4 sm:w-[19vw] w-[60vw] h-[5vh] rounded-md"></input>
+                        className=" border border-gray-500 px-4 sm:w-[19vw] w-[60vw] h-[5vh] rounded-md"></input>
 
                     <input
                         type="email"
@@ -59,32 +61,32 @@ const signup = () => {
                         onChange={handleFormChange}
                         name="email"
                         value={formData.email}
-                        className="border-1 border-gray-500 px-4 sm:w-[19vw] w-[60vw] h-[5vh] rounded-md"></input>
+                        className="border border-gray-500 px-4 sm:w-[19vw] w-[60vw] h-[5vh] rounded-md"></input>
                     <input
                         type="phone"
                         placeholder="Enter your phone number"
                         onChange={handleFormChange}
                         name="phone"
                         value={formData.phone}
-                        className="border-1 border-gray-500 px-4 sm:w-[19vw] w-[60vw] h-[5vh] rounded-md"></input>
+                        className="border border-gray-500 px-4 sm:w-[19vw] w-[60vw] h-[5vh] rounded-md"></input>
                     <input
                         type="password"
                         placeholder="Create password"
                         onChange={handleFormChange}
                         name="password"
                         value={formData.password}
-                        className="border-1 border-gray-500 px-4 sm:w-[19vw] w-[60vw] h-[5vh] rounded-md"></input>
+                        className="border border-gray-500 px-4 sm:w-[19vw] w-[60vw] h-[5vh] rounded-md"></input>
                     <input
                         type="password"
                         placeholder="Confirm password"
                         onChange={handleFormChange}
                         name="confirmPassword"
                         value={formData.confirmPassword}
-                        className="border-1 border-gray-500 px-4 sm:w-[19vw] w-[60vw] h-[5vh] rounded-md"></input>
+                        className="border border-gray-500 px-4 sm:w-[19vw] w-[60vw] h-[5vh] rounded-md"></input>
                     {error && <p className="text-red-500">{error}</p>}
                     <button
                         type="submit"
-                        className="border-1 border-gray-500 sm:w-[12vw]  w-[50vw] h-[5vh] rounded-md">
+                        className="border border-gray-500 sm:w-[12vw]  w-[50vw] h-[5vh] rounded-md">
                         Submit
                     </button>
                     <p className="text-gray-500">

@@ -37,9 +37,11 @@ const page = () => {
                 `${process.env.NEXT_PUBLIC_BASE_URL}/interview`,
                 formData
             );
+            toast.success("Interview Created successfully");
             router.push(`/interview/${res.data.data._id}`);
         } catch (e) {
             console.log(e);
+            toast.error(e.response.data.error);
         }
     };
     return (

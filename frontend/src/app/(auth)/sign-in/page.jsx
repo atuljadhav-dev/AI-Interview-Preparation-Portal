@@ -4,6 +4,7 @@ import { useUser } from "@/utils/UserData";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 const login = () => {
     const [formData, setFormData] = useState({
@@ -23,10 +24,12 @@ const login = () => {
             console.log(res.data);
             if (res.data.success) {
                 setUser(res.data.data);
-                router.push("/home")
+                toast.success("Signup success");
+                router.push("/home");
             }
         } catch (err) {
             console.log(err);
+            toast.error(err.response.data.error);
         }
     };
     return (
@@ -65,7 +68,7 @@ const login = () => {
 
                     <button
                         type="submit"
-                        className="border-1 border-gray-500  w-[50vw] h-[5vh] sm:w-[12vw] rounded-md">
+                        className="border-1 border-gray-500 cursor-pointer  w-[50vw] h-[5vh] sm:w-[12vw] rounded-md">
                         Submit
                     </button>
                 </form>
