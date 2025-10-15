@@ -27,7 +27,7 @@ const page = () => {
         });
     };
     const handleSubmit = async (e) => {
-       // router.push("/interview/68cbb1e153eb2e9757eedede");
+        // router.push("/interview/68cbb1e153eb2e9757eedede");
         e.preventDefault();
         if (!formData.resume) {
             return;
@@ -93,7 +93,7 @@ const page = () => {
 
                     <div className="text-center">
                         <button
-                            className="bg-gradient-to-r from-purple-600 to-purple-800 text-white font-bold text-lg px-10 py-4 rounded-xl shadow-lg 
+                            className="bg-linear-to-r from-purple-600 to-purple-800 text-white font-bold text-lg px-10 py-4 rounded-xl shadow-lg 
                      hover:from-purple-700 hover:to-purple-900 transform hover:scale-105 transition duration-300 ease-in-out">
                             Submit
                         </button>

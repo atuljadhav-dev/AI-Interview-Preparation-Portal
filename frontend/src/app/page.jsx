@@ -24,7 +24,7 @@ const page = () => {
 
             <div className="relative z-10 flex flex-col h-screen">
                 <div className="flex justify-between items-center  px-4 sm:px-6 pt-4">
-                    <Image src={logo} height={50} width={150} />
+                    <Image src={logo} height={50} width={150} alt="Background Image" />
                 </div>
 
                 <div className="flex flex-col justify-center flex-1  px-4 sm:px-6 md:px-20 text-center sm:text-left absolute top-[15%]">

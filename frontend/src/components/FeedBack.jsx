@@ -10,9 +10,7 @@ const FeedBack = ({ id }) => {
     const { user, loading } = useUser();
 
     useEffect(() => {
-        if (loading) return;
-        if (!user?._id) return;
-
+        if (loading || !user?._id) return;
         const fetchData = async () => {
             try {
                 const res = await axios.get(
@@ -29,12 +27,12 @@ const FeedBack = ({ id }) => {
                     `${process.env.NEXT_PUBLIC_BASE_URL}/conversation`,
                     {
                         params: {
-                            interview_id: res.data.data.interviewId, // ✅ use directly
+                            interview_id: res.data.data.interviewId,
                             userId: user._id,
                         },
                     }
                 );
-                console.log("Conversation:", con.data);
+                setConversation(con.data.data);
             } catch (e) {
                 console.error("Error fetching data:", e);
             }
@@ -44,60 +42,124 @@ const FeedBack = ({ id }) => {
     }, [user, id, loading]);
 
     return (
-        <div className="bg-gray-950 min-h-screen text-white">
-            <h1 className="text-5xl font-sans mt-10 pt-5 font-bold text-center">
-                Feedback
+        <div className="bg-gray-950 min-h-screen text-white py-10 px-5">
+            <h1 className="text-4xl md:text-5xl font-bold text-center mb-10 text-indigo-400">
+                Interview Feedback
             </h1>
-            <div className="bg-gray-950 min-h-screen flex items-start flex-col justify-center text-white">
-                <div className="">
-                    <h2>Job Title: {feedback?.jobTitle}</h2>
-                    <h2>Round Name: {feedback?.roundName}</h2>
-                    <h3>Job Description :{interview?.jobDescription}</h3>
-                </div>
-                <div>
-                    <h4>Interview Score: {feedback?.evaluation?.score}/10</h4>
-                    <h4>Justification :</h4>
-                    <h5>{feedback?.evaluation?.justification}</h5>
-                </div>
-                <h4>Strengths:</h4>
-                <h2>
-                    {feedback?.evaluation?.strengths?.length != 0 ? (
-                        <>
-                            {feedback?.evaluation?.strengths.map((cur, idx) => {
-                                return <h5 key={idx}>{cur}</h5>;
-                            })}
-                        </>
+
+            <div className="max-w-5xl mx-auto bg-gray-900 rounded-2xl shadow-lg p-6 space-y-8">
+                <section>
+                    <h2 className="text-2xl font-semibold border-b border-gray-700 pb-2 mb-4">
+                        Job Details
+                    </h2>
+                    <div className="space-y-2 text-gray-300">
+                        <p>
+                            <span className="font-semibold text-indigo-400">
+                                Job Title:
+                            </span>{" "}
+                            {feedback?.jobTitle || "N/A"}
+                        </p>
+                        <p>
+                            <span className="font-semibold text-indigo-400">
+                                Round Name:
+                            </span>{" "}
+                            {feedback?.roundName || "N/A"}
+                        </p>
+                        <p>
+                            <span className="font-semibold text-indigo-400">
+                                Job Description:
+                            </span>{" "}
+                            {interview?.jobDescription || "N/A"}
+                        </p>
+                    </div>
+                </section>
+
+                <section>
+                    <h2 className="text-2xl font-semibold border-b border-gray-700 pb-2 mb-4">
+                        Evaluation Summary
+                    </h2>
+                    <div className="space-y-4 text-gray-300">
+                        <p>
+                            <span className="font-semibold text-indigo-400">
+                                Interview Score:
+                            </span>{" "}
+                            {feedback?.evaluation?.score ?? "N/A"}/10
+                        </p>
+                        <div>
+                            <h4 className="font-semibold text-indigo-400">
+                                Justification:
+                            </h4>
+                            <p className="mt-1 text-gray-400">
+                                {feedback?.evaluation?.justification ||
+                                    "No justification provided."}
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2 className="text-2xl font-semibold border-b border-gray-700 pb-2 mb-4">
+                        Strengths
+                    </h2>
+                    {feedback?.evaluation?.strengths?.length ? (
+                        <ul className="list-disc ml-6 text-gray-300 space-y-1">
+                            {feedback.evaluation.strengths.map((cur, idx) => (
+                                <li key={idx}>{cur}</li>
+                            ))}
+                        </ul>
                     ) : (
-                        <>No Strengths in the candidate.</>
+                        <p className="text-gray-400">
+                            No strengths were recorded.
+                        </p>
                     )}
-                </h2>
-                <h4>Weaknesses:</h4>
-                <h2>
-                    {feedback?.evaluation?.weaknesses?.length != 0 ? (
-                        <>
-                            {feedback?.evaluation?.weaknesses.map(
-                                (cur, idx) => {
-                                    return <h5 key={idx}>◼{cur}</h5>;
-                                }
-                            )}
-                        </>
+                </section>
+                <section>
+                    <h2 className="text-2xl font-semibold border-b border-gray-700 pb-2 mb-4">
+                        Weaknesses
+                    </h2>
+                    {feedback?.evaluation?.weaknesses?.length ? (
+                        <ul className="list-disc ml-6 text-gray-300 space-y-1">
+                            {feedback.evaluation.weaknesses.map((cur, idx) => (
+                                <li key={idx}>{cur}</li>
+                            ))}
+                        </ul>
                     ) : (
-                        <>No noticeable shortcomings were observed.</>
+                        <p className="text-gray-400">
+                            No noticeable shortcomings observed.
+                        </p>
                     )}
-                </h2>
-                <h3>Question And Expected Answers:</h3>
-                <h2>
-                    {interview?.questions?.map((cur, idx) => {
-                        return (
-                            <>
-                                <h4>Question :</h4>
-                                <h5>{cur.question}</h5>
-                                <h4>Expected Answer :</h4>
-                                <h5>{cur.answer}</h5>
-                            </>
-                        );
-                    })}
-                </h2>
+                </section>
+                <section>
+                    <h2 className="text-2xl font-semibold border-b border-gray-700 pb-2 mb-4">
+                        Questions & Expected Answers
+                    </h2>
+                    {interview?.questions?.length ? (
+                        <div className="space-y-6">
+                            {interview.questions.map((cur, idx) => (
+                                <div
+                                    key={idx}
+                                    className="bg-gray-800 p-4 rounded-xl border border-gray-700">
+                                    <h4 className="text-indigo-400 font-semibold">
+                                        Question {idx + 1}:
+                                    </h4>
+                                    <p className="text-gray-200 mt-1">
+                                        {cur.question}
+                                    </p>
+                                    <h5 className="text-indigo-400 font-semibold mt-3">
+                                        Expected Answer:
+                                    </h5>
+                                    <p className="text-gray-300 mt-1">
+                                        {cur.answer}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="text-gray-400">
+                            No questions available for this interview.
+                        </p>
+                    )}
+                </section>
             </div>
         </div>
     );
