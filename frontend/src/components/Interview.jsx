@@ -3,6 +3,7 @@ import { useUser } from "@/utils/UserData";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 const Interview = ({ id }) => {
     const [conversation, setConversation] = useState([]);
@@ -85,10 +86,12 @@ const Interview = ({ id }) => {
                         interviewId: interview._id,
                     }
                 );
+                toast.success("Feedback generated successfully");
                 router.push(`/feedback/${interview._id}`);
             }
         } catch (e) {
             console.error("Interview error:", e);
+            toast.error(e.response.data.error);
         }
     };
 
@@ -123,7 +126,6 @@ const Interview = ({ id }) => {
                     <div className="h-[60vh] w-[45vw] border-2  border-purple-500 rounded-xl backdrop-blur-none shadow-md shadow-purple-500  bg-white/10 ">
                         <video
                             className="h-full w-full object-cover rounded-lg"
-                            control
                             autoPlay
                             src="/interview.mp4"
                             loop
