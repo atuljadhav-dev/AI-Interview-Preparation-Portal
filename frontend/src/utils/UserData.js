@@ -24,10 +24,10 @@ export const UserProvider = ({ children }) => {
                             `${process.env.NEXT_PUBLIC_BASE_URL}/profile/${verifiedUser._id}`,
                             { withCredentials: true }
                         );
-                        setResume(response.data.data.resume);
+                        setResume(response.data.data);
                     } catch (resumeErr) {
                         console.warn("No resume found for user:", resumeErr);
-                        setResume(null); // keep user intact
+                        setResume(null); 
                     }
                 } else {
                     setUser(null);
