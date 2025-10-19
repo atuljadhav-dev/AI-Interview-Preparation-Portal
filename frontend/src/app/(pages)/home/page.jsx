@@ -6,29 +6,16 @@ import axios from "axios";
 
 const home = () => {
     const router = useRouter();
-    const handleLogout = async () => {
-        try {
-            const res = await axios.post(
-                `${process.env.NEXT_PUBLIC_BASE_URL}/signout`,
-                {},
-                { withCredentials: true }
-            );
-            router.push("/home");
-            console.log(res);
-        } catch (e) {
-            console.log(e);
-        }
-    };
     return (
         <div className="bg-gray-950 w-[100vw] h-[100vh] ">
             <div className="h-full w-full flex-row sm:flex items-center justify-evenly">
                 {/*this is left */}
-              
                 <div className="h-full w-6/12  sm:justify-center items-center flex flex-col mx-5">
                     <div className="w-full h-[40vh] ">
                         <Image
                             src={interview}
-                            className="w-[40vw] h-[40vh]"></Image>
+                            className="w-[40vw] h-[40vh]"
+                            alt="image"></Image>
                     </div>
                     <div className="h-[200px] w-full  ">
                         <p className="text-5xl sm:text-5xl text-white font-sans font-bold mx-5">
@@ -42,7 +29,9 @@ const home = () => {
                         </p>
                     </div>
                     <p className="text-gray-500 sm:text-2xl  font-sans font-semibold ">
-                        Practice mock interviews with voice, receive instant personalized feedback, track progress with scores, and build the confidence needed for real interviews.
+                        Practice mock interviews with voice, receive instant
+                        personalized feedback, track progress with scores, and
+                        build the confidence needed for real interviews.
                     </p>
                 </div>
                 <div className=" h-full w-6/12  flex justify-center sm:items-center flex-col">

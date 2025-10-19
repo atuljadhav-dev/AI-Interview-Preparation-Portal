@@ -27,7 +27,6 @@ const page = () => {
         });
     };
     const handleSubmit = async (e) => {
-        // router.push("/interview/68cbb1e153eb2e9757eedede");
         e.preventDefault();
         if (!formData.resume) {
             return;
