@@ -37,7 +37,6 @@ def FindUserById(userId):
         user_obj_id = ObjectId(userId)
         res = db.users.find_one({"_id": user_obj_id})
         res['_id']=str(res['_id'])
-        print(res)
         return res
     except Exception as e:
         print("Error in FindUserById:", e)

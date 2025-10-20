@@ -1,11 +1,12 @@
 from utils.db import db
 def getProfile(userId):
-    user=db.profiles.find_one({"userId":userId})
+    user=db.profiles.find({"userId":userId})
     return user
-def createProfile(userId, resume):
+def createProfile(userId, resume,name):
     profile={
         "userId":userId,
-        "resume":resume
+        "resume":resume,
+        "name":name
         }
     res=db.profiles.insert_one(profile)
     profile["_id"] = res.inserted_id

@@ -6,17 +6,20 @@ from service.ai import convertTextToJSON
 profile_bp = Blueprint('profile', __name__)
 @profile_bp.route("/profile/<userId>", methods=["GET"])
 def get_profile(userId):
-    user = getProfile(userId)
-    if not user:
+    resumes = getProfile(userId)
+    if not resumes:
         return jsonify({
             "success": False,
             "error": "Profile not found"
         }), 404
-    if "_id" in user:
-        user["_id"] = str(user["_id"])
+    resumeList=[]
+    for resume in resumes:
+        if "_id" in resume:
+            resume["_id"] = str(resume["_id"])
+            resumeList.append(resume)
     return jsonify({
         "success": True,
-        "data": user
+        "data": resumeList
     }), 200
 
 @profile_bp.route("/profile", methods=["POST"])

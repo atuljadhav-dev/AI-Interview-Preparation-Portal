@@ -27,7 +27,7 @@ const NavBar = () => {
                 {user && (
                     <button
                         onClick={handleLogout}
-                        className="px-3 py-1 rounded bg-red-500 text-sm">
+                        className="px-3 py-1 rounded bg-red-500 cursor-pointer text-sm">
                         Logout
                     </button>
                 )}

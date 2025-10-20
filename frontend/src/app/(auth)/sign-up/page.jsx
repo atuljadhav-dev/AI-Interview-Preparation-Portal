@@ -41,7 +41,7 @@ const signup = () => {
         }
     };
     return (
-        <div className="w-full h-screen bg-gradient-to-r from-gray-900 to-black-700 flex justify-center items-center flex-col sm:flex-row  ">
+        <div className="w-full h-screen bg-linear-to-r from-gray-900 to-black-700 flex justify-center items-center flex-col sm:flex-row  ">
             <div className="w-full h-screen flex  items-center  flex-col sm:w-6/12">
                 <h1 className="text-5xl font-sans my-10 font-bold">SIGN-UP</h1>
                 <form
