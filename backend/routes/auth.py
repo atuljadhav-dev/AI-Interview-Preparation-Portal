@@ -15,10 +15,11 @@ def create_jwt(userId):
     }
     return jwt.encode(payload, SECRET_KEY, algorithm="HS256")
 
-def verify_jwt(token):
+def verify_jwt(request):
+    token = request.cookies.get("authToken")
     try:
         decoded = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-        return decoded
+        return decoded["userId"]
     except jwt.ExpiredSignatureError:
         return None
     except jwt.InvalidTokenError:
@@ -113,13 +114,11 @@ def verify():
     if not authToken:
         return jsonify({"success": False, "error": "Unauthorized"}), 401
     
-    decoded = verify_jwt(authToken)
-
+    decoded = verify_jwt(request)
     if not decoded:
         return jsonify({"success": False, "error": "Unauthorized"}), 401
 
-    user = FindUserById(decoded["userId"])
-    print(decoded["userId"])
+    user = FindUserById(decoded)
     if not user:
         return jsonify({"success": False, "error": "Unauthorized"}), 401
 
