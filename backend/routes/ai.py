@@ -1,6 +1,5 @@
 from flask import Blueprint,request,jsonify
 import json
-import requests
 from service.ai import generateQuestions,generateFeedback,AIInterviewStimulation
 ai_bp=Blueprint('ai',__name__)
 
