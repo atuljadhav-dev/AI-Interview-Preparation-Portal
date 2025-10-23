@@ -2,6 +2,7 @@
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/utils/UserData";
+import { toast } from "react-toastify";
 const NavBar = () => {
     const router = useRouter();
     const { user, setUser } = useUser();
@@ -13,8 +14,10 @@ const NavBar = () => {
                 { withCredentials: true }
             );
             setUser(null);
+            toast.success("Logged out successfully");
             router.push("/sign-in");
         } catch (e) {
+            toast.error("Logout failed");
             console.error("Logout failed:", e);
         }
     };
