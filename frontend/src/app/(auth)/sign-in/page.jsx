@@ -21,14 +21,12 @@ const login = () => {
                 formData,
                 { withCredentials: true }
             );
-            console.log(res.data);
             if (res.data.success) {
                 setUser(res.data.data);
                 toast.success("Signup success");
                 router.push("/home");
             }
         } catch (err) {
-            console.log(err);
             toast.error(err.response.data.error);
         }
     };

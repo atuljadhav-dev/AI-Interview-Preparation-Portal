@@ -33,9 +33,9 @@ def feedback():
             return jsonify({"success": False, "error": "Unauthorized"}), 401
         res=allFeedBack(request)
         return jsonify({
-            "data":res
-
-        })
+            "data":res,
+            "success":True    
+        }),200
 @feedback_bp.route("/feedback/<interviewId>", methods=["GET"])
 def get_feedback(interviewId):
     if not interviewId:

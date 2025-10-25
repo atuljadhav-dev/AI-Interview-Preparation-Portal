@@ -2,7 +2,6 @@
 import Image from "next/image";
 import interview from "/public/home.png";
 import { useRouter } from "next/navigation";
-import axios from "axios";
 
 const home = () => {
     const router = useRouter();

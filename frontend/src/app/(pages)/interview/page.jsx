@@ -3,7 +3,7 @@ import { useUser } from "@/utils/UserData";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-
+import { toast } from "react-toastify";
 const page = () => {
     const { resume, user } = useUser();
     const router = useRouter();
@@ -39,7 +39,6 @@ const page = () => {
             toast.success("Interview Created successfully");
             router.push(`/interview/${res.data.data._id}`);
         } catch (e) {
-            console.log(e);
             toast.error(e.response.data.error);
         }
     };
@@ -66,13 +65,13 @@ const page = () => {
                         <h2 className="text-xl font-bold text-white mb-2">
                             Description
                         </h2>
-                        <input
-                            type="textArea"
+                        <textarea
                             name="jobDescription"
+                            rows={5}
+                            cols={40}
                             value={formData.jobDescription}
                             onChange={handleFormChange}
-                            className="block w-full text-gray-300 bg-gray-800 rounded-lg border border-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-600"
-                        />
+                            className="block px-3 w-full text-gray-300 bg-gray-800 rounded-lg border border-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-600"></textarea>
                     </div>
                     <div className="p-6 rounded-lg border-2 border-gray-700 hover:border-purple-600 transition-colors">
                         <h2 className="text-xl font-bold text-white mb-2">

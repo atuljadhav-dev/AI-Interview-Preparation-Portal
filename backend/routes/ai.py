@@ -1,6 +1,6 @@
 from flask import Blueprint,request,jsonify
 import json
-from service.ai import generateQuestions,generateFeedback,AIInterviewStimulation
+from service.ai import generateFeedback,AIInterviewStimulation
 ai_bp=Blueprint('ai',__name__)
 
 @ai_bp.route("/generate-feedback",methods=["POST"])

@@ -90,7 +90,6 @@ const Interview = ({ id }) => {
                 router.push(`/feedback/${interview._id}`);
             }
         } catch (e) {
-            console.error("Interview error:", e);
             toast.error(e.response.data.error);
         }
     };

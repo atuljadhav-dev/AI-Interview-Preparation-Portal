@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, constr, field_validator
+from pydantic import BaseModel, EmailStr, field_validator
 import re
 
 class User(BaseModel):

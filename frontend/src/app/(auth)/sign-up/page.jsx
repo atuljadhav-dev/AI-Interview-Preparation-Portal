@@ -35,7 +35,6 @@ const signup = () => {
             setUser(res.data.data);
             router.push("/home");
         } catch (err) {
-            console.log(err.response.data.error);
             toast.error(err.response.data.error);
             setError(err.response.data.error);
         }

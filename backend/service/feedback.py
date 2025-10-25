@@ -24,16 +24,16 @@ def allFeedBack(request):
     if not data:
         return None
     try:
-        interviews=getInterview(data["userId"])
+        interviews=getInterview(userId=data) or []
         feedback_list = []
         for interview in interviews:
             if "feedbackId" in interview:
                 interview["_id"]=str(interview["_id"])
                 feedback=db.feedbacks.find_one({"interviewId": interview["_id"]})
-                feedback["_id"] = str(feedback["_id"])
-                feedback["interview"]=interview
-            feedback_list.append(feedback)
-        
+                if feedback:
+                    feedback["_id"] = str(feedback["_id"])
+                    feedback["interview"]=interview
+                    feedback_list.append(feedback)
         return feedback_list
     except Exception as e:
-        return e
+        return None

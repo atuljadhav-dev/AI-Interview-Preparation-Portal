@@ -26,8 +26,7 @@ export const UserProvider = ({ children }) => {
                         );
                         setResume(response.data.data);
                     } catch (resumeErr) {
-                        console.warn("No resume found for user:", resumeErr);
-                        setResume(null); 
+                        setResume(null);
                     }
                 } else {
                     setUser(null);

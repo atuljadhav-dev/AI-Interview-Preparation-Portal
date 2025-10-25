@@ -6,7 +6,7 @@ import jwt, datetime, os
 
 auth_bp = Blueprint('auth', __name__)
 
-SECRET_KEY = os.getenv("JWT_SECRET")  # keep secret in env
+SECRET_KEY = os.getenv("JWT_SECRET")  
 
 def create_jwt(userId):
     payload = {
@@ -25,7 +25,6 @@ def verify_jwt(request):
     except jwt.InvalidTokenError:
         return None
 
-# ---------------------- SIGNUP ---------------------- #
 @auth_bp.route("/signup", methods=["POST"])
 def signup():
     data = request.get_json()
@@ -62,11 +61,11 @@ def signup():
         token,
         httponly=True,
         samesite="None",
-        secure=True
+        secure=True,
+        max_age=2*24*60*60  # 7 days
     )
     return response
 
-# ---------------------- SIGNIN ---------------------- #
 @auth_bp.route("/signin", methods=["POST"])
 def signin():
     data = request.get_json()
@@ -93,11 +92,11 @@ def signin():
         token,
         httponly=True,
         samesite="None",
-        secure=True
+        secure=True,
+        max_age=7*24*60*60  # 7 days
     )
     return response
 
-# ---------------------- SIGNOUT ---------------------- #
 @auth_bp.route("/signout", methods=["POST"])
 def signout():
     response = make_response(jsonify({
@@ -107,7 +106,6 @@ def signout():
     response.set_cookie("authToken", "", expires=0, httponly=True, samesite="None", secure=True)
     return response
 
-# ---------------------- VERIFY ---------------------- #
 @auth_bp.route("/verify", methods=["GET"])
 def verify():
     authToken = request.cookies.get("authToken")
