@@ -46,7 +46,7 @@ def signup():
         user["_id"] = str(user["_id"])
         user.pop("password", None)
     except Exception as e:
-        return jsonify({"success": False, "error": "Could not create user", "details": str(e)}), 500
+        return jsonify({"success": False, "error": "Could not create user"}), 500
     
     token = create_jwt(user["_id"])
 

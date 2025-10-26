@@ -25,7 +25,7 @@ const Interview = ({ id }) => {
             };
             fetchData();
         } catch (e) {
-            console.log(e);
+            toast.error("Failed to fetch interview data.");
         }
     }, []);
     const handleSend = async () => {

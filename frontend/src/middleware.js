@@ -8,7 +8,6 @@ async function verifyJWT(token) {
         const { payload } = await jwtVerify(token, SECRET);
         return payload;
     } catch (e) {
-        console.log("JWT verification failed:", e);
         return null;
     }
 }

@@ -13,16 +13,21 @@ def create_conversation():
         userId = data['userId']
         interviewId = data['interviewId']
         conversations = data['conversations']
+        if not userId or not interviewId or not conversations:
+            return jsonify({
+                "success": False,
+                "error": "userId, interviewId and conversations are required"
+            }), 400
         response = createConversation(conversations, userId, interviewId)
         return jsonify({
             "success": True,
+            "message": "Conversation created successfully",
             "data": response
-        }), 200
+        }), 201
     except Exception as e:
         return jsonify({
             "success": False,
-            "error": "Could not create conversation",
-            "details": str(e)
+            "error": "Server error: Could not create conversation",
         }), 500
 @con_bp.route("/conversation", methods=["GET"])
 def get_conversation():
@@ -37,11 +42,11 @@ def get_conversation():
         response = getConversation(userId, interviewId)
         return jsonify({
             "success": True,
+            "message": "Conversation fetched successfully",
             "data": response
         }), 200
     except Exception as e:
         return jsonify({
             "success": False,
-            "error": "Could not fetch conversation",
-            "details": str(e)
+            "error": "Server error: Could not fetch conversation",
         }), 500

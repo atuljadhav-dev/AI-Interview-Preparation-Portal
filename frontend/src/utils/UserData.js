@@ -33,7 +33,6 @@ export const UserProvider = ({ children }) => {
                     setResume(null);
                 }
             } catch (err) {
-                console.error("Verify failed:", err);
                 setUser(null);
                 setResume(null);
             } finally {

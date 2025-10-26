@@ -39,5 +39,4 @@ def FindUserById(userId):
         res['_id']=str(res['_id'])
         return res
     except Exception as e:
-        print("Error in FindUserById:", e)
         return None

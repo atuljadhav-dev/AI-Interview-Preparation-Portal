@@ -2,6 +2,7 @@
 import { useUser } from "@/utils/UserData";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 const FeedBack = ({ id }) => {
     const [feedback, setFeedback] = useState({});
@@ -34,7 +35,7 @@ const FeedBack = ({ id }) => {
                 );
                 setConversation(con.data.data);
             } catch (e) {
-                console.error("Error fetching data:", e);
+                toast.error("Failed to fetch feedback data.");
             }
         };
 

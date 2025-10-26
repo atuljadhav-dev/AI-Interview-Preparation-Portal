@@ -19,6 +19,7 @@ def get_profile(userId):
             resumeList.append(resume)
     return jsonify({
         "success": True,
+        "message": "Profile fetched successfully",
         "data": resumeList
     }), 200
 
@@ -44,8 +45,7 @@ def create_profile():
     except Exception as e:
         return jsonify({
             "success": False,
-            "error": "Failed to read PDF file",
-            "details": str(e)
+            "error": "Server error: Failed to read PDF file",
         }), 500
     ai=convertTextToJSON(extracted_text)
     resume=json.loads(ai.text)
@@ -56,8 +56,7 @@ def create_profile():
     except Exception as e:
         return jsonify({
             "success": False,
-            "error": "Could not create profile in database",
-            "details": str(e)
+            "error": "Server error: Could not create profile in database",
         }), 500
     return jsonify({
         "success": True,
@@ -69,7 +68,6 @@ def create_profile():
 def update_profile():
     file = request.files["file"]
     data = request.form.to_dict()
-
     if file.filename == "":
         return jsonify({
             "success": False,
@@ -90,8 +88,7 @@ def update_profile():
     except Exception as e:
         return jsonify({
             "success": False,
-            "error": "Failed to read PDF file",
-            "details": str(e)
+            "error": "Server error: Failed to read PDF file",
         }), 500
     ai=convertTextToJSON(extracted_text)
     resume=json.loads(ai.text)
@@ -102,8 +99,7 @@ def update_profile():
     except Exception as e:
         return jsonify({
             "success": False,
-            "error": "Could not update profile in database",
-            "details": str(e)
+            "error": "Server error: Could not update profile in database",
         }), 500
     return jsonify({
         "success": True,

@@ -18,16 +18,21 @@ def feedbackGeneration():
         jobTitle=data["jobTitle"]
         job_description=data['jobDescription']
         round_name=data['roundName']
+        if not jobTitle or jobTitle.strip()=="" or not resume or not job_description or job_description.strip()=="" or not round_name or round_name.strip()=="" or not questionAnswer  or not userAnswer:
+            return jsonify({
+                "success":False,
+                "error":"Invalid input data"
+                }),400
         response=generateFeedback(jobTitle,resume, questionAnswer, userAnswer, job_description, round_name)
         return jsonify({
             "success":True,
+            "message":"Feedback generated successfully",
             "data":json.loads(response)
-            }),200
+            }),201
     except Exception as e:
         return jsonify({
             "success":False,
-            "error":"Could not generate feedback",
-            "details":str(e)
+            "error":"Server error: Could not generate feedback",
             }),500
 
 @ai_bp.route("/interview-stimulation",methods=["POST"])
@@ -44,14 +49,20 @@ def interviewStimulation():
         jobDescription=data['jobDescription']
         round_name=data['roundName']
         content=data['content']
+        if not questions or not resume or not jobDescription or jobDescription.strip()=="" or not round_name or round_name.strip()=="" or not content :
+            return jsonify({
+                "success":False,
+                "error":"Invalid input data"
+                }),400
         response=AIInterviewStimulation(questions,resume,jobDescription,round_name,content)
         return jsonify({
             "success":True,
+            "message":"Interview simulation generated successfully",
             "data":response
-            }),200
+            }),201
     except Exception as e:
         return jsonify({
             "success":False,
-            "error":"Could not generate feedback",
+            "error":"Server error: Could not generate interview simulation",
             "details":str(e)
             }),500

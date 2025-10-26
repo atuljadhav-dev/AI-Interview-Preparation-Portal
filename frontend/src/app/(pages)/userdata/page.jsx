@@ -3,11 +3,11 @@
 import { useState } from "react";
 import axios from "axios";
 import { useUser } from "@/utils/UserData";
+import { toast } from "react-toastify";
 
 export default function ProfileUpload() {
     const [file, setFile] = useState(null);
     const { user } = useUser();
-    console.log(user);
     const handleFileChange = (e) => {
         setFile(e.target.files[0]);
     };
@@ -29,11 +29,9 @@ export default function ProfileUpload() {
                         "Content-Type": "multipart/form-data",
                     },
                 }
-            );
-            console.log("Response:", res.data);
-        } catch (err) {
-            console.error("Error uploading profile:", err);
-        }
+            ); } catch (err) {
+                toast.error("Upload failed. Please try again.");
+            }
     };
 
     return (

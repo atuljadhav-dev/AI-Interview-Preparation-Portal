@@ -9,7 +9,6 @@ def createConversation(conversations,userId,interviewId):
     conversation["_id"] = str(res.inserted_id)
     return conversation
 def getConversation(userId, interviewId):
-    print(userId, interviewId)
     conversation = db.conversations.find_one({
         "userId": userId,
         "interviewId": interviewId
@@ -20,6 +19,5 @@ def getConversation(userId, interviewId):
 
     # Convert ObjectId to string
     conversation["_id"] = str(conversation["_id"])
-    print(conversation)
     return conversation
     
