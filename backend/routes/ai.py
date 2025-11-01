@@ -1,10 +1,17 @@
 from flask import Blueprint,request,jsonify
 import json
 from service.ai import generateFeedback,AIInterviewStimulation
+from routes.auth import verify_jwt 
 ai_bp=Blueprint('ai',__name__)
 
 @ai_bp.route("/generate-feedback",methods=["POST"])
 def feedbackGeneration():
+    '''Generate feedback based on resume, questionAnswer, userAnswer, jobTitle, jobDescription, roundName'''
+    if not verify_jwt(request):# prevent unauthorized access
+        return jsonify({
+            "success": False, 
+            "error": "Unauthorized"
+            }), 401
     data=request.get_json()
     if not data:
         return jsonify({
@@ -18,7 +25,7 @@ def feedbackGeneration():
         jobTitle=data["jobTitle"]
         job_description=data['jobDescription']
         round_name=data['roundName']
-        if not jobTitle or jobTitle.strip()=="" or not resume or not job_description or job_description.strip()=="" or not round_name or round_name.strip()=="" or not questionAnswer  or not userAnswer:
+        if not all([resume, questionAnswer, userAnswer, jobTitle, job_description, round_name]):# validate input
             return jsonify({
                 "success":False,
                 "error":"Invalid input data"
@@ -27,7 +34,7 @@ def feedbackGeneration():
         return jsonify({
             "success":True,
             "message":"Feedback generated successfully",
-            "data":json.loads(response)
+            "data":json.loads(response)# convert string response to json
             }),201
     except Exception as e:
         return jsonify({
@@ -35,8 +42,15 @@ def feedbackGeneration():
             "error":"Server error: Could not generate feedback",
             }),500
 
-@ai_bp.route("/interview-stimulation",methods=["POST"])
+@ai_bp.route("/interview-stimulation", methods=["POST"])
 def interviewStimulation():
+    '''Generate interview simulation based on questions, resume, jobDescription, roundName, content'''
+    if not verify_jwt(request):
+        return jsonify({
+            "success": False, 
+            "error": "Unauthorized"
+            }), 401
+
     data=request.get_json()
     if not data:
         return jsonify({
@@ -49,7 +63,7 @@ def interviewStimulation():
         jobDescription=data['jobDescription']
         round_name=data['roundName']
         content=data['content']
-        if not questions or not resume or not jobDescription or jobDescription.strip()=="" or not round_name or round_name.strip()=="" or not content :
+        if not all([questions, resume, jobDescription, round_name, content]):
             return jsonify({
                 "success":False,
                 "error":"Invalid input data"
@@ -64,5 +78,4 @@ def interviewStimulation():
         return jsonify({
             "success":False,
             "error":"Server error: Could not generate interview simulation",
-            "details":str(e)
             }),500

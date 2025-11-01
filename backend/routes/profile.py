@@ -3,10 +3,16 @@ from pypdf import PdfReader
 from service.profile import getProfile, createProfile,updateProfile
 import json
 from service.ai import convertTextToJSON
+from routes.auth import verify_jwt 
 profile_bp = Blueprint('profile', __name__)
-@profile_bp.route("/profile/<userId>", methods=["GET"])
-def get_profile(userId):
-    resumes = getProfile(userId)
+@profile_bp.route("/profile", methods=["GET"])
+def get_profile():
+    token_user = verify_jwt(request)
+    if not token_user :
+        return jsonify({
+            "success": False, 
+            "error": "Unauthorized"}), 401
+    resumes = getProfile(token_user)
     if not resumes:
         return jsonify({
             "success": False,
@@ -25,6 +31,12 @@ def get_profile(userId):
 
 @profile_bp.route("/profile", methods=["POST"])
 def create_profile():
+    token_user = verify_jwt(request)
+    if not token_user:
+        return jsonify({
+            "success": False, 
+            "error": "Unauthorized"
+            }), 401
     file = request.files["file"]
     data = request.form.to_dict()
     if file.filename == "":
@@ -32,11 +44,12 @@ def create_profile():
             "success": False,
             "error": "No selected file"
         }), 400
-    if not data or 'userId' not in data :
+    if not data  :
         return jsonify({
             "success": False,
-            "error": "userId and resume are required"
+            "error": "Resume data is required"
         }), 400
+   
     try:
         reader = PdfReader(file)
         extracted_text = ""
@@ -48,9 +61,9 @@ def create_profile():
             "error": "Server error: Failed to read PDF file",
         }), 500
     ai=convertTextToJSON(extracted_text)
-    resume=json.loads(ai.text)
     try:
-        profile = createProfile(data['userId'], resume)
+        resume=json.loads(ai.text)
+        profile = createProfile(token_user, resume, data.get('name', '')) 
         if "_id" in profile:
             profile["_id"] = str(profile["_id"])
     except Exception as e:
@@ -66,6 +79,13 @@ def create_profile():
 
 @profile_bp.route("/profile", methods=["PUT"])
 def update_profile():
+    token_user = verify_jwt(request)
+    if not token_user:
+        return jsonify({
+            "success": False, 
+            "error": "Unauthorized"
+            }), 401
+
     file = request.files["file"]
     data = request.form.to_dict()
     if file.filename == "":
@@ -73,27 +93,25 @@ def update_profile():
             "success": False,
             "error": "No selected file"
         }), 400
-    if not data or 'userId' not in data :
+    if not data  :
         return jsonify({
             "success": False,
-            "error": "userId and resume are required"
+            "error": "Resume are required"
         }), 400
-    
     try:
         reader = PdfReader(file)
         extracted_text = ""
         for page in reader.pages:
             extracted_text += page.extract_text() or ""
-
     except Exception as e:
         return jsonify({
             "success": False,
             "error": "Server error: Failed to read PDF file",
         }), 500
     ai=convertTextToJSON(extracted_text)
-    resume=json.loads(ai.text)
     try:
-        profile = updateProfile(data['userId'], resume)
+        resume = json.loads(ai.text)
+        profile = updateProfile(token_user, resume)
         if "_id" in profile:
             profile["_id"] = str(profile["_id"])
     except Exception as e:

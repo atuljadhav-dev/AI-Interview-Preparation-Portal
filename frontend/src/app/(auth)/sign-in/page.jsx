@@ -9,7 +9,7 @@ import { toast } from "react-toastify";
 const login = () => {
     const [formData, setFormData] = useState({
         password: "",
-        identifier: "",
+        email: "",
     });
     const router = useRouter();
     const { setUser } = useUser();
@@ -41,12 +41,12 @@ const login = () => {
                     <input
                         type="text"
                         placeholder="Enter email or phone number"
-                        name="identifier"
-                        value={formData.identifier}
+                        name="email"
+                        value={formData.email}
                         onChange={(e) =>
                             setFormData({
                                 ...formData,
-                                identifier: e.target.value,
+                                email: e.target.value,
                             })
                         }
                         className=" bg-transparent border border-gray-500 px-4 w-[60vw] h-[5vh] sm:w-[19vw] rounded-md"></input>

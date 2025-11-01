@@ -11,7 +11,6 @@ const page = () => {
                     `${process.env.NEXT_PUBLIC_BASE_URL}/feedback`,
                     { withCredentials: true }
                 );
-                
             } catch (e) {
                 toast.error("Failed to fetch feedback data");
             }

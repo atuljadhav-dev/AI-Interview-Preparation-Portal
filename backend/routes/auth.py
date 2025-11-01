@@ -9,14 +9,18 @@ auth_bp = Blueprint('auth', __name__)
 SECRET_KEY = os.getenv("JWT_SECRET")  
 
 def create_jwt(userId):
+    '''Create a JWT token for the given user ID with a 2-day expiry.'''
     payload = {
         "userId": str(userId),
-        "exp": datetime.datetime.utcnow() + datetime.timedelta(days=7)  # 7-day expiry
+        "exp": datetime.datetime.utcnow() + datetime.timedelta(days=2)  
     }
     return jwt.encode(payload, SECRET_KEY, algorithm="HS256")
 
 def verify_jwt(request):
+    '''Verify the JWT token from the request cookies and return the user ID if valid.'''
     token = request.cookies.get("authToken")
+    if not token:
+        return None 
     try:
         decoded = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
         return decoded["userId"]
@@ -29,32 +33,44 @@ def verify_jwt(request):
 def signup():
     data = request.get_json()
     if not data:
-        return jsonify({"success": False, "error": "No data provided"}), 400
+        return jsonify({
+            "success": False, 
+            "error": "No data provided"
+            }), 400
     
     try:
-        userData = User(**data)
+        userData = User(**data)# Validate input data
     except ValidationError as e:
-        error = e.errors()[0]["msg"]
-        return jsonify({"success": False, "error": error}), 422
+        error = e.errors()[0]["msg"]# Get the first validation error message
+        return jsonify({
+            "success": False, 
+            "error": error
+            }), 422
     
-    check = FindUserByEmail(data['email'])
+    check = FindUserByEmail(data['email'])# Check if user already exists
     if check:
-        return jsonify({"success": False, "error": "User Already exists"}), 403
+        return jsonify({
+            "success": False, 
+            "error": "User Already exists"
+            }), 403
     
     try:
         user = createUser(data['name'], data['email'], data['password'], data['phone'])
-        user["_id"] = str(user["_id"])
-        user.pop("password", None)
+        user["_id"] = str(user["_id"])# Convert ObjectId to string
+        user.pop("password", None)# Remove password from response
     except Exception as e:
-        return jsonify({"success": False, "error": "Could not create user"}), 500
+        return jsonify({
+            "success": False, 
+            "error": "Could not create user"
+            }), 500
     
-    token = create_jwt(user["_id"])
+    token = create_jwt(user["_id"])# Create JWT token
 
     response = make_response(jsonify({
         "success": True,
         "message": "User created successfully!",
         "data": user
-    }), 201)
+    }), 201)# Set cookie with token
 
     response.set_cookie(
         "authToken",
@@ -62,7 +78,7 @@ def signup():
         httponly=True,
         samesite="None",
         secure=True,
-        max_age=2*24*60*60  # 7 days
+        max_age=2*24*60*60  #2 days
     )
     return response
 
@@ -70,11 +86,17 @@ def signup():
 def signin():
     data = request.get_json()
     if not data:
-        return jsonify({"success": False, "error": "No data provided"}), 400
+        return jsonify({
+            "success": False, 
+            "error": "No data provided"
+            }), 400
     
-    user = Login(data['identifier'], data['password'])
+    user = Login(data['email'], data['password'])
     if not user:
-        return jsonify({"success": False, "error": "Wrong Credentials"}), 403
+        return jsonify({
+            "success": False, 
+            "error": "Wrong Credentials"
+            }), 403
     
     user["_id"] = str(user["_id"])
     user.pop("password", None)
@@ -93,7 +115,7 @@ def signin():
         httponly=True,
         samesite="None",
         secure=True,
-        max_age=7*24*60*60  # 7 days
+        max_age=2*24*60*60 
     )
     return response
 
@@ -108,17 +130,27 @@ def signout():
 
 @auth_bp.route("/verify", methods=["GET"])
 def verify():
+    '''Verify the user's authentication status using the JWT token.'''
     authToken = request.cookies.get("authToken")
     if not authToken:
-        return jsonify({"success": False, "error": "Unauthorized"}), 401
+        return jsonify({
+            "success": False, 
+            "error": "Unauthorized"
+            }), 401
     
     decoded = verify_jwt(request)
     if not decoded:
-        return jsonify({"success": False, "error": "Unauthorized"}), 401
+        return jsonify({
+            "success": False, 
+            "error": "Unauthorized"
+            }), 401
 
     user = FindUserById(decoded)
     if not user:
-        return jsonify({"success": False, "error": "Unauthorized"}), 401
+        return jsonify({
+            "success": False, 
+            "error": "Unauthorized"
+            }), 401
 
     user["_id"] = str(user["_id"])
     user.pop("password", None)

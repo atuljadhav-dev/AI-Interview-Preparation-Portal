@@ -19,7 +19,7 @@ export default function ProfileUpload() {
         }
         const data = new FormData();
         data.append("file", file);
-        data.append("userId", user._id);
+        
         try {
             const res = await axios.post(
                 `${process.env.NEXT_PUBLIC_BASE_URL}/profile`,

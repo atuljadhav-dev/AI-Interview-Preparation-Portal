@@ -19,12 +19,9 @@ def getFeedBack(interviewId):
     res["_id"] = str(res["_id"])
     return res
 
-def allFeedBack(request):
-    data=verify_jwt(request)
-    if not data:
-        return None
+def allFeedBack(userId):
     try:
-        interviews=getInterview(userId=data) or []
+        interviews=getInterview(userId) or []
         feedback_list = []
         for interview in interviews:
             if "feedbackId" in interview:

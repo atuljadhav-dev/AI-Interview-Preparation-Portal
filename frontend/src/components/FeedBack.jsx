@@ -29,7 +29,7 @@ const FeedBack = ({ id }) => {
                     {
                         params: {
                             interview_id: res.data.data.interviewId,
-                            userId: user._id,
+                            
                         },
                     }
                 );

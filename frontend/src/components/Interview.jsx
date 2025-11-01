@@ -43,7 +43,7 @@ const Interview = ({ id }) => {
                 {
                     jobDescription: interview.jobDescription,
                     roundName: interview.roundName,
-                    userId: interview.userId,
+                   
                     questions: interview.questions,
                     content: updatedConversation,
                     resume,
@@ -61,7 +61,7 @@ const Interview = ({ id }) => {
                 await axios.post(
                     `${process.env.NEXT_PUBLIC_BASE_URL}/conversation`,
                     {
-                        userId: interview.userId,
+                      
                         interviewId: interview._id,
                         conversations: finalConversation,
                     }

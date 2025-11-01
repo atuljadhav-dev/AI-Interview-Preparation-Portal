@@ -1,11 +1,18 @@
 from flask import Blueprint, jsonify, request
 from service.feedback import addFeedback, getFeedBack,allFeedBack
 from service.interview import setFeedback
+from routes.auth import verify_jwt 
 feedback_bp = Blueprint("feedback", __name__)
 
 @feedback_bp.route("/feedback", methods=["POST","GET"])
 def feedback():
     if request.method == "POST":
+        if not verify_jwt(request):
+            return jsonify({
+                "success": False, 
+                "error": "Unauthorized"
+                }), 401
+
         data = request.get_json()
         if not data:
             return jsonify({
@@ -33,10 +40,13 @@ def feedback():
                 "error": "Server error: Could not create feedback",
             }), 500
     if request.method == "GET":
-        authToken = request.cookies.get("authToken")
-        if not authToken:
-            return jsonify({"success": False, "error": "Unauthorized Access"}), 401
-        res=allFeedBack(request)
+        token_user=verify_jwt(request)
+        if not token_user:
+            return jsonify({
+                "success": False, 
+                "error": "Unauthorized Access"
+                }), 401
+        res=allFeedBack(token_user)
         return jsonify({
             "data":res,
             "message":"All feedback fetched successfully",
@@ -44,11 +54,11 @@ def feedback():
         }),200
 @feedback_bp.route("/feedback/<interviewId>", methods=["GET"])
 def get_feedback(interviewId):
-    if not interviewId:
+    if not verify_jwt(request):
         return jsonify({
-            "success": False,
-            "error": "interviewId is required"
-        }), 400
+            "success": False, 
+            "error": "Unauthorized"
+            }), 401
     try:
         feedback = getFeedBack(interviewId)
         if not feedback:

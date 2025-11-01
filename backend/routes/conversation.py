@@ -1,8 +1,18 @@
 from flask import Blueprint, request, jsonify
 from service.conversation import createConversation,getConversation
+from routes.auth import verify_jwt  # <-- Import here
+
 con_bp = Blueprint('conversation', __name__)
+
 @con_bp.route("/conversation", methods=["POST"])
 def create_conversation():
+    token_user = verify_jwt(request)
+    if not token_user:
+        return jsonify({
+            "success": False, 
+            "error": "Unauthorized"
+            }), 401
+
     data = request.get_json()
     if not data:
         return jsonify({
@@ -10,15 +20,14 @@ def create_conversation():
             "error": "No data provided"
         }), 400
     try:
-        userId = data['userId']
         interviewId = data['interviewId']
         conversations = data['conversations']
-        if not userId or not interviewId or not conversations:
+        if not all([interviewId, conversations]):
             return jsonify({
                 "success": False,
-                "error": "userId, interviewId and conversations are required"
+                "error": "Invalid input data"
             }), 400
-        response = createConversation(conversations, userId, interviewId)
+        response = createConversation(conversations, userId=token_user, interviewId=interviewId)
         return jsonify({
             "success": True,
             "message": "Conversation created successfully",
@@ -31,15 +40,22 @@ def create_conversation():
         }), 500
 @con_bp.route("/conversation", methods=["GET"])
 def get_conversation():
-    userId = request.args.get('userId')
+    token_user = verify_jwt(request)
+    if not token_user:
+        return jsonify({
+            "success": False, 
+            "error": "Unauthorized"
+            }), 401
+    
     interviewId = request.args.get('interviewId')
-    if not userId or not interviewId:
+    if  not interviewId:
         return jsonify({
             "success": False,
             "error": "userId and interviewId are required"
         }), 400
+    
     try:
-        response = getConversation(userId, interviewId)
+        response = getConversation(userId=token_user, interviewId=interviewId)
         return jsonify({
             "success": True,
             "message": "Conversation fetched successfully",

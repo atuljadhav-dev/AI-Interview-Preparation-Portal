@@ -17,7 +17,7 @@ const page = () => {
         setFormData({
             ...formData,
             ["resume"]: resume,
-            ["userId"]: user?._id,
+       
         });
     }, [resume, user]);
     const handleFormChange = (e) => {

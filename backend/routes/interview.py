@@ -2,22 +2,29 @@ from flask import Blueprint, request, jsonify
 from service.interview import createInterview, getInterview,getSpecificInterview
 from service.ai import generateQuestions
 import json
+from routes.auth import verify_jwt 
 interview_bp = Blueprint('interview', __name__)
 @interview_bp.route("/interview", methods=["POST"])
 def create_interview():
+    token_user = verify_jwt(request)
+    if not token_user:
+        return jsonify({
+            "success": False, 
+            "error": "Unauthorized"
+            }), 401
     data=request.get_json()
     if not data:
         return jsonify({
             "success":False,
             "error":"No data provided"
             }),400
+
     try:
         job_description=data['jobDescription']
         round_name=data['round_name']
         resume=data['resume']
-        userId=data['userId']
         title=data["jobRole"]
-        if not job_description or job_description.strip()=="" or not round_name or round_name.strip()=="" or not resume or not title or title.strip()=="" or not userId:
+        if not all([job_description, round_name, resume, title]):
             return jsonify({
                 "success":False,
                 "error":"Invalid input data"
@@ -30,7 +37,7 @@ def create_interview():
             "error":"Server error: Could not generate questions",
             }),500
     try:
-        interview = createInterview(userId, title,round_name,description=job_description,question_answer=response)
+        interview = createInterview( title,round_name,userId=token_user,description=job_description,question_answer=response)
         
         if "_id" in interview:
             interview["_id"] = str(interview["_id"])
@@ -44,15 +51,16 @@ def create_interview():
         "message": "Interview created successfully!",
         "data": interview
     }), 201
-@interview_bp.route("/interview/<userId>", methods=["GET"])
-def get_All_interview(userId):
+@interview_bp.route("/interview", methods=["GET"])
+def get_All_interview():
+    token_user = verify_jwt(request)
+    if not token_user :
+        return jsonify({
+            "success": False, 
+            "error": "Unauthorized"
+            }), 401
     try:
-        if not userId:
-            return jsonify({
-                "success": False,
-                "error": "userId is required"
-            }), 400
-        interviews = getInterview(userId)
+        interviews = getInterview(token_user)
         interview_list = []
         for interview in interviews:
             if "_id" in interview:
@@ -71,6 +79,12 @@ def get_All_interview(userId):
 
 @interview_bp.route("/interview/specific/<interviewId>", methods=["GET"])
 def get_specific_interview(interviewId):
+    token_user = verify_jwt(request)
+    if not token_user:
+        return jsonify({
+            "success": False, 
+            "error": "Unauthorized"
+            }), 401
     try:
         interview = getSpecificInterview(interviewId)
         if not interview:
