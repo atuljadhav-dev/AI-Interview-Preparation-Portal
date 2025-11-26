@@ -136,21 +136,20 @@ def verify():
         return jsonify({
             "success": False, 
             "error": "Unauthorized"
-            }), 401
-    
+            }), 201
     decoded = verify_jwt(request)
     if not decoded:
         return jsonify({
             "success": False, 
             "error": "Unauthorized"
-            }), 401
+            }), 201
 
     user = FindUserById(decoded)
     if not user:
         return jsonify({
             "success": False, 
             "error": "Unauthorized"
-            }), 401
+            }), 201
 
     user["_id"] = str(user["_id"])
     user.pop("password", None)

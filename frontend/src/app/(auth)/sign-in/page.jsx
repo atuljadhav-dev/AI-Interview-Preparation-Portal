@@ -23,7 +23,7 @@ const login = () => {
             );
             if (res.data.success) {
                 setUser(res.data.data);
-                toast.success("Signup success");
+                toast.success("Login Successfully");
                 router.push("/home");
             }
         } catch (err) {

@@ -6,6 +6,7 @@ const SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
 async function verifyJWT(token) {
     try {
         const { payload } = await jwtVerify(token, SECRET);
+        console.log(payload);
         return payload;
     } catch (e) {
         return null;
