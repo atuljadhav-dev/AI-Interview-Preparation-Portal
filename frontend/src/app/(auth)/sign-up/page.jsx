@@ -85,8 +85,8 @@ const signup = () => {
                     {error && <p className="text-red-500">{error}</p>}
                     <button
                         type="submit"
-                        className="border border-gray-500 sm:w-[12vw]  w-[50vw] h-[5vh] rounded-md">
-                        Submit
+                        className="border border-gray-500 sm:w-[12vw] cursor-pointer  w-[50vw] h-[5vh] rounded-md">
+                        Register
                     </button>
                     <p className="text-gray-500">
                         Alredy have an account?{" "}

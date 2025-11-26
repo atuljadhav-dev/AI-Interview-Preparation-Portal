@@ -67,7 +67,7 @@ const login = () => {
                     <button
                         type="submit"
                         className="border border-gray-500 cursor-pointer  w-[50vw] h-[5vh] sm:w-[12vw] rounded-md">
-                        Submit
+                        Login
                     </button>
                 </form>
             </div>

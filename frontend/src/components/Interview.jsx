@@ -61,7 +61,6 @@ const Interview = ({ id }) => {
                 await axios.post(
                     `${process.env.NEXT_PUBLIC_BASE_URL}/conversation`,
                     {
-                      
                         interviewId: interview._id,
                         conversations: finalConversation,
                     }
