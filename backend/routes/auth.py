@@ -14,6 +14,7 @@ def create_jwt(userId):
         "userId": str(userId),
         "exp": datetime.datetime.utcnow() + datetime.timedelta(days=2)  
     }
+    print(SECRET_KEY)
     return jwt.encode(payload, SECRET_KEY, algorithm="HS256")
 
 def verify_jwt(request):
@@ -22,6 +23,7 @@ def verify_jwt(request):
     if not token:
         return None 
     try:
+        print(SECRET_KEY)
         decoded = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
         return decoded["userId"]
     except jwt.ExpiredSignatureError:

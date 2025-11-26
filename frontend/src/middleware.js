@@ -5,6 +5,7 @@ const SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
 
 async function verifyJWT(token) {
     try {
+        console.log("Middleware JWT_SECRET:", process.env.JWT_SECRET);
         const { payload } = await jwtVerify(token, SECRET);
         console.log(payload);
         return payload;
