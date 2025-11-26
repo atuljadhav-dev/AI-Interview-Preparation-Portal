@@ -13,9 +13,12 @@ const login = () => {
     });
     const router = useRouter();
     const { setUser } = useUser();
+    const [sending, setSending] = useState(false);
     const handleSend = async (e) => {
         e.preventDefault();
+        if (sending) return;
         try {
+            setSending(true);
             const res = await axios.post(
                 `${process.env.NEXT_PUBLIC_BASE_URL}/signin`,
                 formData,
@@ -29,6 +32,8 @@ const login = () => {
             }
         } catch (err) {
             toast.error(err.response.data.error);
+        } finally {
+            setSending(false);
         }
     };
     return (

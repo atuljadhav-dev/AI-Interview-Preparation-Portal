@@ -4,10 +4,12 @@ import { useState } from "react";
 import axios from "axios";
 import { useUser } from "@/utils/UserData";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 export default function ProfileUpload() {
     const [file, setFile] = useState(null);
-    const { user } = useUser();
+    const [uploading, setUploading] = useState(false);
+    const router = useRouter();
     const handleFileChange = (e) => {
         setFile(e.target.files[0]);
     };
@@ -17,9 +19,11 @@ export default function ProfileUpload() {
             alert("Please select a file");
             return;
         }
+        if (uploading) return;
         const data = new FormData();
         data.append("file", file);
         data.append("name", "test");
+        setUploading(true);
         try {
             const res = await axios.post(
                 `${process.env.NEXT_PUBLIC_BASE_URL}/profile`,
@@ -31,9 +35,13 @@ export default function ProfileUpload() {
                     withCredentials: true,
                 }
             );
+            toast.success("Resume uploded successfully");
+            router.push("/home");
         } catch (err) {
             console.log(e);
             toast.error("Upload failed. Please try again.");
+        } finally {
+            setUploading(false);
         }
     };
 

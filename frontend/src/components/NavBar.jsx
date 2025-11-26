@@ -24,7 +24,7 @@ const NavBar = () => {
     };
 
     return (
-        <nav className="w-full h-16 flex items-center sticky top-0 justify-between px-6 bg-gray-900 text-white">
+        <nav className="w-full h-16 flex z-50 items-center sticky top-0 justify-between px-6 bg-gray-900 text-white">
             <h1 className="font-bold text-xl">Interview Portal</h1>
             <div className="flex items-center gap-4">
                 {user && <span>Hello, {user.name}</span>}

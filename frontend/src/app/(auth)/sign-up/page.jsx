@@ -14,6 +14,7 @@ const signup = () => {
         confirmPassword: "",
         phone: "",
     });
+    const [sending, setSending] = useState(flase);
     const router = useRouter();
     const [error, setError] = useState("");
     const handleFormChange = (e) => {
@@ -25,11 +26,13 @@ const signup = () => {
     const { setUser } = useUser();
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if( formData.password !== formData.confirmPassword ){
+        if (formData.password !== formData.confirmPassword) {
             setError("Passwords do not match");
             return;
         }
+        if (sending) return;
         try {
+            setSending(true);
             const res = await axios.post(
                 `${process.env.NEXT_PUBLIC_BASE_URL}/signup`,
                 formData,
@@ -42,6 +45,8 @@ const signup = () => {
         } catch (err) {
             toast.error(err.response.data.error);
             setError(err.response.data.error);
+        } finally {
+            setSending(false);
         }
     };
     return (

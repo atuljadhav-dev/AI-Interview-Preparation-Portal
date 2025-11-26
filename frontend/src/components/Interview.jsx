@@ -2,14 +2,22 @@
 import { useUser } from "@/utils/UserData";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 
 const Interview = ({ id }) => {
     const [conversation, setConversation] = useState([]);
     const [input, setInput] = useState("");
     const [interview, setInterview] = useState({});
+    const [sending, setSending] = useState(false);
     const { resume } = useUser();
+    const textareaRef = useRef(null);
+    useEffect(() => {
+        const el = textareaRef.current;
+        if (!el) return;
+        el.style.height = "auto";
+        el.style.height = `${el.scrollHeight}px`;
+    }, [input]);
     const [lastAIResponse, setLastAIResponse] = useState("");
     const router = useRouter();
     useEffect(() => {
@@ -31,7 +39,7 @@ const Interview = ({ id }) => {
     }, []);
     const handleSend = async () => {
         if (!input.trim()) return;
-
+        if (sending) return;
         const newMessage = { role: "user", parts: [{ text: input }] };
         const updatedConversation = [...conversation, newMessage];
 
@@ -39,6 +47,7 @@ const Interview = ({ id }) => {
         setInput("");
 
         try {
+            setSending(true);
             const res = await axios.post(
                 `${process.env.NEXT_PUBLIC_BASE_URL}/interview-stimulation`,
                 {
@@ -94,11 +103,13 @@ const Interview = ({ id }) => {
             }
         } catch (e) {
             toast.error(e.response.data.error);
+        } finally {
+            setSending(false);
         }
     };
 
     return (
-        <div className="w-full h-screen bg-gray-900 ">
+        <div className="w-full min-h-screen bg-gray-900 ">
             <div className="h-[70vh] w-full flex flex-row-reverse">
                 {/* this is left */}
                 <div className="h-[70vh] w-6/12  flex items-center justify-center">
@@ -135,17 +146,17 @@ const Interview = ({ id }) => {
                     </div>
                 </div>
             </div>
-            <div className="h-[30vh] w-full flex items-center justify-center">
-                <div className="h-[25vh] w-[97vw] border-2 flex flex-col border-purple-500 rounded-xl backdrop-blur-none bg-white/10 p-4">
+            <div className="min-h-[30vh] w-full flex items-center justify-center">
+                <div className="min-h-[25vh] w-[97vw] border-2 flex flex-col border-purple-500 rounded-xl backdrop-blur-none bg-white/10 p-4">
                     <p className="text-lg">{lastAIResponse}</p>
-                    <div className="w-full flex justify-between gap-4 mt-auto">
-                        <input
-                            type="text"
-                            placeholder="Any question"
+                    <div className="w-full flex items-end gap-4 mt-auto">
+                        <textarea
+                            rows={1}
                             value={input}
+                            ref={textareaRef}
                             onChange={(e) => setInput(e.target.value)}
-                            className="rounded-xl backdrop-blur-none  bg-white/10 w-[70vw] h-[5vh] mt-auto p-4"
-                        />
+                            style={{ height: "auto", overflow: "hidden" }}
+                            className="resize-none overflow-hidden rounded-xl backdrop-blur-none  bg-white/10 w-[70vw] h-[5vh] mt-auto p-4"></textarea>
                         <button
                             className="bg-purple-500 p-1 rounded mx-12 px-5"
                             onClick={handleSend}>

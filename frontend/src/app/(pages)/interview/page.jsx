@@ -8,6 +8,7 @@ const page = () => {
     const { resume, user } = useUser();
     const router = useRouter();
     const textareaRef = useRef(null);
+    const [sending, setSending] = useState(false);
     const [formData, setFormData] = useState({
         jobRole: "",
         jobDescription: "",
@@ -48,7 +49,9 @@ const page = () => {
             );
             return;
         }
+        if (sending) return;
         try {
+            setSending(true);
             const res = await axios.post(
                 `${process.env.NEXT_PUBLIC_BASE_URL}/interview`,
                 formData,
@@ -58,6 +61,8 @@ const page = () => {
             router.push(`/interview/${res.data.data._id}`);
         } catch (e) {
             toast.error(e.response.data.error);
+        } finally {
+            setSending(false);
         }
     };
     return (
