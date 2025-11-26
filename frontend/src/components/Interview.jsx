@@ -16,7 +16,8 @@ const Interview = ({ id }) => {
         try {
             const fetchData = async () => {
                 const res = await axios.get(
-                    `${process.env.NEXT_PUBLIC_BASE_URL}/interview/specific/${id}`
+                    `${process.env.NEXT_PUBLIC_BASE_URL}/interview/specific/${id}`,
+                    { withCredentials: true }
                 );
                 setInterview(res.data.data);
                 if (res.data.data.status == "Done") {
@@ -43,11 +44,11 @@ const Interview = ({ id }) => {
                 {
                     jobDescription: interview.jobDescription,
                     roundName: interview.roundName,
-                   
                     questions: interview.questions,
                     content: updatedConversation,
                     resume,
-                }
+                },
+                { withCredentials: true }
             );
 
             const aiResponse = {
@@ -63,7 +64,8 @@ const Interview = ({ id }) => {
                     {
                         interviewId: interview._id,
                         conversations: finalConversation,
-                    }
+                    },
+                    { withCredentials: true }
                 );
 
                 const feedback = await axios.post(
@@ -75,7 +77,8 @@ const Interview = ({ id }) => {
                         jobDescription: interview.jobDescription,
                         roundName: interview.roundName,
                         jobTitle: interview.title,
-                    }
+                    },
+                    { withCredentials: true }
                 );
 
                 const feedbackSave = await axios.post(
@@ -83,7 +86,8 @@ const Interview = ({ id }) => {
                     {
                         feedback: feedback.data.data,
                         interviewId: interview._id,
-                    }
+                    },
+                    { withCredentials: true }
                 );
                 toast.success("Feedback generated successfully");
                 router.push(`/feedback/${interview._id}`);

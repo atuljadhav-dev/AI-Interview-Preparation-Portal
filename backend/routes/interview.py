@@ -18,7 +18,6 @@ def create_interview():
             "success":False,
             "error":"No data provided"
             }),400
-
     try:
         job_description=data['jobDescription']
         round_name=data['round_name']
@@ -35,9 +34,10 @@ def create_interview():
         return jsonify({
             "success":False,
             "error":"Server error: Could not generate questions",
+            "e":e
             }),500
     try:
-        interview = createInterview( title,round_name,userId=token_user,description=job_description,question_answer=response)
+        interview = createInterview( title=title,round_name=round_name,userId=token_user,description=job_description,question_answer=response)
         
         if "_id" in interview:
             interview["_id"] = str(interview["_id"])
@@ -70,6 +70,7 @@ def get_All_interview():
         return jsonify({
             "success": False,
             "error": "Server error: Could not fetch interviews",
+            
         }), 500
     return jsonify({
         "success": True,

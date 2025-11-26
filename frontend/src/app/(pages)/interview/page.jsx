@@ -2,11 +2,12 @@
 import { useUser } from "@/utils/UserData";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 const page = () => {
     const { resume, user } = useUser();
     const router = useRouter();
+    const textareaRef = useRef(null);
     const [formData, setFormData] = useState({
         jobRole: "",
         jobDescription: "",
@@ -17,9 +18,14 @@ const page = () => {
         setFormData({
             ...formData,
             ["resume"]: resume,
-       
         });
     }, [resume, user]);
+    useEffect(() => {
+        const el = textareaRef.current;
+        if (!el) return;
+        el.style.height = "auto";
+        el.style.height = `${el.scrollHeight}px`;
+    }, [formData.jobDescription]);
     const handleFormChange = (e) => {
         setFormData({
             ...formData,
@@ -28,13 +34,25 @@ const page = () => {
     };
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!formData.jobRole.trim()) {
+            toast.error("Please enter a job role");
+            return;
+        }
+        if (!formData.jobDescription.trim()) {
+            toast.error("Please enter a job description");
+            return;
+        }
         if (!formData.resume) {
+            toast.error(
+                "Please upload or attach a resume before creating the interview"
+            );
             return;
         }
         try {
             const res = await axios.post(
                 `${process.env.NEXT_PUBLIC_BASE_URL}/interview`,
-                formData
+                formData,
+                { withCredentials: true }
             );
             toast.success("Interview Created successfully");
             router.push(`/interview/${res.data.data._id}`);
@@ -58,7 +76,7 @@ const page = () => {
                             name="jobRole"
                             value={formData.jobRole}
                             onChange={handleFormChange}
-                            className="block w-full text-gray-300 bg-gray-800 rounded-lg border border-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-600"
+                            className="block w-full text-gray-300 bg-gray-800 pl-3 rounded-lg border border-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-600"
                         />
                     </div>
                     <div className="p-6 rounded-lg border-2 border-gray-700 hover:border-purple-600 transition-colors">
@@ -68,10 +86,11 @@ const page = () => {
                         <textarea
                             name="jobDescription"
                             rows={5}
-                            cols={40}
+                            ref={textareaRef}
                             value={formData.jobDescription}
                             onChange={handleFormChange}
-                            className="block px-3 w-full text-gray-300 bg-gray-800 rounded-lg border border-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-600"></textarea>
+                            style={{ height: "auto", overflow: "hidden" }}
+                            className="resize-none overflow-hidden px-3 w-full text-gray-300 bg-gray-800 rounded-lg border border-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-600"></textarea>
                     </div>
                     <div className="p-6 rounded-lg border-2 border-gray-700 hover:border-purple-600 transition-colors">
                         <h2 className="text-xl font-bold text-white mb-2">

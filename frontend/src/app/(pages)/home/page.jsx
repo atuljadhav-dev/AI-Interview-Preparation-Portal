@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 const home = () => {
     const router = useRouter();
     return (
-        <div className="bg-gray-950 w-screen h-screen ">
+        <div className="bg-gray-950 w-screen h-[calc(100vh-4rem)] ">
             <div className="h-full w-full flex-row sm:flex items-center justify-evenly">
                 {/*this is left */}
                 <div className="h-full w-6/12  sm:justify-center items-center flex flex-col mx-5">
@@ -50,7 +50,7 @@ const home = () => {
                         onClick={() => {
                             router.push("/interview");
                         }}
-                        className="bg-purple-500 mt-12 justify-start items-start rounded-xl sm:font-semibold font-sansmy-15 transition hover:-translate-y-1 hover:scale-110 hover:bg-purple-400 ease-in w-[150px] sm:h-10 sm:w-[250px] mx-15 ">
+                        className="bg-purple-500 cursor-pointer mt-12 justify-start items-start rounded-xl sm:font-semibold font-sansmy-15 transition hover:-translate-y-1 hover:scale-110 hover:bg-purple-400 ease-in w-[150px] sm:h-10 sm:w-[250px] mx-15 ">
                         Start Interview
                     </button>
                 </div>

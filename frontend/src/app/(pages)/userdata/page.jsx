@@ -19,7 +19,7 @@ export default function ProfileUpload() {
         }
         const data = new FormData();
         data.append("file", file);
-        
+
         try {
             const res = await axios.post(
                 `${process.env.NEXT_PUBLIC_BASE_URL}/profile`,
@@ -28,10 +28,12 @@ export default function ProfileUpload() {
                     headers: {
                         "Content-Type": "multipart/form-data",
                     },
+                    withCredentials: true,
                 }
-            ); } catch (err) {
-                toast.error("Upload failed. Please try again.");
-            }
+            );
+        } catch (err) {
+            toast.error("Upload failed. Please try again.");
+        }
     };
 
     return (

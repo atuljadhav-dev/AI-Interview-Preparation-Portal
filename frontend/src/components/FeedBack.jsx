@@ -15,12 +15,14 @@ const FeedBack = ({ id }) => {
         const fetchData = async () => {
             try {
                 const res = await axios.get(
-                    `${process.env.NEXT_PUBLIC_BASE_URL}/feedback/${id}`
+                    `${process.env.NEXT_PUBLIC_BASE_URL}/feedback/${id}`,
+                    { withCredentials: true }
                 );
                 setFeedback(res.data.data.feedback);
 
                 const int = await axios.get(
-                    `${process.env.NEXT_PUBLIC_BASE_URL}/interview/specific/${res.data.data.interviewId}`
+                    `${process.env.NEXT_PUBLIC_BASE_URL}/interview/specific/${res.data.data.interviewId}`,
+                    { withCredentials: true }
                 );
                 setInterview(int.data.data);
 
@@ -29,8 +31,8 @@ const FeedBack = ({ id }) => {
                     {
                         params: {
                             interview_id: res.data.data.interviewId,
-                            
                         },
+                        withCredentials: true,
                     }
                 );
                 setConversation(con.data.data);
