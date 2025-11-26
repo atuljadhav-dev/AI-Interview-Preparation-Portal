@@ -62,7 +62,7 @@ const page = () => {
     };
     return (
         <>
-            <div className="bg-gray-950 min-h-screen flex items-center  justify-center p-6">
+            <div className="bg-gray-950  flex items-center  justify-center p-6">
                 <form
                     method="POST"
                     onSubmit={handleSubmit}
