@@ -3,6 +3,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/utils/UserData";
 import { toast } from "react-toastify";
+import Cookies from "js-cookie";
 const NavBar = () => {
     const router = useRouter();
     const { user, setUser } = useUser();
@@ -15,6 +16,7 @@ const NavBar = () => {
             );
             setUser(null);
             toast.success("Logged out successfully");
+            Cookies.remove("authToken");
             router.push("/sign-in");
         } catch (e) {
             toast.error("Logout failed");

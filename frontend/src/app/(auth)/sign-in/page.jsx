@@ -5,7 +5,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
-
+import Cookies from "js-cookie";
 const login = () => {
     const [formData, setFormData] = useState({
         password: "",
@@ -23,6 +23,7 @@ const login = () => {
             );
             if (res.data.success) {
                 setUser(res.data.data);
+                Cookies.set("authToken", res.data.token, { expires: 2 });
                 toast.success("Login Successfully");
                 router.push("/home");
             }

@@ -6,7 +6,6 @@ const SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
 async function verifyJWT(token) {
     try {
         const { payload } = await jwtVerify(token, SECRET);
-        console.log(payload);
         return payload;
     } catch (e) {
         return null;
@@ -16,13 +15,10 @@ async function verifyJWT(token) {
 export async function middleware(request) {
     const token = request.cookies.get("authToken")?.value;
     const verified = token ? await verifyJWT(token) : null;
-    console.log("Verified:", verified);
-    console.log("Middleware JWT_SECRET:", process.env.JWT_SECRET);
     if (
         verified?.userId &&
         ["/", "/sign-up", "/sign-in"].includes(request.nextUrl.pathname)
     ) {
-        console.log("Redirecting to /home");
         return NextResponse.redirect(new URL("/home", request.url));
     }
 
@@ -32,7 +28,6 @@ export async function middleware(request) {
             (path) => request.nextUrl.pathname.startsWith(path)
         )
     ) {
-        console.log("Redirecting to /sign-in");
         return NextResponse.redirect(new URL("/sign-in", request.url));
     }
 

@@ -14,7 +14,6 @@ def create_jwt(userId):
         "userId": str(userId),
         "exp": datetime.datetime.utcnow() + datetime.timedelta(days=2)  
     }
-    print(SECRET_KEY)
     return jwt.encode(payload, SECRET_KEY, algorithm="HS256")
 
 def verify_jwt(request):
@@ -23,7 +22,6 @@ def verify_jwt(request):
     if not token:
         return None 
     try:
-        print(SECRET_KEY)
         decoded = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
         return decoded["userId"]
     except jwt.ExpiredSignatureError:
@@ -71,6 +69,7 @@ def signup():
     response = make_response(jsonify({
         "success": True,
         "message": "User created successfully!",
+        "token": token,
         "data": user
     }), 201)# Set cookie with token
 
@@ -108,6 +107,7 @@ def signin():
     response = make_response(jsonify({
         "success": True,
         "message": "User signed in successfully!",
+        "token": token,
         "data": user
     }), 200)
 
