@@ -30,12 +30,13 @@ const FeedBack = ({ id }) => {
                     `${process.env.NEXT_PUBLIC_BASE_URL}/conversation`,
                     {
                         params: {
-                            interview_id: res.data.data.interviewId,
+                            interviewId: res.data.data.interviewId,
                         },
                         withCredentials: true,
                     }
                 );
-                setConversation(con.data.data);
+                setConversation(con.data.data.conversations);
+                
             } catch (e) {
                 toast.error("Failed to fetch feedback data.");
             }
@@ -161,6 +162,40 @@ const FeedBack = ({ id }) => {
                         <p className="text-gray-400">
                             No questions available for this interview.
                         </p>
+                    )}
+                </section>
+                <section>
+                    <h2 className="text-2xl font-semibold border-b border-gray-700 pb-2 mb-4">
+                        Conversation
+                    </h2>
+
+                    {conversation?.length ? (
+                        <div className="space-y-4">
+                            {conversation.map((msg, i) => {
+                                const role = msg.role || "user";
+                                const text =
+                                    msg.parts?.map((p) => p.text).join("\n") ||
+                                    "";
+                                return (
+                                    <div
+                                        key={i}
+                                        className={`p-3 rounded-md ${
+                                            role === "model"
+                                                ? "bg-indigo-900 text-white"
+                                                : "bg-gray-800 text-gray-200"
+                                        }`}>
+                                        <div className="text-sm font-medium mb-1">
+                                            {role === "model" ? "AI" : "You"}
+                                        </div>
+                                        <div className="whitespace-pre-wrap text-sm">
+                                            {text}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    ) : (
+                        <p className="text-gray-400">No conversation found.</p>
                     )}
                 </section>
             </div>

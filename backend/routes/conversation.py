@@ -51,7 +51,7 @@ def get_conversation():
     if  not interviewId:
         return jsonify({
             "success": False,
-            "error": "userId and interviewId are required"
+            "error": "interviewId are required"
         }), 400
     
     try:
