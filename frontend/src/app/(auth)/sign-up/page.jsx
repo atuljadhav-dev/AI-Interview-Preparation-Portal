@@ -25,6 +25,10 @@ const signup = () => {
     const { setUser } = useUser();
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if( formData.password !== formData.confirmPassword ){
+            setError("Passwords do not match");
+            return;
+        }
         try {
             const res = await axios.post(
                 `${process.env.NEXT_PUBLIC_BASE_URL}/signup`,
@@ -62,7 +66,7 @@ const signup = () => {
                         value={formData.email}
                         className="border border-gray-500 px-4 sm:w-[19vw] w-[60vw] h-[5vh] rounded-md"></input>
                     <input
-                        type="phone"
+                        type="tel"
                         placeholder="Enter your phone number"
                         onChange={handleFormChange}
                         name="phone"

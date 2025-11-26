@@ -40,7 +40,7 @@ const login = () => {
                     className="h-[55vh] w-[85vw] flex items-center justify-center sm:w-[50vh] gap-5 flex-col rounded-2xl border-purple-500 border bg-gray-950/30 backdrop-blur-none shadow-md shadow-purple-500">
                     <input
                         type="text"
-                        placeholder="Enter email or phone number"
+                        placeholder="Enter email address"
                         name="email"
                         value={formData.email}
                         onChange={(e) =>
