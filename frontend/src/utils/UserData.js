@@ -21,7 +21,7 @@ export const UserProvider = ({ children }) => {
                     setUser(verifiedUser);
                     try {
                         const response = await axios.get(
-                            `${process.env.NEXT_PUBLIC_BASE_URL}/profile/${verifiedUser._id}`,
+                            `${process.env.NEXT_PUBLIC_BASE_URL}/profile`,
                             { withCredentials: true }
                         );
                         setResume(response.data.data);
