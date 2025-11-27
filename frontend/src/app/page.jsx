@@ -49,7 +49,7 @@ const page = () => {
             </div>
             <div className="container mx-auto px-4">
                 <p className="text-lg md:text-xl text-gray-500 max-w-4xl mx-auto mb-8">
-                    At SkillStream, we believe that every career journey is an
+                    At PlacementReady, we believe that every career journey is an
                     opportunity for growth. We've built a platform that removes
                     the guesswork from job hunting, allowing you to focus on
                     what you do best. Our tools are designed to help you prepare

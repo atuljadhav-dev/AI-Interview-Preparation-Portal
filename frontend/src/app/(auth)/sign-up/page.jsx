@@ -14,7 +14,7 @@ const signup = () => {
         confirmPassword: "",
         phone: "",
     });
-    const [sending, setSending] = useState(flase);
+    const [sending, setSending] = useState(false);
     const router = useRouter();
     const [error, setError] = useState("");
     const handleFormChange = (e) => {
