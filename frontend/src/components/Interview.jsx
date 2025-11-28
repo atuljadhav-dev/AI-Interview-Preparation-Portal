@@ -11,12 +11,12 @@ const Interview = ({ id }) => {
     const [interview, setInterview] = useState({});
     const [sending, setSending] = useState(false);
     const { resume } = useUser();
-    const textareaRef = useRef(null);
+    const textareaRef = useRef(null); //to auto resize textarea
     useEffect(() => {
         const el = textareaRef.current;
-        if (!el) return;
-        el.style.height = "auto";
-        el.style.height = `${el.scrollHeight}px`;
+        if (!el) return; //null check
+        el.style.height = "auto"; //reset height
+        el.style.height = `${el.scrollHeight}px`; //set height to scrollHeight
     }, [input]);
     const [lastAIResponse, setLastAIResponse] = useState("");
     const router = useRouter();
@@ -38,7 +38,7 @@ const Interview = ({ id }) => {
         }
     }, []);
     const handleSend = async () => {
-        if (!input.trim()) return;
+        if (!input.trim()) return; //avoid sending empty messages
         if (sending) return;
         const newMessage = { role: "user", parts: [{ text: input }] };
         const updatedConversation = [...conversation, newMessage];
@@ -68,6 +68,7 @@ const Interview = ({ id }) => {
             setConversation(finalConversation);
             setLastAIResponse(res.data.data);
             if (res.data.data.includes("quit")) {
+                //interview end condition
                 await axios.post(
                     `${process.env.NEXT_PUBLIC_BASE_URL}/conversation`,
                     {
@@ -76,7 +77,7 @@ const Interview = ({ id }) => {
                     },
                     { withCredentials: true }
                 );
-
+                //generate feedback
                 const feedback = await axios.post(
                     `${process.env.NEXT_PUBLIC_BASE_URL}/generate-feedback`,
                     {
@@ -89,7 +90,7 @@ const Interview = ({ id }) => {
                     },
                     { withCredentials: true }
                 );
-
+                //save feedback to db
                 const feedbackSave = await axios.post(
                     `${process.env.NEXT_PUBLIC_BASE_URL}/feedback`,
                     {
@@ -99,7 +100,7 @@ const Interview = ({ id }) => {
                     { withCredentials: true }
                 );
                 toast.success("Feedback generated successfully");
-                router.push(`/feedback/${interview._id}`);
+                router.push(`/feedback/${interview._id}`);//navigate to feedback page
             }
         } catch (e) {
             toast.error(e.response.data.error);
@@ -153,9 +154,9 @@ const Interview = ({ id }) => {
                         <textarea
                             rows={1}
                             value={input}
-                            ref={textareaRef}
+                            ref={textareaRef}//to auto resize
                             onChange={(e) => setInput(e.target.value)}
-                            style={{ height: "auto", overflow: "hidden" }}
+                            style={{ height: "auto", overflow: "hidden" }}//auto resize
                             className="resize-none overflow-hidden rounded-xl backdrop-blur-none  bg-white/10 w-[70vw] h-[5vh] mt-auto p-4"></textarea>
                         <button
                             className="bg-purple-500 p-1 rounded mx-12 px-5"

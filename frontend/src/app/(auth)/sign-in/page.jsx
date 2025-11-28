@@ -26,7 +26,7 @@ const login = () => {
             );
             if (res.data.success) {
                 setUser(res.data.data);
-                Cookies.set("authToken", res.data.token, { expires: 2 });
+                Cookies.set("authToken", res.data.token, { expires: 2 });//cookies set by the server are not accessible in client side,nextjs app. Cookies set by backend is has different domain. Hence setting cookie in client side also.It helps to middleware to identify authenticated user.
                 toast.success("Login Successfully");
                 router.push("/home");
             }
@@ -37,7 +37,7 @@ const login = () => {
         }
     };
     return (
-        <div className="w-full h-screen bg-linear-to-r from-gray-600 to-black-500 flex  items-center justify-center sm:flex-row text-white">
+        <div className="w-full h-screen bg-gray-800 flex  items-center justify-center sm:flex-row text-white">
             <div className="w-full  h-screen flex justify-center m-auto items-center flex-col sm:w-6/12">
                 <h1 className="text-5xl font-sans my-10 font-bold">LOGIN</h1>
 
@@ -72,7 +72,11 @@ const login = () => {
 
                     <button
                         type="submit"
-                        className="border border-gray-500 cursor-pointer  w-[50vw] h-[5vh] sm:w-[12vw] rounded-md">
+                        className="border border-gray-500 text-gray-200 cursor-pointer 
+        px-6 py-2 sm:px-8 sm:py-2.5 rounded-md 
+        transition 
+        hover:bg-gray-700 hover:text-white hover:border-purple-500 hover:scale-[1.02]
+    ">
                         Login
                     </button>
                 </form>

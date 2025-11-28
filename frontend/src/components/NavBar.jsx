@@ -24,14 +24,25 @@ const NavBar = () => {
     };
 
     return (
-        <nav className="w-full h-16 flex z-50 items-center sticky top-0 justify-between px-6 bg-gray-900 text-white">
-            <h1 className="font-bold text-xl">Interview Portal</h1>
-            <div className="flex items-center gap-4">
-                {user && <span>Hello, {user.name}</span>}
+        <nav
+            className="w-full h-16 flex z-50 items-center sticky top-0 justify-between 
+                          px-4 sm:px-6 md:px-8 bg-gray-900 text-white shadow-lg">
+            <h1 className="font-bold text-base sm:text-xl text-purple-400 tracking-wide">
+                PlacementReady
+            </h1>
+            <div className="flex items-center gap-3 sm:gap-4">
+                {user && (
+                    <span className="text-xs sm:text-base text-gray-300">
+                        Hello, {user.name}
+                    </span>
+                )}
                 {user && (
                     <button
                         onClick={handleLogout}
-                        className="px-3 py-1 rounded bg-red-500 cursor-pointer text-sm">
+                        className="px-3 py-1 sm:px-4 sm:py-2 rounded-lg 
+                                bg-red-600 text-white font-medium text-xs sm:text-sm 
+                                transition
+                                hover:bg-red-700 hover:shadow-md">
                         Logout
                     </button>
                 )}

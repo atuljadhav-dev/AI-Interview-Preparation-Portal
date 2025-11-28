@@ -14,7 +14,7 @@ export const UserProvider = ({ children }) => {
             try {
                 const res = await axios.get(
                     `${process.env.NEXT_PUBLIC_BASE_URL}/verify`,
-                    { withCredentials: true }
+                    { withCredentials: true }//to send cookies with the request
                 );
                 if (res.data.success) {
                     const verifiedUser = res.data.data;
@@ -22,7 +22,7 @@ export const UserProvider = ({ children }) => {
                     try {
                         const response = await axios.get(
                             `${process.env.NEXT_PUBLIC_BASE_URL}/profile`,
-                            { withCredentials: true }
+                            { withCredentials: true }//to send cookies with the request
                         );
                         setResume(response.data.data);
                     } catch (resumeErr) {
@@ -40,7 +40,7 @@ export const UserProvider = ({ children }) => {
             }
         };
 
-        if (!user) {
+        if (!user) {//to avoid infinite loop
             fetchUserAndResume();
         }
     }, []);

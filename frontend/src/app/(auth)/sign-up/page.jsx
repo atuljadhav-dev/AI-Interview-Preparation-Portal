@@ -50,12 +50,12 @@ const signup = () => {
         }
     };
     return (
-        <div className="w-full h-screen bg-linear-to-r from-gray-900 to-black-700 flex justify-center items-center flex-col sm:flex-row  ">
+        <div className="w-full h-screen bg-gray-800 flex justify-center items-center flex-col sm:flex-row text-white">
             <div className="w-full h-screen flex  items-center  flex-col sm:w-6/12">
                 <h1 className="text-5xl font-sans my-10 font-bold">SIGN-UP</h1>
                 <form
                     onSubmit={handleSubmit}
-                    className="h-[65vh] w-[85vw] sm:w-[50vh] flex items-center justify-evenly flex-col rounded-2xl border-purple-500 border bg-gray-950/30 backdrop-blur-none shadow-md shadow-purple-500">
+                    className="h-[65vh] w-[85vw] sm:w-[50vh] p-5 flex items-center justify-evenly flex-col rounded-2xl border-purple-500 border bg-gray-950/30 backdrop-blur-none shadow-md shadow-purple-500">
                     <input
                         type="text"
                         placeholder="Enter your name"
@@ -95,12 +95,16 @@ const signup = () => {
                     {error && <p className="text-red-500">{error}</p>}
                     <button
                         type="submit"
-                        className="border border-gray-500 sm:w-[12vw] cursor-pointer  w-[50vw] h-[5vh] rounded-md">
+                        className="border border-gray-500 text-gray-200 cursor-pointer 
+        px-6 py-2 sm:px-8 sm:py-2.5 rounded-md 
+        transition
+        hover:bg-gray-700 hover:text-white hover:border-purple-500 hover:scale-[1.02]
+    ">
                         Register
                     </button>
                     <p className="text-gray-500">
                         Alredy have an account?{" "}
-                        <a href="/sign-in" className="text-sky-500">
+                        <a href="/sign-in" className="text-purple-500">
                             Login
                         </a>
                     </p>

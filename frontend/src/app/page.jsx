@@ -5,7 +5,7 @@ const page = () => {
     return (
         <>
             <div
-                className="absolute inset-0   bg-cover bg-center"
+                className="absolute inset-0 bg-gray-900 bg-cover bg-center"
                 style={{
                     backgroundImage:
                         "linear-gradient(to right, rgba(200, 68, 68, 1), rgba(59, 130, 255, 1))",
@@ -47,76 +47,79 @@ const page = () => {
                     </a>
                 </div>
             </div>
-            <div className="container mx-auto px-4">
-                <p className="text-lg md:text-xl text-gray-500 max-w-4xl mx-auto mb-8">
-                    At PlacementReady, we believe that every career journey is an
-                    opportunity for growth. We've built a platform that removes
-                    the guesswork from job hunting, allowing you to focus on
-                    what you do best. Our tools are designed to help you prepare
-                    with confidence, build a professional brand, and stand out
-                    in a competitive job market.
-                </p>
-                <p className="text-lg md:text-xl text-gray-500 max-w-4xl mx-auto mb-12">
-                    Whether you are a recent graduate, a seasoned professional,
-                    or considering a career change, your path to success starts
-                    here. We're committed to providing the resources and
-                    guidance you need to achieve your goals and predict your
-                    future by creating it.
-                </p>
+            <div className="bg-gray-950 py-16 md:py-20 border-t border-gray-800">
+                <div className="container mx-auto px-6">
+                    <div className="bg-gray-900 p-8 rounded-xl mb-16">
+                        <h3 className="text-3xl font-bold text-white mb-6 text-center">
+                            Our Commitment
+                        </h3>
+                        <p className="text-lg md:text-xl text-gray-300 max-w-4xl mx-auto mb-8 leading-relaxed">
+                            At <span className="font-bold text-purple-400">PlacementReady</span>, we believe that every career journey is an
+                            opportunity for growth. We've built a platform that removes
+                            the guesswork from job hunting, allowing you to focus on
+                            what you do best. Our tools are designed to help you prepare
+                            with confidence, build a professional brand, and stand out
+                            in a competitive job market.
+                        </p>
+                        <p className="text-lg md:text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
+                            Whether you are a recent graduate, a seasoned professional,
+                            or considering a career change, your path to success starts
+                            here. We're committed to providing the resources and
+                            guidance you need to achieve your goals and predict your
+                            future by creating it.
+                        </p>
+                    </div>
 
-                <section className="py-16 md:py-20 bg-gray-800">
-                    <div className="container mx-auto px-4">
+                    <section className="mt-12">
                         <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-12">
                             Your Toolkit for Success
                         </h2>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-                            <div className="bg-gray-950 p-6 md:p-8 rounded-xl shadow-md">
-                                <h3 className="font-bold text-xl mb-2 text-white">
+                            
+                            <div className="bg-gray-800 p-6 md:p-8 rounded-xl shadow-lg border border-purple-500/30 hover:bg-gray-700 transition-colors">
+                                <h3 className="font-bold text-xl mb-2 text-purple-400">
                                     Comprehensive Preparation
                                 </h3>
-                                <p className="text-gray-100">
-                                    Access a vast library of interview
-                                    questions, practice scenarios, and expert
-                                    tips.
+                                <p className="text-gray-300">
+                                    Access a vast library of interview questions, practice scenarios, and expert tips.
                                 </p>
                             </div>
-                            <div className="bg-gray-950 p-6 md:p-8 rounded-xl shadow-md">
-                                <h3 className="font-bold text-xl mb-2 text-white">
+                            
+                            <div className="bg-gray-800 p-6 md:p-8 rounded-xl shadow-lg border border-purple-500/30 hover:bg-gray-700 transition-colors">
+                                <h3 className="font-bold text-xl mb-2 text-purple-400">
                                     Professional Branding
                                 </h3>
-                                <p className="text-gray-100">
-                                    Our resume-building tools help you create a
-                                    powerful document that gets you noticed.
+                                <p className="text-gray-300">
+                                    Our resume-building tools help you create a powerful document that gets you noticed.
                                 </p>
                             </div>
-                            <div className="bg-gray-950 p-6 md:p-8 rounded-xl shadow-md">
-                                <h3 className="font-bold text-xl mb-2 text-white">
+                            
+                            <div className="bg-gray-800 p-6 md:p-8 rounded-xl shadow-lg border border-purple-500/30 hover:bg-gray-700 transition-colors">
+                                <h3 className="font-bold text-xl mb-2 text-purple-400">
                                     Data-Driven Insights
                                 </h3>
-                                <p className="text-gray-100">
-                                    Get personalized feedback on your mock
-                                    interviews to pinpoint areas for
-                                    improvement.
+                                <p className="text-gray-300">
+                                    Get personalized feedback on your mock interviews to pinpoint areas for improvement.
                                 </p>
                             </div>
                         </div>
-                    </div>
-                </section>
-
-                <section className="py-12 md:py-16 text-center bg-gray-950">
-                    <div className="container mx-auto px-4">
-                        <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
-                            Ready to turn your next interview into a great
-                            opportunity?
-                        </h3>
-                        <a
-                            href="/sign-up"
-                            className="inline-block bg-purple-600 text-white font-bold text-lg px-8 py-4 rounded-full shadow-lg hover:bg-purple-700 transition-colors transform hover:scale-105">
-                            Get Started
-                        </a>
-                    </div>
-                </section>
+                    </section>
+                </div>
             </div>
+
+            <section className="py-12 md:py-16 text-center bg-gray-900 border-t border-gray-800">
+                <div className="container mx-auto px-4">
+                    <h3 className="text-2xl md:text-3xl font-bold text-white mb-6">
+                        Ready to turn your next interview into a great opportunity?
+                    </h3>
+                    <a
+                        href="/sign-up"
+                        className="inline-block bg-purple-600 text-white font-bold text-lg px-8 py-4 rounded-full shadow-lg hover:bg-purple-700 transition-colors transform hover:scale-105">
+                        Get Started
+                    </a>
+                </div>
+            </section>
+        
         </>
     );
 };
