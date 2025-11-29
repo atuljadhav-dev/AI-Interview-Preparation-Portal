@@ -149,7 +149,7 @@ const Interview = ({ id }) => {
             </div>
             <div className="min-h-[30vh] w-full flex items-center justify-center">
                 <div className="min-h-[25vh] w-[97vw] border-2 flex flex-col border-purple-500 rounded-xl backdrop-blur-none bg-white/10 p-4">
-                    <p className="text-lg">{lastAIResponse}</p>
+                    <p className="text-lg text-white">{lastAIResponse}</p>
                     <div className="w-full flex items-end gap-4 mt-auto">
                         <textarea
                             rows={1}
