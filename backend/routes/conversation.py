@@ -1,10 +1,11 @@
 from flask import Blueprint, request, jsonify
 from service.conversation import createConversation,getConversation
 from routes.auth import verify_jwt  # <-- Import here
-
+from utils.limiter import limiter
 con_bp = Blueprint('conversation', __name__)
 
 @con_bp.route("/conversation", methods=["POST"])
+@limiter.limit("10 per minute") # Limit to 10 requests per minute
 def create_conversation():
     token_user = verify_jwt(request)
     if not token_user:
@@ -39,6 +40,7 @@ def create_conversation():
             "error": "Server error: Could not create conversation",
         }), 500
 @con_bp.route("/conversation", methods=["GET"])
+@limiter.limit("10 per minute") # Limit to 10 requests per minute
 def get_conversation():
     token_user = verify_jwt(request)
     if not token_user:

@@ -2,9 +2,11 @@ from flask import Blueprint, jsonify, request
 from service.feedback import addFeedback, getFeedBack,allFeedBack
 from service.interview import setFeedback
 from routes.auth import verify_jwt 
+from utils.limiter import limiter
 feedback_bp = Blueprint("feedback", __name__)
 
 @feedback_bp.route("/feedback", methods=["POST","GET"])
+@limiter.limit("10 per minute") # Limit to 10 requests per minute
 def feedback():
     if request.method == "POST":
         if not verify_jwt(request):
@@ -53,6 +55,7 @@ def feedback():
             "success":True    
         }),200
 @feedback_bp.route("/feedback/<interviewId>", methods=["GET"])
+@limiter.limit("10 per minute") # Limit to 10 requests per minute
 def get_feedback(interviewId):
     if not verify_jwt(request):
         return jsonify({

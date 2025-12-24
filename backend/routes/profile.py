@@ -1,11 +1,14 @@
 from flask import Blueprint, request, jsonify
 from pypdf import PdfReader
+import os
 from service.profile import getProfile, createProfile,updateProfile
 import json
 from service.ai import convertTextToJSON
 from routes.auth import verify_jwt 
+from utils.limiter import limiter
 profile_bp = Blueprint('profile', __name__)
 @profile_bp.route("/profile", methods=["GET"])
+@limiter.limit("10 per minute") # Limit to 10 requests per minute
 def get_profile():
     token_user = verify_jwt(request)
     if not token_user :
@@ -30,6 +33,7 @@ def get_profile():
     }), 200
 
 @profile_bp.route("/profile", methods=["POST"])
+@limiter.limit("5 per minute") # Limit resume uploads to 5 per minute
 def create_profile():
     token_user = verify_jwt(request)
     if not token_user:
@@ -37,29 +41,20 @@ def create_profile():
             "success": False, 
             "error": "Unauthorized"
             }), 401
-    file = request.files["file"]
+    file = request.files.get("file")
+    if not file:
+        return jsonify({"success": False, "error": "No file uploaded"}), 400
+    if not file.filename.lower().endswith('.pdf'):
+        return jsonify({"success": False, "error": "Only PDF files are supported"}), 400
     data = request.form.to_dict()
-    if file.filename == "":
-        return jsonify({
-            "success": False,
-            "error": "No selected file"
-        }), 400
     if not data  :
         return jsonify({
             "success": False,
             "error": "Resume data is required"
         }), 400
-   
-    try:
-        reader = PdfReader(file)
-        extracted_text = ""
-        for page in reader.pages:
-            extracted_text += page.extract_text() or ""
-    except Exception as e:
-        return jsonify({
-            "success": False,
-            "error": "Server error: Failed to read PDF file",
-        }), 500
+    extracted_text, error, status = process_resume_pdf(file)
+    if error:
+        return jsonify({"success": False, "error": error}), status
     ai=convertTextToJSON(extracted_text)
     try:
         resume=json.loads(ai.text)
@@ -78,6 +73,7 @@ def create_profile():
     }), 201
 
 @profile_bp.route("/profile", methods=["PUT"])
+@limiter.limit("5 per minute") # Limit profile updates to 5 per minute
 def update_profile():
     token_user = verify_jwt(request)
     if not token_user:
@@ -85,29 +81,23 @@ def update_profile():
             "success": False, 
             "error": "Unauthorized"
             }), 401
-
-    file = request.files["file"]
-    data = request.form.to_dict()
-    if file.filename == "":
+    file = request.files.get("file")
+    if not file:
         return jsonify({
-            "success": False,
-            "error": "No selected file"
-        }), 400
+            "success": False, 
+            "error": "No file uploaded"
+            }), 400
+    if not file.filename.lower().endswith('.pdf'):
+        return jsonify({"success": False, "error": "Only PDF files are supported"}), 400
+    data = request.form.to_dict()
     if not data  :
         return jsonify({
             "success": False,
             "error": "Resume are required"
         }), 400
-    try:
-        reader = PdfReader(file)
-        extracted_text = ""
-        for page in reader.pages:
-            extracted_text += page.extract_text() or ""
-    except Exception as e:
-        return jsonify({
-            "success": False,
-            "error": "Server error: Failed to read PDF file",
-        }), 500
+    extracted_text, error, status = process_resume_pdf(file)
+    if error:
+        return jsonify({"success": False, "error": error}), status
     ai=convertTextToJSON(extracted_text)
     try:
         resume = json.loads(ai.text)
@@ -124,3 +114,34 @@ def update_profile():
         "message": "Profile updated successfully!",
         "data": profile
     }), 201
+
+def process_resume_pdf(file):
+    """
+    Handles file size validation, page count limits, and text extraction.
+    Returns (extracted_text, error_message, status_code)
+    """
+    MAX_FILE_SIZE = 2 * 1024 * 1024  # 2MB
+    
+    # Check file size
+    file.seek(0, os.SEEK_END)
+    file_size = file.tell()
+    if file_size > MAX_FILE_SIZE:
+        return None, "File too large (Max 2MB)", 413
+    file.seek(0)
+
+    try:
+        reader = PdfReader(file)
+        # Limit page count to prevent resource exhaustion
+        if len(reader.pages) > 10:
+            return None, "PDF too long (Max 10 pages)", 400
+            
+        extracted_text = ""
+        for page in reader.pages:
+            extracted_text += page.extract_text() or ""
+        
+        if not extracted_text.strip():
+            return None, "Could not extract text from PDF", 400
+            
+        return extracted_text, None, 200
+    except Exception as e:
+        return None, f"Failed to read PDF file: {str(e)}", 500

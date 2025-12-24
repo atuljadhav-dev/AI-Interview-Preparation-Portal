@@ -3,8 +3,10 @@ from service.interview import createInterview, getInterview,getSpecificInterview
 from service.ai import generateQuestions
 import json
 from routes.auth import verify_jwt 
+from utils.limiter import limiter
 interview_bp = Blueprint('interview', __name__)
 @interview_bp.route("/interview", methods=["POST"])
+@limiter.limit("5 per minute") # Limit to 5 requests per minute
 def create_interview():
     token_user = verify_jwt(request)
     if not token_user:
@@ -52,6 +54,7 @@ def create_interview():
         "data": interview
     }), 201
 @interview_bp.route("/interview", methods=["GET"])
+@limiter.limit("10 per minute") # Limit to 10 requests per minute
 def get_All_interview():
     token_user = verify_jwt(request)
     if not token_user :
@@ -79,6 +82,7 @@ def get_All_interview():
     }), 200
 
 @interview_bp.route("/interview/specific/<interviewId>", methods=["GET"])
+@limiter.limit("10 per minute") # Limit to 10 requests per minute
 def get_specific_interview(interviewId):
     token_user = verify_jwt(request)
     if not token_user:

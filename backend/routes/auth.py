@@ -3,7 +3,7 @@ from pydantic import ValidationError
 from models.user import User
 from service.user import createUser, FindUserByEmail, Login, FindUserById
 import jwt, datetime, os
-
+from utils.limiter import limiter
 auth_bp = Blueprint('auth', __name__)
 
 SECRET_KEY = os.getenv("JWT_SECRET")  
@@ -30,6 +30,7 @@ def verify_jwt(request):
         return None
 
 @auth_bp.route("/signup", methods=["POST"])
+@limiter.limit("5 per minute") # Limit signup attempts
 def signup():
     data = request.get_json()
     if not data:
@@ -84,6 +85,7 @@ def signup():
     return response
 
 @auth_bp.route("/signin", methods=["POST"])
+@limiter.limit("10 per minute") # Limit login attempts
 def signin():
     data = request.get_json()
     if not data:
@@ -122,6 +124,7 @@ def signin():
     return response
 
 @auth_bp.route("/signout", methods=["POST"])
+@limiter.limit("10 per minute") # Limit signout attempts
 def signout():
     response = make_response(jsonify({
         "success": True,
@@ -131,6 +134,7 @@ def signout():
     return response
 
 @auth_bp.route("/verify", methods=["GET"])
+@limiter.limit("15 per minute") # Limit verification attempts
 def verify():
     '''Verify the user's authentication status using the JWT token.'''
     authToken = request.cookies.get("authToken")

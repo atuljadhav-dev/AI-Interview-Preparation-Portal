@@ -2,9 +2,11 @@ from flask import Blueprint,request,jsonify
 import json
 from service.ai import generateFeedback,AIInterviewStimulation
 from routes.auth import verify_jwt 
+from utils.limiter import limiter
 ai_bp=Blueprint('ai',__name__)
 
 @ai_bp.route("/generate-feedback",methods=["POST"])
+@limiter.limit("5 per minute") # Limit to 5 requests per minute
 def feedbackGeneration():
     '''Generate feedback based on resume, questionAnswer, userAnswer, jobTitle, jobDescription, roundName'''
     if not verify_jwt(request):# prevent unauthorized access
@@ -43,6 +45,7 @@ def feedbackGeneration():
             }),500
 
 @ai_bp.route("/interview-stimulation", methods=["POST"])
+@limiter.limit("10 per minute") # Limit to 10 requests per minute
 def interviewStimulation():
     '''Generate interview simulation based on questions, resume, jobDescription, roundName, content'''
     if not verify_jwt(request):
