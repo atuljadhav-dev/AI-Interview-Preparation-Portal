@@ -7,7 +7,8 @@ from utils.limiter import limiter
 auth_bp = Blueprint('auth', __name__)
 
 SECRET_KEY = os.getenv("JWT_SECRET")  
-
+if not SECRET_KEY:
+    raise ValueError("Secret is Missing!")
 def create_jwt(userId):
     '''Create a JWT token for the given user ID with a 2-day expiry.'''
     payload = {

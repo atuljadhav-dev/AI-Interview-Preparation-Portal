@@ -3,5 +3,8 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv()
-client= MongoClient(os.getenv('MONGODB_URI'))
+URI=os.getenv('MONGODB_URI')
+if not URI:
+    raise ValueError("Database URI is Missing!")
+client= MongoClient()
 db = client["AIInterview"]
