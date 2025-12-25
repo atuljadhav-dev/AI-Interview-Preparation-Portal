@@ -19,26 +19,31 @@ const FeedBack = ({ id }) => {
                     { withCredentials: true }
                 );
                 setFeedback(res.data.data.feedback);
-
+            } catch (e) {
+                toast.error("Failed to fetch feedback data.");
+            }
+            try {
                 const int = await axios.get(
-                    `${process.env.NEXT_PUBLIC_BASE_URL}/interview/specific/${res.data.data.interviewId}`,
+                    `${process.env.NEXT_PUBLIC_BASE_URL}/interview/specific/${id}`,
                     { withCredentials: true }
                 );
                 setInterview(int.data.data);
-
+            } catch (e) {
+                toast.error("Failed to fetch interview data.");
+            }
+            try {
                 const con = await axios.get(
                     `${process.env.NEXT_PUBLIC_BASE_URL}/conversation`,
                     {
                         params: {
-                            interviewId: res.data.data.interviewId,
+                            interviewId: id,
                         },
                         withCredentials: true,
                     }
                 );
                 setConversation(con.data.data.conversations);
-                
             } catch (e) {
-                toast.error("Failed to fetch feedback data.");
+                toast.error("Failed to fetch conversation data");
             }
         };
 
