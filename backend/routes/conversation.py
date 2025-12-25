@@ -48,14 +48,14 @@ def get_conversation():
             "success": False, 
             "error": "Unauthorized"
             }), 401
-    
+    print(token_user)
     interviewId = request.args.get('interviewId')
     if  not interviewId:
         return jsonify({
             "success": False,
             "error": "interviewId are required"
         }), 400
-    
+    print( interviewId)
     try:
         response = getConversation(userId=token_user, interviewId=interviewId)
         return jsonify({
