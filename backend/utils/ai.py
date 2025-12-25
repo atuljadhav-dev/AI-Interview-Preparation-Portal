@@ -1,5 +1,29 @@
 from google import genai
-def AIClient(content,config):
-    client=genai.Client()
-    response = client.models.generate_content(model="gemini-2.0-flash",contents=content,config=config)
-    return response
+from utils.gemini_keys import get_next_key, GEMINI_KEYS
+class GeminiExhaustedError(Exception):
+    '''Custom exception to indicate all Gemini API keys are exhausted.'''
+    pass
+
+def AIClient(content, config):
+    attempts = 0
+    max_attempts = len(GEMINI_KEYS) # number of keys to try
+
+    while attempts < max_attempts:
+        api_key = get_next_key()
+
+        try:
+            client = genai.Client(api_key=api_key)
+            response = client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=content,
+                config=config
+            )
+            return response
+
+        except Exception as e:
+            print(attempts)
+            print(e)
+            print(api_key)
+            attempts += 1
+
+    raise GeminiExhaustedError("All Gemini API keys exhausted")

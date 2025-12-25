@@ -4,7 +4,8 @@ import os
 
 load_dotenv()
 URI=os.getenv('MONGODB_URI')
+print(URI)
 if not URI:
     raise ValueError("Database URI is Missing!")
-client= MongoClient()
+client= MongoClient(URI)
 db = client["AIInterview"]

@@ -1,11 +1,7 @@
-from utils.ai import AIClient
+from utils.ai import AIClient,GeminiExhaustedError
 from pydantic import BaseModel
-from typing import List, Dict
-import json
-from utils.ai import AIClient
-from pydantic import BaseModel
-from typing import List
-
+from datetime import datetime
+timestamp=datetime.now()
 class QAItem(BaseModel):
     """Defines the structure for a single question-answer pair."""
     question: str
@@ -43,10 +39,13 @@ def generateQuestions(job_description, resume, round_name="Technical Interview")
         }
     }
 
-    response = AIClient(prompt, config)
-    return response
+    try:
+        response = AIClient(prompt, config)
+        return response
+    except GeminiExhaustedError:
+        return None
 
-def generateConfig(questions,resume,jobDescription,round_name):
+def generateConfig(questions,resume,jobDescription,round_name,content):
     return f"""
     You are an AI Interviewer conducting the {round_name}.  
 Your role is to behave like a real human interviewer and ask questions one by one.  
@@ -59,9 +58,12 @@ Your role is to behave like a real human interviewer and ask questions one by on
 ### Predefined Question Set:
 {questions}
 
+### Interview Content:
+{content}
 ### Guidelines:
 1. Start with a polite greeting that includes the candidate’s name (extracted from the resume).  
-   Example: "Good morning||evening||afternoon, <Candidate Name>! Let’s begin with the interview."  
+   Example: "Good morning||evening||afternoon, <Candidate Name>! Let’s begin with the interview." 
+   Current Time :{timestamp} 
 2. Ask questions strictly in the given order, one at a time.  
 3. Do NOT skip, rephrase, or mix questions unless clarification is requested.  
 4. Wait for the candidate’s response before moving to the next question.  
@@ -75,13 +77,16 @@ Your role is to behave like a real human interviewer and ask questions one by on
 Your job is to simulate the flow of a professional interview as naturally as possible.
 """
 def AIInterviewStimulation(questions,resume,jobDescription,round_name,content):
-    prompt=generateConfig(questions,resume,jobDescription,round_name)
+    prompt=generateConfig(questions,resume,jobDescription,round_name,content)
     config={
         "response_mime_type": "text/plain",
         "system_instruction": prompt,
     }
-    response = AIClient(content, config)
-    return response.text
+    try:
+        response = AIClient(prompt, config)
+        return response.text
+    except GeminiExhaustedError:
+        return None
 def generateSummary(jobTitle,resume, questionAnswer, userAnswer, job_description, round_name) :
     return f"""
     You are an AI interview assistant. 
@@ -141,8 +146,11 @@ def generateFeedback(jobTitle,resume, questionAnswer, userAnswer, job_descriptio
             
         }
     }
-    response = AIClient(prompt, config)
-    return response.text
+    try:
+        response = AIClient(prompt, config)
+        return response.text
+    except GeminiExhaustedError:
+        return None
 
 def convertTextToJSON(text):
     prompt=f"""
@@ -162,6 +170,9 @@ def convertTextToJSON(text):
     config={
         "response_mime_type": "application/json",
     }
-    response = AIClient(prompt, config)
-    return response
+    try:
+        response = AIClient(prompt, config)
+        return response
+    except GeminiExhaustedError:
+        return None
 

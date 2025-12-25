@@ -21,21 +21,22 @@ const Interview = ({ id }) => {
     const [lastAIResponse, setLastAIResponse] = useState("");
     const router = useRouter();
     useEffect(() => {
-        try {
-            const fetchData = async () => {
+        const fetchData = async () => {
+            try {
                 const res = await axios.get(
                     `${process.env.NEXT_PUBLIC_BASE_URL}/interview/specific/${id}`,
                     { withCredentials: true }
                 );
                 setInterview(res.data.data);
                 if (res.data.data.status == "Done") {
-                    router.push(`/feedback/${res.data.data.feedbackId}`);
+                    router.push(`/feedback/${id}`);
                 }
-            };
-            fetchData();
-        } catch (e) {
-            toast.error("Failed to fetch interview data.");
-        }
+            } catch (e) {
+                toast.error("Failed to fetch interview data.");
+                router.push("/home")
+            }
+        };
+        fetchData();
     }, []);
     const handleSend = async () => {
         if (!input.trim()) return; //avoid sending empty messages
@@ -100,7 +101,7 @@ const Interview = ({ id }) => {
                     { withCredentials: true }
                 );
                 toast.success("Feedback generated successfully");
-                router.push(`/feedback/${interview._id}`);//navigate to feedback page
+                router.push(`/feedback/${interview._id}`); //navigate to feedback page
             }
         } catch (e) {
             toast.error(e.response.data.error);
@@ -154,9 +155,9 @@ const Interview = ({ id }) => {
                         <textarea
                             rows={1}
                             value={input}
-                            ref={textareaRef}//to auto resize
+                            ref={textareaRef} //to auto resize
                             onChange={(e) => setInput(e.target.value)}
-                            style={{ height: "auto", overflow: "hidden" }}//auto resize
+                            style={{ height: "auto", overflow: "hidden" }} //auto resize
                             className="resize-none overflow-hidden rounded-xl backdrop-blur-none  bg-white/10 w-[70vw] h-[5vh] mt-auto p-4"></textarea>
                         <button
                             className="bg-purple-500 p-1 rounded mx-12 px-5"

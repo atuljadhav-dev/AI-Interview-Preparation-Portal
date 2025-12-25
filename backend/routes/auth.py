@@ -146,17 +146,21 @@ def verify():
             }), 403
     decoded = verify_jwt(request)
     if not decoded:
-        return jsonify({
-            "success": False, 
-            "error": "Unauthorized"
-            }), 403
+        response = make_response(jsonify({
+        "success": False,
+        "message": "Unauthorized"
+        }), 403)
+        response.set_cookie("authToken", "", expires=0, httponly=True, samesite="None", secure=True)
+        return response
 
     user = FindUserById(decoded)
     if not user:
-        return jsonify({
-            "success": False, 
-            "error": "Unauthorized"
-            }), 403
+        response = make_response(jsonify({
+        "success": False,
+        "message": "Unauthorized"
+        }), 403)
+        response.set_cookie("authToken", "", expires=0, httponly=True, samesite="None", secure=True)
+        return response
 
     user["_id"] = str(user["_id"])
     user.pop("password", None)

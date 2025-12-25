@@ -31,12 +31,16 @@ def create_interview():
                 "error":"Invalid input data"
                 }),400
         response=generateQuestions(job_description,round_name,resume)
+        if response is None:
+            return jsonify({
+                "success":False,
+                "error":"AI response error"
+            }),500
         response=json.loads(response.text)
     except Exception as e:
         return jsonify({
             "success":False,
             "error":"Server error: Could not generate questions",
-            "e":e
             }),500
     try:
         interview = createInterview( title=title,round_name=round_name,userId=token_user,description=job_description,question_answer=response)

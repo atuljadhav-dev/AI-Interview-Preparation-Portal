@@ -56,6 +56,11 @@ def create_profile():
     if error:
         return jsonify({"success": False, "error": error}), status
     ai=convertTextToJSON(extracted_text)
+    if ai is None:
+        return jsonify({
+                "success":False,
+                "error":"AI response error"
+            }),500
     try:
         resume=json.loads(ai.text)
         profile = createProfile(token_user, resume, data.get('name', '')) 

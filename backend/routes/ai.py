@@ -33,6 +33,11 @@ def feedbackGeneration():
                 "error":"Invalid input data"
                 }),400
         response=generateFeedback(jobTitle,resume, questionAnswer, userAnswer, job_description, round_name)
+        if response is None:
+            return jsonify({
+                "success":False,
+                "error":"AI response error"
+            }),500
         return jsonify({
             "success":True,
             "message":"Feedback generated successfully",
@@ -72,12 +77,17 @@ def interviewStimulation():
                 "error":"Invalid input data"
                 }),400
         response=AIInterviewStimulation(questions,resume,jobDescription,round_name,content)
+        if response is None:
+            return jsonify({
+                "success":False,
+                "error":"AI response error"
+            }),500
         return jsonify({
             "success":True,
             "message":"Interview simulation generated successfully",
             "data":response
             }),201
-    except Exception as e:
+    except Exception :
         return jsonify({
             "success":False,
             "error":"Server error: Could not generate interview simulation",
