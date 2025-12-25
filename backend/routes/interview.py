@@ -88,15 +88,15 @@ def get_All_interview():
 @interview_bp.route("/interview/specific/<interviewId>", methods=["GET"])
 @limiter.limit("10 per minute") # Limit to 10 requests per minute
 def get_specific_interview(interviewId):
-    token_user = verify_jwt(request)
-    if not token_user:
+    userId = verify_jwt(request)
+    if not userId:
         return jsonify({
             "success": False, 
             "error": "Unauthorized"
             }), 401
     try:
         interview = getSpecificInterview(interviewId)
-        if not interview:
+        if not interview or interview["userId"] != userId:
             return jsonify({
                 "success": False,
                 "error": "Interview not found"

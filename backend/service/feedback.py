@@ -1,6 +1,5 @@
 from utils.db import db
-from routes.auth import verify_jwt
-from service.interview import getInterview
+from service.interview import getInterview,getSpecificInterview
 def addFeedback(interviewId, feedback):
     result = db.feedbacks.insert_one({
         "feedback": feedback,
@@ -12,7 +11,10 @@ def addFeedback(interviewId, feedback):
         "interviewId": interviewId
     }
 
-def getFeedBack(interviewId):
+def getFeedBack(interviewId,userId):
+    interview=getSpecificInterview(interviewId)
+    if not interview or interview["userId"] != userId:
+        return None
     res = db.feedbacks.find_one({"interviewId": interviewId})
     if not res:
         return None

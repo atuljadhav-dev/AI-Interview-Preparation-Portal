@@ -57,13 +57,14 @@ def feedback():
 @feedback_bp.route("/feedback/<interviewId>", methods=["GET"])
 @limiter.limit("10 per minute") # Limit to 10 requests per minute
 def get_feedback(interviewId):
-    if not verify_jwt(request):
+    userId=verify_jwt(request)
+    if not userId :
         return jsonify({
             "success": False, 
             "error": "Unauthorized"
             }), 401
     try:
-        feedback = getFeedBack(interviewId)
+        feedback = getFeedBack(interviewId,userId)
         if not feedback:
             return jsonify({
                 "success": False,
