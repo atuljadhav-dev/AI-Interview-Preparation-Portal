@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useUser } from "@/hooks/useUser";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
+import Link from "next/link";
 const NavBar = () => {
     const router = useRouter();
     const { user, setUser } = useUser();
@@ -27,9 +28,11 @@ const NavBar = () => {
         <nav
             className="w-full h-16 flex z-50 items-center sticky top-0 justify-between 
                           px-4 sm:px-6 md:px-8 bg-gray-900 text-white shadow-lg">
-            <h1 className="font-bold text-base sm:text-xl text-purple-400 tracking-wide">
+            <Link
+                className="font-bold text-base sm:text-xl text-purple-400 tracking-wide"
+                href={"/home"}>
                 PlacementReady
-            </h1>
+            </Link>
             <div className="flex items-center gap-3 sm:gap-4">
                 {user && (
                     <span className="text-xs sm:text-base text-gray-300">

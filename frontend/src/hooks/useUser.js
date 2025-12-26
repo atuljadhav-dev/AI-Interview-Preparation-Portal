@@ -25,7 +25,6 @@ export const UserProvider = ({ children }) => {
                             { withCredentials: true } //to send cookies with the request
                         );
                         setResume(response.data.data);
-                        console.log(response.data.data);
                     } catch (resumeErr) {
                         setResume(null);
                     }
