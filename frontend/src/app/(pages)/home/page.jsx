@@ -36,6 +36,9 @@ const home = () => {
             setFilteredInterview(interviews.filter((i) => i.status === "Done"));
         } else if (filter === "scheduled") {
             setFilteredInterview(interviews.filter((i) => i.status !== "Done"));
+        }else if (filter === "recent") {
+            const sorted = [...interviews].sort((a, b) => new Date(b.dateCreated) - new Created(a.dateCreated));
+            setFilteredInterview(sorted);
         }
     }, [filter, interviews]);
     return (
@@ -105,6 +108,7 @@ const home = () => {
                         <option value="all">All</option>
                         <option value="done">Done</option>
                         <option value="scheduled">Scheduled</option>
+                        <option value="recent">Recent</option>
                     </select>
                 </div>
                 {loading ? (

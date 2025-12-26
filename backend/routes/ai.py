@@ -44,6 +44,7 @@ def feedbackGeneration():
             "data":json.loads(response)# convert string response to json
             }),201
     except Exception as e:
+        print(e)
         return jsonify({
             "success":False,
             "error":"Server error: Could not generate feedback",
@@ -87,7 +88,8 @@ def interviewStimulation():
             "message":"Interview simulation generated successfully",
             "data":response
             }),201
-    except Exception :
+    except Exception as e:
+        print(e)
         return jsonify({
             "success":False,
             "error":"Server error: Could not generate interview simulation",
