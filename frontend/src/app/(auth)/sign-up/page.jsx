@@ -1,6 +1,6 @@
 "use client";
 
-import { useUser } from "@/utils/UserData";
+import { useUser } from "@/hooks/useUser";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -95,6 +95,7 @@ const signup = () => {
                     {error && <p className="text-red-500">{error}</p>}
                     <button
                         type="submit"
+                        disabled={sending}
                         className="border border-gray-500 text-gray-200 cursor-pointer 
         px-6 py-2 sm:px-8 sm:py-2.5 rounded-md 
         transition

@@ -1,5 +1,5 @@
 "use client";
-import { useUser } from "@/utils/UserData";
+import { useUser } from "@/hooks/useUser";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";

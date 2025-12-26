@@ -18,7 +18,6 @@ def getInterview(userId):
 def getSpecificInterview(interviewId):
     id=ObjectId(interviewId)
     interview=db.interviews.find_one({"_id":id})
-
     return interview
 def setFeedback(interviewId,feedbackId):
     id=ObjectId(interviewId)

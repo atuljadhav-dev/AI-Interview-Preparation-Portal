@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from pypdf import PdfReader
 import os
-from service.profile import getProfile, createProfile,updateProfile
+from service.profile import getProfile, createProfile,updateProfile,deleteProfile
 import json
 from service.ai import convertTextToJSON
 from routes.auth import verify_jwt 
@@ -150,3 +150,39 @@ def process_resume_pdf(file):
         return extracted_text, None, 200
     except Exception as e:
         return None, f"Failed to read PDF file: {str(e)}", 500
+
+
+@profile_bp.route("/profile", methods=["DELETE"])
+@limiter.limit("5 per minute") # Limit profile deletions to 5 per minute
+def deleteUser():
+    userId = verify_jwt(request)
+    if not userId:
+        return jsonify({
+            "success": False, 
+            "error": "Unauthorized"
+            }), 401
+    profileId = request.args.get('profileId')
+    if not profileId:
+        return jsonify({
+            "success": False,
+            "error": "profileId is required"
+        }), 400
+    try:
+        res=deleteProfile(userId,profileId)
+        if not res:
+            return jsonify({
+                "success": False,
+                "error": "Profile not found or could not be deleted"
+            }), 404
+        res["_id"] = str(res["_id"])
+        return jsonify({
+            "success": True,
+            "message": "Profile deleted successfully",
+            "data": res
+        }), 200
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "error": "Server error: Could not delete profile",
+        }), 500
+    

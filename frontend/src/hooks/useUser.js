@@ -14,7 +14,7 @@ export const UserProvider = ({ children }) => {
             try {
                 const res = await axios.get(
                     `${process.env.NEXT_PUBLIC_BASE_URL}/verify`,
-                    { withCredentials: true }//to send cookies with the request
+                    { withCredentials: true } //to send cookies with the request
                 );
                 if (res.data.success) {
                     const verifiedUser = res.data.data;
@@ -22,9 +22,10 @@ export const UserProvider = ({ children }) => {
                     try {
                         const response = await axios.get(
                             `${process.env.NEXT_PUBLIC_BASE_URL}/profile`,
-                            { withCredentials: true }//to send cookies with the request
+                            { withCredentials: true } //to send cookies with the request
                         );
                         setResume(response.data.data);
+                        console.log(response.data.data);
                     } catch (resumeErr) {
                         setResume(null);
                     }
@@ -40,14 +41,18 @@ export const UserProvider = ({ children }) => {
             }
         };
 
-        if (!user) {//to avoid infinite loop
+        if (!user) {
+            //to avoid infinite loop
             fetchUserAndResume();
         }
-    }, []);
+        if (loading) {
+            fetchUserAndResume();
+        }
+    }, [loading]);
 
     return (
         <UserContext.Provider
-            value={{ user, setUser, resume, setResume, loading }}>
+            value={{ user, setUser, resume, setResume, loading, setLoading }}>
             {children}
         </UserContext.Provider>
     );

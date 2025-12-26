@@ -1,5 +1,5 @@
 "use client";
-import { useUser } from "@/utils/UserData";
+import { useUser } from "@/hooks/useUser";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -33,7 +33,7 @@ const Interview = ({ id }) => {
                 }
             } catch (e) {
                 toast.error("Failed to fetch interview data.");
-                router.push("/home")
+                router.push("/home");
             }
         };
         fetchData();

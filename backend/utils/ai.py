@@ -21,9 +21,6 @@ def AIClient(content, config):
             return response
 
         except Exception as e:
-            print(attempts)
-            print(e)
-            print(api_key)
             attempts += 1
 
     raise GeminiExhaustedError("All Gemini API keys exhausted")

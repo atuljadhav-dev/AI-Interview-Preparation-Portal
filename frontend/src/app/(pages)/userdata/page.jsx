@@ -2,14 +2,16 @@
 
 import { useState } from "react";
 import axios from "axios";
-import { useUser } from "@/utils/UserData";
+import { useUser } from "@/hooks/useUser";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 
 export default function ProfileUpload() {
     const [file, setFile] = useState(null);
     const [uploading, setUploading] = useState(false);
+    const [name, setName] = useState("");
     const router = useRouter();
+    const { setLoading } = useUser();
     const handleFileChange = (e) => {
         setFile(e.target.files[0]);
     };
@@ -22,7 +24,7 @@ export default function ProfileUpload() {
         if (uploading) return;
         const data = new FormData();
         data.append("file", file);
-        data.append("name", "test");
+        data.append("name", name);
         setUploading(true);
         try {
             const res = await axios.post(
@@ -35,10 +37,10 @@ export default function ProfileUpload() {
                     withCredentials: true,
                 }
             );
+            setLoading(true);
             toast.success("Resume uploded successfully");
-            router.push("/home");
+            router.back();
         } catch (err) {
-            console.log(e);
             toast.error("Upload failed. Please try again.");
         } finally {
             setUploading(false);
@@ -48,10 +50,19 @@ export default function ProfileUpload() {
     return (
         <div className="bg-gray-950 min-h-screen flex flex-col items-center justify-start p-6">
             {/* <div className="w-[40vw] h-[60vh] bg-red-500 flex-col items-center justify-evenly"> */}
-            <h1 class="text-2xl font-bold text-white mt-6">Upload Resume</h1>
+            <h1 className="text-2xl font-bold text-white mt-6">
+                Upload Resume
+            </h1>
             <form
                 onSubmit={handleSubmit}
                 className="p-6 rounded-lg border-2  border-purple-600 transition-colors flex items-center justify-center flex-col">
+                <input
+                    type="text"
+                    placeholder="Enter name to resume"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="mb-4 p-2 rounded-md bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-600 w-full"
+                />
                 <input
                     type="file"
                     onChange={handleFileChange}
@@ -59,6 +70,7 @@ export default function ProfileUpload() {
                 />
                 <button
                     type="submit"
+                    disabled={uploading}
                     className="bg-purple-500 text-white px-4 py-2 rounded-md m-3">
                     Upload
                 </button>

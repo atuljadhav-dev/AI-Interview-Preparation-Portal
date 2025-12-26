@@ -1,6 +1,6 @@
 "use client";
 
-import { useUser } from "@/utils/UserData";
+import { useUser } from "@/hooks/useUser";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -26,7 +26,7 @@ const login = () => {
             );
             if (res.data.success) {
                 setUser(res.data.data);
-                Cookies.set("authToken", res.data.token, { expires: 2 });//cookies set by the server are not accessible in client side,nextjs app. Cookies set by backend is has different domain. Hence setting cookie in client side also.It helps to middleware to identify authenticated user.
+                Cookies.set("authToken", res.data.token, { expires: 2 }); //cookies set by the server are not accessible in client side,nextjs app. Cookies set by backend is has different domain. Hence setting cookie in client side also.It helps to middleware to identify authenticated user.
                 toast.success("Login Successfully");
                 router.push("/home");
             }
@@ -72,6 +72,7 @@ const login = () => {
 
                     <button
                         type="submit"
+                        disabled={sending}
                         className="border border-gray-500 text-gray-200 cursor-pointer 
         px-6 py-2 sm:px-8 sm:py-2.5 rounded-md 
         transition 

@@ -1,7 +1,7 @@
 "use client";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useUser } from "@/utils/UserData";
+import { useUser } from "@/hooks/useUser";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
 const NavBar = () => {

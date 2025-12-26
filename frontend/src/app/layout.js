@@ -1,6 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { UserProvider } from "@/utils/UserData";
+import { UserProvider } from "@/hooks/useUser";
 import { ToastContainer } from "react-toastify";
 
 const geistSans = Geist({
@@ -46,7 +46,7 @@ export const metadata = {
         siteName: "PlacementReady",
         images: [
             {
-                url: "/logo.png", 
+                url: "/logo.png",
                 width: 1200,
                 height: 630,
                 alt: "AI Interview Preparation Portal Dashboard",

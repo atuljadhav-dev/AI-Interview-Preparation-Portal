@@ -1,11 +1,11 @@
 "use client";
-import { useUser } from "@/utils/UserData";
+import { useUser } from "@/hooks/useUser";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 const page = () => {
-    const { resume, user } = useUser();
+    const { resume, user, loading } = useUser();
     const router = useRouter();
     const textareaRef = useRef(null);
     const [sending, setSending] = useState(false);
@@ -13,13 +13,16 @@ const page = () => {
         jobRole: "",
         jobDescription: "",
         round_name: "HR Round",
+        resumeId: "",
         resume: {},
     });
     useEffect(() => {
-        setFormData({
-            ...formData,
-            ["resume"]: resume,
-        });
+        if (!user) return;
+
+        if (!resume && !loading) {
+            toast.info("Please upload or attach your resume");
+            router.push("/userdata");
+        }
     }, [resume, user]);
     useEffect(() => {
         const el = textareaRef.current;
@@ -43,7 +46,7 @@ const page = () => {
             toast.error("Please enter a job description");
             return;
         }
-        if (!formData.resume) {
+        if (!formData.resumeId) {
             toast.error(
                 "Please upload or attach a resume before creating the interview"
             );
@@ -52,6 +55,10 @@ const page = () => {
         if (sending) return;
         try {
             setSending(true);
+            const filterResume = resume.filter(
+                (cur) => cur._id == formData.resumeId
+            );
+            formData.resume = filterResume[0]?.resume;
             const res = await axios.post(
                 `${process.env.NEXT_PUBLIC_BASE_URL}/interview`,
                 formData,
@@ -98,6 +105,38 @@ const page = () => {
                             className="resize-none overflow-hidden px-3 w-full text-gray-300 bg-gray-800 rounded-lg border border-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-600"></textarea>
                     </div>
                     <div className="p-6 rounded-lg border-2 border-gray-700 hover:border-purple-600 transition-colors">
+                        <h2 className="text-xl font-bold text-whiet mb-2">
+                            Select the resume
+                        </h2>
+                        <select
+                            name="resumeId"
+                            value={formData.resumeId}
+                            onChange={(e) => {
+                                const value = e.target.value;
+
+                                if (value === "add") {
+                                    router.push("/userdata");
+                                    return;
+                                }
+
+                                handleFormChange(e);
+                            }}
+                            className="w-full bg-gray-800 text-gray-300 p-3 rounded-lg border border-gray-600 focus:ring-2 focus:ring-purple-600">
+                            <option value="" disabled>
+                                Select Resume
+                            </option>
+                            {resume &&
+                                resume.map((cur) => {
+                                    return (
+                                        <option value={cur._id}>
+                                            {cur.name}
+                                        </option>
+                                    );
+                                })}
+                            <option value="add">Add New Resume</option>
+                        </select>
+                    </div>
+                    <div className="p-6 rounded-lg border-2 border-gray-700 hover:border-purple-600 transition-colors">
                         <h2 className="text-xl font-bold text-white mb-2">
                             Select Interview Round
                         </h2>
@@ -106,15 +145,21 @@ const page = () => {
                             value={formData.round_name}
                             onChange={handleFormChange}
                             className="w-full bg-gray-800 text-gray-300 p-3 rounded-lg border border-gray-600 focus:ring-2 focus:ring-purple-600">
-                            <option>Technical Round</option>
-                            <option>HR Round</option>
-                            <option>Managerial Round</option>
-                            <option>Final Round</option>
+                            <option value="Technical Round">
+                                Technical Round
+                            </option>
+                            <option value="HR Round">HR Round</option>
+                            <option value="Managerial Round">
+                                Managerial Round
+                            </option>
+                            <option value="Final Round">Final Round</option>
                         </select>
                     </div>
 
                     <div className="text-center">
                         <button
+                            type="submit"
+                            disabled={sending}
                             className="bg-linear-to-r from-purple-600 to-purple-800 text-white font-bold text-lg px-10 py-4 rounded-xl shadow-lg 
                      hover:from-purple-700 hover:to-purple-900 transform hover:scale-105 transition duration-300 ease-in-out">
                             Submit
