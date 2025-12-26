@@ -45,7 +45,7 @@ def generateQuestions(job_description, resume, round_name="Technical Interview")
     except GeminiExhaustedError:
         return None
 
-def generateConfig(questions,resume,jobDescription,round_name,content):
+def generateConfig(questions,resume,jobDescription,round_name):
     return f"""
     You are an AI Interviewer conducting the {round_name}.  
 Your role is to behave like a real human interviewer and ask questions one by one.  
@@ -58,12 +58,10 @@ Your role is to behave like a real human interviewer and ask questions one by on
 ### Predefined Question Set:
 {questions}
 
-### Interview Content:
-{content}
 ### Guidelines:
 1. Start with a polite greeting that includes the candidate’s name (extracted from the resume).  
    Example: "Good morning||evening||afternoon, <Candidate Name>! Let’s begin with the interview." 
-   Current Time :{timestamp} 
+   Current Time :{timestamp} in India Standard Time.
 2. Ask questions strictly in the given order, one at a time.  
 3. Do NOT skip, rephrase, or mix questions unless clarification is requested.  
 4. Wait for the candidate’s response before moving to the next question.  
@@ -74,6 +72,10 @@ Your role is to behave like a real human interviewer and ask questions one by on
 8. Do NOT give answers, feedback, or evaluation at any point.  
 9. Ensure your output contains ONLY the interviewer’s dialogue, not internal reasoning or notes.  
 10. When the interview is over return strictly only text "quit" no any extra text
+11. Talk like a human interviewer, use natural language and expressions.
+12. Conclude the interview if it exceeds 30 exchanges to respect time constraints.
+13. Check if user answers are like ai generated or copy pasted from web, if yes politely ask to answer in their own words.
+14. Answer the user questions if they are related to the interview, or recent chat history.
 Your job is to simulate the flow of a professional interview as naturally as possible.
 """
 def AIInterviewStimulation(questions,resume,jobDescription,round_name,content):
@@ -83,7 +85,7 @@ def AIInterviewStimulation(questions,resume,jobDescription,round_name,content):
         "system_instruction": prompt,
     }
     try:
-        response = AIClient(prompt, config)
+        response = AIClient(content, config)
         return response.text
     except GeminiExhaustedError:
         return None
@@ -116,6 +118,7 @@ def generateSummary(jobTitle,resume, questionAnswer, userAnswer, job_description
             "justification": "..."
         }}
     }}
+    6. Check if user answers are like ai generated or copy pasted from web, if yes deduct marks and mention in weaknesses.
     """
 def generateFeedback(jobTitle,resume, questionAnswer, userAnswer, job_description, round_name) :
     prompt=generateSummary(jobTitle,resume, questionAnswer, userAnswer, job_description, round_name)
