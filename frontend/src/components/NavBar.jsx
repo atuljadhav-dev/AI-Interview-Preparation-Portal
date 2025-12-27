@@ -42,7 +42,7 @@ const NavBar = () => {
                 {user && (
                     <button
                         onClick={handleLogout}
-                        className="px-3 py-1 sm:px-4 sm:py-2 rounded-lg 
+                        className="px-3 py-1 sm:px-4 sm:py-2 rounded-lg cursor-pointer
                                 bg-red-600 text-white font-medium text-xs sm:text-sm 
                                 transition
                                 hover:bg-red-700 hover:shadow-md">

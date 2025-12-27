@@ -160,7 +160,7 @@ const page = () => {
                         <button
                             type="submit"
                             disabled={sending}
-                            className="bg-linear-to-r from-purple-600 to-purple-800 text-white font-bold text-lg px-10 py-4 rounded-xl shadow-lg 
+                            className="bg-linear-to-r from-purple-600 to-purple-800 cursor-pointer text-white font-bold text-lg px-10 py-4 rounded-xl shadow-lg 
                      hover:from-purple-700 hover:to-purple-900 transform hover:scale-105 transition duration-300 ease-in-out">
                             Submit
                         </button>

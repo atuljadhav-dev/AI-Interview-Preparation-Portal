@@ -75,7 +75,7 @@ export default function ProfileUpload() {
                 <button
                     type="submit"
                     disabled={uploading}
-                    className="bg-purple-500 text-white px-4 py-2 rounded-md m-3">
+                    className="bg-purple-500 text-white cursor-pointer px-4 py-2 rounded-md m-3">
                     Upload
                 </button>
             </form>

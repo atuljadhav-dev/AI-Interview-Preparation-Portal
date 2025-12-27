@@ -2,7 +2,7 @@
 import { useUser } from "@/hooks/useUser";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 const Interview = ({ id }) => {
@@ -18,13 +18,6 @@ const Interview = ({ id }) => {
     const [interview, setInterview] = useState({});
     const [sending, setSending] = useState(false);
     const { resume } = useUser();
-    const textareaRef = useRef(null); //to auto resize textarea
-    useEffect(() => {
-        const el = textareaRef.current;
-        if (!el) return; //null check
-        el.style.height = "auto"; //reset height
-        el.style.height = `${el.scrollHeight}px`; //set height to scrollHeight
-    }, [input]);
     const [lastAIResponse, setLastAIResponse] = useState("");
     const router = useRouter();
     useEffect(() => {
@@ -54,7 +47,7 @@ const Interview = ({ id }) => {
     }, [resume, interview]);
     useEffect(() => {
         if (conversation.length == 0 && interview.questions && currentResume) {
-            handleSend(); //auto send to start interview
+             handleSend(); //auto send to start interview
         }
     }, [currentResume, interview]);
     const handleSend = async () => {
@@ -132,9 +125,9 @@ const Interview = ({ id }) => {
 
     return (
         <div className="w-full min-h-screen bg-gray-900 ">
-            <div className="h-[70vh] w-full flex flex-row-reverse">
+            <div className="h-[60vh] w-full flex flex-row-reverse">
                 {/* this is left */}
-                <div className="h-[70vh] w-6/12  flex items-center justify-center">
+                <div className="h-[60vh] w-6/12  flex items-center justify-center">
                     <div className="h-[60vh] w-[45vw] shadow-md shadow-purple-500  border-2  border-purple-500 rounded-xl backdrop-blur-none flex justify-center items-center bg-white/10">
                         <div role="status">
                             <svg
@@ -157,7 +150,7 @@ const Interview = ({ id }) => {
                     </div>
                 </div>
                 {/* this is right */}
-                <div className="h-[70vh] w-6/12 flex items-center justify-center">
+                <div className="h-[60vh] w-6/12 flex items-center justify-center">
                     <div className="h-[60vh] w-[45vw] border-2  border-purple-500 rounded-xl backdrop-blur-none shadow-md shadow-purple-500  bg-white/10 ">
                         <video
                             className="h-full w-full object-cover rounded-lg"
@@ -173,14 +166,13 @@ const Interview = ({ id }) => {
                     <p className="text-lg text-white">{lastAIResponse}</p>
                     <div className="w-full flex items-end gap-4 mt-auto">
                         <textarea
-                            rows={1}
+                            rows={3}
+                            cols={50}
                             value={input}
-                            ref={textareaRef} //to auto resize
                             onChange={(e) => setInput(e.target.value)}
-                            style={{ height: "auto", overflow: "hidden" }} //auto resize
-                            className="resize-none overflow-hidden rounded-xl backdrop-blur-none  bg-white/10 w-[70vw] h-[5vh] mt-auto p-4"></textarea>
+                            className="overflow-hidden rounded-xl backdrop-blur-none  bg-white/10 w-[70vw]  mt-auto p-2"></textarea>
                         <button
-                            className="bg-purple-500 p-1 rounded mx-12 px-5"
+                            className="bg-purple-500 p-1 cursor-pointer rounded mx-12 px-5"
                             onClick={handleSend}>
                             Send
                         </button>

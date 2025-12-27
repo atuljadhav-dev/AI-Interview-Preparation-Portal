@@ -54,13 +54,13 @@ const InterviewCard = ({ interview }) => {
                 {status === "Done" && feedbackId ? (
                     <button
                         onClick={() => router.push(`/feedback/${_id}`)}
-                        className="bg-indigo-600 hover:bg-indigo-700 px-5 py-2 rounded-lg text-white font-semibold transition">
+                        className="bg-indigo-600 cursor-pointer hover:bg-indigo-700 px-5 py-2 rounded-lg text-white font-semibold transition">
                         View Feedback
                     </button>
                 ) : (
                     <button
                         onClick={() => router.push(`/interview/${_id}`)}
-                        className="bg-purple-600 hover:bg-purple-700 px-5 py-2 rounded-lg text-white font-semibold transition">
+                        className="bg-purple-600 cursor-pointer hover:bg-purple-700 px-5 py-2 rounded-lg text-white font-semibold transition">
                         Start Interview
                     </button>
                 )}
