@@ -65,9 +65,10 @@ const page = () => {
                 { withCredentials: true }
             );
             toast.success("Interview Created successfully");
-            router.push(`/interview/${res.data.data._id}`);
+          //  router.push(`/interview/${res.data.data._id}`);
         } catch (e) {
-            toast.error(e.response.data.error);
+            console.log(e);
+           // toast.error(e.response.data.error);
         } finally {
             setSending(false);
         }

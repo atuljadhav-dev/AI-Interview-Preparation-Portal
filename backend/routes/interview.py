@@ -44,7 +44,7 @@ def create_interview():
             "error":"Server error: Could not generate questions",
             }),500
     try:
-        interview = createInterview( title=title,round_name=round_name,userId=token_user,description=job_description,question_answer=response,resumeId=resumeId)
+        interview = createInterview( title=title,round_name=round_name,userId=token_user,description=job_description,question_answer=response["questionAnswer"],resumeId=resumeId,skills=response["skills"])
         
         if "_id" in interview:
             interview["_id"] = str(interview["_id"])

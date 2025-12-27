@@ -16,7 +16,7 @@ def generateQuestions(job_description, resume, round_name="Technical Interview")
 
     prompt = f"""
     You are an interview assistant. 
-    Based on the following data, generate 5 interview questions 
+    Based on the following data, generate 10 interview questions 
     and return them in **strict JSON array** format.
 
     data: job description: {job_description}
@@ -24,13 +24,15 @@ def generateQuestions(job_description, resume, round_name="Technical Interview")
     data: round name: {round_name}
 
     Example JSON:
-    [
+{{ "skills": ["Python", "Django", "REST APIs"],
+    "questionAnswer": [
         {{"question": "What is OOP?", "answer": "OOP stands for Object-Oriented Programming..."}},
         {{"question": "Explain SOLID principles.", "answer": "SOLID is an acronym for..."}},
         {{"question": "How do you manage memory in C++?", "answer": "I manage memory using..."}},
         {{"question": "What is REST API?", "answer": "REST stands for Representational State Transfer..."}},
         {{"question": "How would you optimize a SQL query?", "answer": "Optimizing a SQL query involves..."}}
     ]
+    }}
     Strictly follow the JSON format shown above.
     Answer should be given for each question.
     Do not give answer blank.
@@ -39,8 +41,18 @@ def generateQuestions(job_description, resume, round_name="Technical Interview")
     config = {
         "response_mime_type": "application/json",
         "response_schema": {
-            "type": "array",
-            "items": QAItem.model_json_schema()  # ✅ just array of QAItem
+            "type":"object",
+            "properties":{
+                "skills":{
+                    "type":"array",
+                    "items":{"type":"string"}
+                },
+                "questionAnswer":{
+                    "type":"array",
+                    "items":QAItem.model_json_schema()
+                }
+            },
+            "required":["skills","questionAnswer"]
         }
     }
 
@@ -109,6 +121,9 @@ You must ask questions naturally, one at a time, and wait for the candidate’s 
         - User response should not consist decorated text or code blocks.
         - Example:
             ## **Architecture Approach**
+        - If detected again, remind the candidate about authenticity.
+        - If response consist of the emojis terminate the interview.
+        - If it persists, terminate the interview politely.
 
 
 7. **Conversation Scope**
@@ -151,7 +166,9 @@ def AIInterviewStimulation(questions,resume,jobDescription,round_name,content):
         return response.text
     except GeminiExhaustedError:
         return None
-def generateSummary(jobTitle,resume, questionAnswer, userAnswer, job_description, round_name) :
+    
+
+def generateSummary(jobTitle,resume, questionAnswer, userAnswer, job_description, round_name,skills) :
     return f"""
 You are an AI Interview Evaluator.
 
@@ -167,6 +184,7 @@ You must behave like a real technical/HR interviewer, not a tutor or assistant.
 - **Job Description**: {job_description}
 - **Candidate Resume**: {resume}
 - **Interview Questions with Ideal (Model) Answers**: {questionAnswer}
+- **Skills to be Rated**: {skills}
 - **Candidate Responses (Conversation Format)**: {userAnswer}
 
 ---
@@ -235,6 +253,7 @@ You must behave like a real technical/HR interviewer, not a tutor or assistant.
 {str({
     "roundName": "round_name",
     "jobTitle": "jobTitle",
+    "skillsRating":[{"skill_name": "rating (1-5)"}],
     "evaluation": {
         "strengths": ["string"],
         "weaknesses": ["string"],
@@ -243,8 +262,8 @@ You must behave like a real technical/HR interviewer, not a tutor or assistant.
     }
 })}
 """
-def generateFeedback(jobTitle,resume, questionAnswer, userAnswer, job_description, round_name) :
-    prompt=generateSummary(jobTitle,resume, questionAnswer, userAnswer, job_description, round_name)
+def generateFeedback(jobTitle,resume, questionAnswer, userAnswer, job_description, round_name,skills=None): 
+    prompt=generateSummary(jobTitle,resume, questionAnswer, userAnswer, job_description, round_name,skills)
     config={
         "response_mime_type": "application/json",
         "response_schema": {
@@ -252,6 +271,17 @@ def generateFeedback(jobTitle,resume, questionAnswer, userAnswer, job_descriptio
             "properties": {
                 "roundName": {"type": "string"},
                 "jobTitle": {"type": "string"},
+                "skillsRating": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "skill_name": {"type": "string"},
+                            "rating": {"type": "integer", "minimum": 1, "maximum": 5}
+                        },
+                        "required": ["skill_name", "rating"]
+                    }
+                },
                 "evaluation": {
                     "type": "object",
                     "properties": {

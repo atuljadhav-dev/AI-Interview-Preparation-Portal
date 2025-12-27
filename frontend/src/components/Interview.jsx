@@ -100,6 +100,7 @@ const Interview = ({ id }) => {
                         jobDescription: interview.jobDescription,
                         roundName: interview.roundName,
                         jobTitle: interview.title,
+                        skills:interview.skills
                     },
                     { withCredentials: true }
                 );

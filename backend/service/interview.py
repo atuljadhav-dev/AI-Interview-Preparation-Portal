@@ -2,7 +2,7 @@ from utils.db import db
 from datetime import datetime
 import pytz
 from bson import ObjectId
-def createInterview(userId,title,round_name,description,question_answer,resumeId):
+def createInterview(userId,title,round_name,description,question_answer,resumeId,skills):
     tz_india = pytz.timezone('Asia/Kolkata')
     interview={
         "userId":userId,
@@ -10,6 +10,7 @@ def createInterview(userId,title,round_name,description,question_answer,resumeId
         "roundName":round_name,
         "jobDescription":description,
         "questions":question_answer,
+        "skills":skills,
         "status": "Scheduled",
         "resumeId":resumeId,
         "dateCreated": datetime.now(tz_india)# store date in IST timezone

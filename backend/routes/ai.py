@@ -27,12 +27,13 @@ def feedbackGeneration():
         jobTitle=data["jobTitle"]
         job_description=data['jobDescription']
         round_name=data['roundName']
-        if not all([resume, questionAnswer, userAnswer, jobTitle, job_description, round_name]):# validate input
+        skills=data['skills']
+        if not all([resume, questionAnswer, userAnswer, jobTitle, job_description, round_name,skills]):# validate input
             return jsonify({
                 "success":False,
                 "error":"Invalid input data"
                 }),400
-        response=generateFeedback(jobTitle,resume, questionAnswer, userAnswer, job_description, round_name)
+        response=generateFeedback(jobTitle,resume, questionAnswer, userAnswer, job_description, round_name,skills)
         if response is None:
             return jsonify({
                 "success":False,
