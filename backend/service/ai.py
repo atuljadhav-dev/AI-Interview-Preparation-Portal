@@ -1,10 +1,9 @@
 from utils.ai import AIClient,GeminiExhaustedError
 from pydantic import BaseModel
 from datetime import datetime
-timestamp=datetime.now()
 import pytz
 tz_india = pytz.timezone('Asia/Kolkata')    
-timestamp1 = datetime.now(tz_india)
+timestamp = datetime.now(tz_india).strftime("%Y-%m-%d %I:%M:%S %p IST")
 class QAItem(BaseModel):
     """Defines the structure for a single question-answer pair."""
     question: str
@@ -32,6 +31,9 @@ def generateQuestions(job_description, resume, round_name="Technical Interview")
         {{"question": "What is REST API?", "answer": "REST stands for Representational State Transfer..."}},
         {{"question": "How would you optimize a SQL query?", "answer": "Optimizing a SQL query involves..."}}
     ]
+    Strictly follow the JSON format shown above.
+    Answer should be given for each question.
+    Do not give answer blank.
     """
 
     config = {
@@ -49,8 +51,6 @@ def generateQuestions(job_description, resume, round_name="Technical Interview")
         return None
 
 def generateConfig(questions,resume,jobDescription,round_name):
-    print(timestamp)
-    print(timestamp1)
     return f"""
 You are an AI Interviewer conducting the {round_name}.
 

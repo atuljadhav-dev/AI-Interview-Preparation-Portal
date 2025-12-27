@@ -44,7 +44,6 @@ def feedbackGeneration():
             "data":json.loads(response)# convert string response to json
             }),201
     except Exception as e:
-        print(e)
         return jsonify({
             "success":False,
             "error":"Server error: Could not generate feedback",
@@ -59,7 +58,6 @@ def interviewStimulation():
             "success": False, 
             "error": "Unauthorized"
             }), 401
-
     data=request.get_json()
     if not data:
         return jsonify({

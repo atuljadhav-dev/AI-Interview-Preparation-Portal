@@ -37,7 +37,7 @@ const home = () => {
         } else if (filter === "scheduled") {
             setFilteredInterview(interviews.filter((i) => i.status !== "Done"));
         }else if (filter === "recent") {
-            const sorted = [...interviews].sort((a, b) => new Date(b.dateCreated) - new Created(a.dateCreated));
+            const sorted = [...interviews].sort((a, b) => new Date(b.dateCreated) - new Date(a.dateCreated));
             setFilteredInterview(sorted);
         }
     }, [filter, interviews]);

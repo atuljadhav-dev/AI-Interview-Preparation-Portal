@@ -7,7 +7,14 @@ import { toast } from "react-toastify";
 
 const Interview = ({ id }) => {
     const [conversation, setConversation] = useState([]);
-    const [input, setInput] = useState("");
+    const [input, setInput] = useState(
+        `Start Interview Current Time: ${new Date().toLocaleString("en-IN", {
+            timeZone: "Asia/Kolkata",
+            dateStyle: "medium",
+            timeStyle: "medium",
+        })}`
+    );
+    const [currentResume, setCurrentResume] = useState({});
     const [interview, setInterview] = useState({});
     const [sending, setSending] = useState(false);
     const { resume } = useUser();
@@ -38,14 +45,26 @@ const Interview = ({ id }) => {
         };
         fetchData();
     }, []);
+    useEffect(() => {
+        if (!resume || !interview) return;
+        const filtered = resume.find((cur) => cur._id === interview.resumeId);
+        if (filtered) {
+            setCurrentResume(filtered.resume);
+        }
+    }, [resume, interview]);
+    useEffect(() => {
+        if (conversation.length == 0 && interview.questions) {
+            handleSend(); //auto send to start interview
+        }
+    }, [currentResume,interview]);
     const handleSend = async () => {
         if (!input.trim()) return; //avoid sending empty messages
         if (sending) return;
         const newMessage = { role: "user", parts: [{ text: input }] };
+        setInput("");
         const updatedConversation = [...conversation, newMessage];
 
         setConversation(updatedConversation);
-        setInput("");
 
         try {
             setSending(true);
@@ -56,7 +75,7 @@ const Interview = ({ id }) => {
                     roundName: interview.roundName,
                     questions: interview.questions,
                     content: updatedConversation,
-                    resume,
+                    resume: currentResume,
                 },
                 { withCredentials: true }
             );

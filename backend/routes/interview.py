@@ -25,7 +25,8 @@ def create_interview():
         round_name=data['round_name']
         resume=data['resume']
         title=data["jobRole"]
-        if not all([job_description, round_name, resume, title]):
+        resumeId=data["resumeId"]
+        if not all([job_description, round_name, resume, title,resumeId]):
             return jsonify({
                 "success":False,
                 "error":"Invalid input data"
@@ -43,7 +44,7 @@ def create_interview():
             "error":"Server error: Could not generate questions",
             }),500
     try:
-        interview = createInterview( title=title,round_name=round_name,userId=token_user,description=job_description,question_answer=response)
+        interview = createInterview( title=title,round_name=round_name,userId=token_user,description=job_description,question_answer=response,resumeId=resumeId)
         
         if "_id" in interview:
             interview["_id"] = str(interview["_id"])

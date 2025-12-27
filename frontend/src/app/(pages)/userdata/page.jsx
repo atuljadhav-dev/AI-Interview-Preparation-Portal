@@ -18,7 +18,11 @@ export default function ProfileUpload() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!file) {
-            alert("Please select a file");
+            toast.error("Please select a file");
+            return;
+        }
+        if(!name){
+            toast.error("Please enter a name for the resume");
             return;
         }
         if (uploading) return;
@@ -49,7 +53,6 @@ export default function ProfileUpload() {
 
     return (
         <div className="bg-gray-950 min-h-screen flex flex-col items-center justify-start p-6">
-            {/* <div className="w-[40vw] h-[60vh] bg-red-500 flex-col items-center justify-evenly"> */}
             <h1 className="text-2xl font-bold text-white mt-6">
                 Upload Resume
             </h1>
@@ -58,7 +61,7 @@ export default function ProfileUpload() {
                 className="p-6 rounded-lg border-2  border-purple-600 transition-colors flex items-center justify-center flex-col">
                 <input
                     type="text"
-                    placeholder="Enter name to resume"
+                    placeholder="Enter name to resume Eg.Software Engineer Resume"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     className="mb-4 p-2 rounded-md bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-600 w-full"

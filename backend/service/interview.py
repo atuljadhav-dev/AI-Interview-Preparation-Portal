@@ -1,7 +1,7 @@
 from utils.db import db
 from datetime import datetime
 from bson import ObjectId
-def createInterview(userId,title,round_name,description,question_answer):
+def createInterview(userId,title,round_name,description,question_answer,resumeId):
     interview={
         "userId":userId,
         "title":title,
@@ -9,6 +9,7 @@ def createInterview(userId,title,round_name,description,question_answer):
         "jobDescription":description,
         "questions":question_answer,
         "status": "Scheduled",
+        "resumeId":resumeId,
         "dateCreated": datetime.utcnow()
         }
     res=db.interviews.insert_one(interview)
