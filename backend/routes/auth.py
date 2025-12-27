@@ -57,7 +57,7 @@ def signup():
             }), 403
     
     try:
-        user = createUser(data['name'], data['email'], data['password'], data['phone'])
+        user = createUser(data['name'], data['email'], data['password'])
         user["_id"] = str(user["_id"])# Convert ObjectId to string
         user.pop("password", None)# Remove password from response
     except Exception as e:

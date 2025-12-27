@@ -2,7 +2,7 @@ from utils.db import db
 from datetime import datetime
 import bcrypt
 from bson import ObjectId
-def createUser(name,email,password,phone):
+def createUser(name,email,password):
     password_bytes = password.encode('utf-8')
     salt = bcrypt.gensalt()
     hashpass = bcrypt.hashpw(password_bytes, salt).decode('utf-8')
@@ -11,7 +11,6 @@ def createUser(name,email,password,phone):
         "name":name,
         "email":email,
         "password":hashpass,
-        "phone":phone,
         "created_at":created_at
         }
     res=db.users.insert_one(user)

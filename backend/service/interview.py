@@ -1,7 +1,9 @@
 from utils.db import db
 from datetime import datetime
+import pytz
 from bson import ObjectId
 def createInterview(userId,title,round_name,description,question_answer,resumeId):
+    tz_india = pytz.timezone('Asia/Kolkata')
     interview={
         "userId":userId,
         "title":title,
@@ -10,7 +12,7 @@ def createInterview(userId,title,round_name,description,question_answer,resumeId
         "questions":question_answer,
         "status": "Scheduled",
         "resumeId":resumeId,
-        "dateCreated": datetime.utcnow()
+        "dateCreated": datetime.now(tz_india)# store date in IST timezone
         }
     res=db.interviews.insert_one(interview)
     interview["_id"] = res.inserted_id

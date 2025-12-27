@@ -14,7 +14,7 @@ const Interview = ({ id }) => {
             timeStyle: "medium",
         })}`
     );
-    const [currentResume, setCurrentResume] = useState({});
+    const [currentResume, setCurrentResume] = useState(null);
     const [interview, setInterview] = useState({});
     const [sending, setSending] = useState(false);
     const { resume } = useUser();
@@ -53,10 +53,10 @@ const Interview = ({ id }) => {
         }
     }, [resume, interview]);
     useEffect(() => {
-        if (conversation.length == 0 && interview.questions) {
+        if (conversation.length == 0 && interview.questions && currentResume) {
             handleSend(); //auto send to start interview
         }
-    }, [currentResume,interview]);
+    }, [currentResume, interview]);
     const handleSend = async () => {
         if (!input.trim()) return; //avoid sending empty messages
         if (sending) return;
@@ -124,6 +124,7 @@ const Interview = ({ id }) => {
             }
         } catch (e) {
             toast.error(e.response.data.error);
+            console.log(e);
         } finally {
             setSending(false);
         }

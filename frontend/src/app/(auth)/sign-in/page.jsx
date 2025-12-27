@@ -3,7 +3,7 @@
 import { useUser } from "@/hooks/useUser";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
 const login = () => {
@@ -11,9 +11,16 @@ const login = () => {
         password: "",
         email: "",
     });
+    const passwordRef = useRef(null);
     const router = useRouter();
     const { setUser } = useUser();
     const [sending, setSending] = useState(false);
+    const handleKeyDown = (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault(); // Prevents the form from submitting early
+            passwordRef.current.focus();
+        }
+    };
     const handleSend = async (e) => {
         e.preventDefault();
         if (sending) return;
@@ -46,6 +53,7 @@ const login = () => {
                     className="h-[55vh] w-[85vw] flex items-center justify-center sm:w-[50vh] gap-5 flex-col rounded-2xl border-purple-500 border bg-gray-950/30 backdrop-blur-none shadow-md shadow-purple-500">
                     <input
                         type="text"
+                        autoFocus
                         placeholder="Enter email address"
                         name="email"
                         value={formData.email}
@@ -55,12 +63,14 @@ const login = () => {
                                 email: e.target.value,
                             })
                         }
+                        onKeyDown={handleKeyDown} // Trigger focus move here
                         className=" bg-transparent border border-gray-500 px-4 w-[60vw] h-[5vh] sm:w-[19vw] rounded-md"></input>
 
                     <input
                         type="password"
                         placeholder="Enter password"
                         name="password"
+                        ref={passwordRef}
                         value={formData.password}
                         onChange={(e) =>
                             setFormData({

@@ -3,7 +3,7 @@
 import { useUser } from "@/hooks/useUser";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
 const signup = () => {
@@ -12,11 +12,12 @@ const signup = () => {
         email: "",
         password: "",
         confirmPassword: "",
-        phone: "",
     });
+    const emailRef = useRef(null);
+    const passwordRef = useRef(null);
+    const confirmPasswordRef = useRef(null);
     const [sending, setSending] = useState(false);
     const router = useRouter();
-    const [error, setError] = useState("");
     const handleFormChange = (e) => {
         setFormData({
             ...formData,
@@ -24,10 +25,16 @@ const signup = () => {
         });
     };
     const { setUser } = useUser();
+    const handleKeydown = (e, name) => {
+        if (e.key === "Enter") {
+            e.preventDefault(); // Prevents the form from submitting early
+            name.current.focus();
+        }
+    };
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (formData.password !== formData.confirmPassword) {
-            setError("Passwords do not match");
+            toast.error("Passwords do not match");
             return;
         }
         if (sending) return;
@@ -44,7 +51,6 @@ const signup = () => {
             router.push("/home");
         } catch (err) {
             toast.error(err.response.data.error);
-            setError(err.response.data.error);
         } finally {
             setSending(false);
         }
@@ -60,8 +66,12 @@ const signup = () => {
                         type="text"
                         placeholder="Enter your name"
                         name="name"
+                        autoFocus
                         onChange={handleFormChange}
                         value={formData.name}
+                        onKeyDown={(e) => {
+                            handleKeydown(e, emailRef);
+                        }}
                         className=" border border-gray-500 px-4 sm:w-[19vw] w-[60vw] h-[5vh] rounded-md"></input>
 
                     <input
@@ -69,30 +79,32 @@ const signup = () => {
                         placeholder="Enter your email"
                         onChange={handleFormChange}
                         name="email"
+                        ref={emailRef}
+                        onKeyDown={(e) => {
+                            handleKeydown(e, passwordRef);
+                        }}
                         value={formData.email}
-                        className="border border-gray-500 px-4 sm:w-[19vw] w-[60vw] h-[5vh] rounded-md"></input>
-                    <input
-                        type="tel"
-                        placeholder="Enter your phone number"
-                        onChange={handleFormChange}
-                        name="phone"
-                        value={formData.phone}
                         className="border border-gray-500 px-4 sm:w-[19vw] w-[60vw] h-[5vh] rounded-md"></input>
                     <input
                         type="password"
                         placeholder="Create password"
                         onChange={handleFormChange}
                         name="password"
+                        ref={passwordRef}
+                        onKeyDown={(e) => {
+                            handleKeydown(e, confirmPasswordRef);
+                        }}
                         value={formData.password}
                         className="border border-gray-500 px-4 sm:w-[19vw] w-[60vw] h-[5vh] rounded-md"></input>
                     <input
                         type="password"
                         placeholder="Confirm password"
+                        ref={confirmPasswordRef}
                         onChange={handleFormChange}
                         name="confirmPassword"
                         value={formData.confirmPassword}
                         className="border border-gray-500 px-4 sm:w-[19vw] w-[60vw] h-[5vh] rounded-md"></input>
-                    {error && <p className="text-red-500">{error}</p>}
+
                     <button
                         type="submit"
                         disabled={sending}

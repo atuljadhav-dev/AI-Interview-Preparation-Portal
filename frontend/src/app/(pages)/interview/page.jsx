@@ -12,7 +12,7 @@ const page = () => {
     const [formData, setFormData] = useState({
         jobRole: "",
         jobDescription: "",
-        round_name: "HR Round",
+        round_name: "",
         resumeId: "",
         resume: {},
     });
@@ -86,6 +86,7 @@ const page = () => {
                         <input
                             type="text"
                             name="jobRole"
+                            autoFocus
                             value={formData.jobRole}
                             onChange={handleFormChange}
                             className="block w-full text-gray-300 bg-gray-800 pl-3 rounded-lg border border-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-600"
@@ -140,20 +141,19 @@ const page = () => {
                         <h2 className="text-xl font-bold text-white mb-2">
                             Select Interview Round
                         </h2>
-                        <select
+                        <input
+                            list="round_name"
                             name="round_name"
                             value={formData.round_name}
                             onChange={handleFormChange}
-                            className="w-full bg-gray-800 text-gray-300 p-3 rounded-lg border border-gray-600 focus:ring-2 focus:ring-purple-600">
-                            <option value="Technical Round">
-                                Technical Round
-                            </option>
-                            <option value="HR Round">HR Round</option>
-                            <option value="Managerial Round">
-                                Managerial Round
-                            </option>
-                            <option value="Final Round">Final Round</option>
-                        </select>
+                            className="w-full bg-gray-800 text-gray-300 p-3 rounded-lg border border-gray-600 focus:ring-2 focus:ring-purple-600"
+                        />
+                        <datalist id="round_name">
+                            <option value="Technical Round" />
+                            <option value="HR Round" />
+                            <option value="Managerial Round" />
+                            <option value="Final Round" />
+                        </datalist>
                     </div>
 
                     <div className="text-center">

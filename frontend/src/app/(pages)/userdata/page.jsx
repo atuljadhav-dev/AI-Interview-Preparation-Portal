@@ -61,6 +61,7 @@ export default function ProfileUpload() {
                 className="p-6 rounded-lg border-2  border-purple-600 transition-colors flex items-center justify-center flex-col">
                 <input
                     type="text"
+                    autoFocus
                     placeholder="Enter name to resume Eg.Software Engineer Resume"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
