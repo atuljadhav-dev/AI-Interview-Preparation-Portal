@@ -1,5 +1,6 @@
 "use client";
 
+import FeedBackCard from "@/components/FeedBackCard";
 import axios from "axios";
 import { useEffect } from "react";
 
@@ -17,7 +18,11 @@ const page = () => {
         };
         fetchData();
     }, []);
-    return <div></div>;
+    return (
+        <div>
+            <FeedBackCard />
+        </div>
+    );
 };
 
 export default page;

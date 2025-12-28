@@ -16,7 +16,7 @@ def generateQuestions(job_description, resume, round_name="Technical Interview")
 
     prompt = f"""
     You are an interview assistant. 
-    Based on the following data, generate 10 interview questions 
+    Based on the following data, generate interview questions 
     and return them in **strict JSON array** format.
 
     data: job description: {job_description}
@@ -34,6 +34,11 @@ def generateQuestions(job_description, resume, round_name="Technical Interview")
     ]
     }}
     Strictly follow the JSON format shown above.
+    Only mention skills on which questions are generated.
+    Question should be strictly related to the interview round.
+    Minimum generate the 5 question. 
+    Increase the number the question according to the job description.
+    Generate at most 15 question.
     Answer should be given for each question.
     Do not give answer blank.
     """
