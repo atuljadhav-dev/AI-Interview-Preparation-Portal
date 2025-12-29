@@ -1,6 +1,11 @@
 import Image from "next/image";
 import React from "react";
 import logo from "/public/logo1.png";
+export const metadata = {
+    title: "PlacementReady - Your Path to Career Success",
+    description:
+        "PlacementReady is your ultimate platform for interview preparation, resume building, and career advancement. Get ready to ace your interviews and land your dream job with our comprehensive tools and resources.",
+};
 const page = () => {
     return (
         <>

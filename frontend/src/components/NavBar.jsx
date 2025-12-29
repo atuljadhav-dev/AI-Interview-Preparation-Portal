@@ -50,7 +50,7 @@ const NavBar = () => {
                             Profile
                         </Link>
                         <MenuIcon
-                            className="md:hidden"
+                            className="md:hidden cursor-pointer"
                             onClick={() => {
                                 setShowLogout(false);
                                 setShowMenu(!showMenu);
@@ -58,6 +58,7 @@ const NavBar = () => {
                         />
 
                         <UserCircle2Icon
+                        className="cursor-pointer"
                             onClick={() => {
                                 setShowMenu(false);
                                 setShowLogout(!showLogout);
