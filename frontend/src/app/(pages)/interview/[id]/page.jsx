@@ -1,6 +1,39 @@
 import Interview from "@/components/Interview";
+import axios from "axios";
 import React, { Suspense } from "react";
+import { cookies } from "next/headers";
 
+export const generateMetadata = async ({ params }) => {
+    const { id } = await params;
+    const cookieStore = await cookies(); // Access cookies
+    const token = cookieStore.get("authToken")?.value; // Get the authToken cookie value
+
+    try {
+        const res = await axios.get(
+            `${process.env.BASE_URL}/interview/specific/${id}`,
+            {
+                headers: {
+                    Cookie: `authToken=${token}`, // Include the authToken cookie in the request
+                },
+                withCredentials: true,
+            }
+        );
+
+        const interview = res.data.data;
+        return {
+            title: `${interview.title} Interview | PlacementReady`,
+            description: `Practice for your ${interview.roundName} session.`,
+            openGraph: {
+                title: `${interview.title} Mock Interview`,
+                description: `Live AI-powered interview practice for the ${interview.roundName} role.`,
+            },
+        };
+    } catch (error) {
+        return {
+            title: "Interview Session | PlacementReady",
+        };
+    }
+};
 const page = async ({ params }) => {
     const { id } = await params;
     return (

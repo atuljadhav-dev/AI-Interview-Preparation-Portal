@@ -6,6 +6,12 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import InterviewCard from "@/components/InterviewCard";
 
+export const metadata = {
+    title: "PlacementReady - Your Path to Career Success",
+    description:
+        "PlacementReady is your ultimate platform for interview preparation, resume building, and career advancement. Get ready to ace your interviews and land your dream job with our comprehensive tools and resources.",
+};
+
 const home = () => {
     const router = useRouter();
     const [interviews, setInterviews] = useState([]);
@@ -36,20 +42,22 @@ const home = () => {
             setFilteredInterview(interviews.filter((i) => i.status === "Done"));
         } else if (filter === "scheduled") {
             setFilteredInterview(interviews.filter((i) => i.status !== "Done"));
-        }else if (filter === "recent") {
-            const sorted = [...interviews].sort((a, b) => new Date(b.dateCreated) - new Date(a.dateCreated));
+        } else if (filter === "recent") {
+            const sorted = [...interviews].sort(
+                (a, b) => new Date(b.dateCreated) - new Date(a.dateCreated)
+            );
             setFilteredInterview(sorted);
         }
     }, [filter, interviews]);
     return (
         <>
-            <div className="bg-gray-950 min-h-[calc(100%-4rem)] w-full py-10 md:py-0">
+            <div className="bg-gray-950 min-h-[calc(100%-4rem)] w-full md:py-0">
                 <div className="container mx-auto h-full flex flex-col md:flex-row items-center justify-between px-6 md:px-10">
                     <div className="w-full md:w-5/12 flex flex-col items-center md:items-start text-center md:text-left order-1 md:order-1 mt-8 md:mt-0">
-                        <div className="w-full max-w-xs md:max-w-md h-auto mb-8">
+                        <div className="w-full md:max-w-md h-auto  mb-8">
                             <Image
                                 src={interview}
-                                className="w-[40vw] h-[40vh]"
+                                className="w-auto h-[40vh] m-auto"
                                 alt="image"></Image>
                         </div>
                         <div className="mb-6 w-full px-5">
@@ -96,7 +104,7 @@ const home = () => {
             </div>
             <div className="container mx-auto px-10 mt-20">
                 <div className="flex justify-between items-center mb-8">
-                    <h2 className="text-2xl text-white font-bold mb-6">
+                    <h2 className="md:text-2xl text-xl text-white font-bold mb-6">
                         Your Previous Interviews
                     </h2>
                     <select

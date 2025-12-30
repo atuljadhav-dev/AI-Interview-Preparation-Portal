@@ -47,7 +47,7 @@ const Interview = ({ id }) => {
     }, [resume, interview]);
     useEffect(() => {
         if (conversation.length == 0 && interview.questions && currentResume) {
-             handleSend(); //auto send to start interview
+          //  handleSend(); //auto send to start interview
         }
     }, [currentResume, interview]);
     const handleSend = async () => {
@@ -100,7 +100,7 @@ const Interview = ({ id }) => {
                         jobDescription: interview.jobDescription,
                         roundName: interview.roundName,
                         jobTitle: interview.title,
-                        skills:interview.skills
+                        skills: interview.skills,
                     },
                     { withCredentials: true }
                 );
@@ -128,7 +128,7 @@ const Interview = ({ id }) => {
         <div className="w-full min-h-screen bg-gray-900 ">
             <div className="h-[60vh] w-full flex flex-row-reverse">
                 {/* this is left */}
-                <div className="h-[60vh] w-6/12  flex items-center justify-center">
+                <div className="h-[60vh] w-6/12 hidden md:flex items-center justify-center">
                     <div className="h-[60vh] w-[45vw] shadow-md shadow-purple-500  border-2  border-purple-500 rounded-xl backdrop-blur-none flex justify-center items-center bg-white/10">
                         <div role="status">
                             <svg
@@ -151,8 +151,8 @@ const Interview = ({ id }) => {
                     </div>
                 </div>
                 {/* this is right */}
-                <div className="h-[60vh] w-6/12 flex items-center justify-center">
-                    <div className="h-[60vh] w-[45vw] border-2  border-purple-500 rounded-xl backdrop-blur-none shadow-md shadow-purple-500  bg-white/10 ">
+                <div className="h-[60vh] w-full md:w-6/12 flex items-center justify-center">
+                    <div className="h-[60vh] md:w-[45vw] border-2  border-purple-500 rounded-xl backdrop-blur-none shadow-md shadow-purple-500  bg-white/10 ">
                         <video
                             className="h-full w-full object-cover rounded-lg"
                             autoPlay

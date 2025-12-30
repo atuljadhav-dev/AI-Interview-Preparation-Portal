@@ -6,6 +6,12 @@ import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
+
+export const metadata = {
+    title: "Login - PlacementReady",
+    description: " Access Your PlacementReady Account",
+};
+
 const login = () => {
     const [formData, setFormData] = useState({
         password: "",

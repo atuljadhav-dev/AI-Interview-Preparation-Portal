@@ -4,6 +4,13 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
+
+export const metadata = {
+    title: "Create Interview - PlacementReady",
+    description:
+        "Create a new interview session on PlacementReady. Input job role, description, and select your resume to start practicing for your interviews.",
+};
+
 const page = () => {
     const { resume, user, loading } = useUser();
     const router = useRouter();
@@ -65,10 +72,10 @@ const page = () => {
                 { withCredentials: true }
             );
             toast.success("Interview Created successfully");
-          //  router.push(`/interview/${res.data.data._id}`);
+            //  router.push(`/interview/${res.data.data._id}`);
         } catch (e) {
             console.log(e);
-           // toast.error(e.response.data.error);
+            // toast.error(e.response.data.error);
         } finally {
             setSending(false);
         }
