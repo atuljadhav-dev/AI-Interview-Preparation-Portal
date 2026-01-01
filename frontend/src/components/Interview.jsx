@@ -47,7 +47,7 @@ const Interview = ({ id }) => {
     }, [resume, interview]);
     useEffect(() => {
         if (conversation.length == 0 && interview.questions && currentResume) {
-          //  handleSend(); //auto send to start interview
+            handleSend(); //auto send to start interview
         }
     }, [currentResume, interview]);
     const handleSend = async () => {
