@@ -16,11 +16,20 @@ const page = async () => {
         },
         withCredentials: true,
     });
+    const feedbacks = data.data;
     return (
         <div>
-            {data.data.map((feedback) => (
-                <FeedBackCard key={feedback._id} feedback={feedback} />
-            ))}
+            {feedbacks.length === 0 ? (
+                <p className="text-center mt-10 text-lg">
+                    No feedback available yet.
+                </p>
+            ) : (
+                <div className="max-w-4xl mx-auto mt-10 space-y-6 pb-10">
+                    {feedbacks.map((feedback) => (
+                        <FeedBackCard key={feedback._id} feedback={feedback} />
+                    ))}
+                </div>
+            )}
         </div>
     );
 };
