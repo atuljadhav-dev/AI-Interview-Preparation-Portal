@@ -21,8 +21,8 @@ def FindUserByEmail(email):
     res=db.users.find_one({"email":email})
     return res
 
-def Login(identifier,password):
-    res=db.users.find_one({"$or":[{"email":identifier},{"phone":identifier}]})
+def Login(email,password):
+    res=db.users.find_one({"email":email})
     if not res:
         return None
     login_password_bytes = password.encode('utf-8')

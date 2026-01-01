@@ -51,7 +51,7 @@ const SignInPage = () => {
                     onSubmit={handleSend}
                     className="h-[55vh] w-[85vw] flex items-center justify-center sm:w-[50vh] gap-5 flex-col rounded-2xl border-purple-500 border bg-gray-950/30 backdrop-blur-none shadow-md shadow-purple-500">
                     <input
-                        type="text"
+                        type="email"
                         autoFocus
                         placeholder="Enter email address"
                         name="email"
@@ -89,6 +89,14 @@ const SignInPage = () => {
     ">
                         Login
                     </button>
+                    <p className="text-gray-400">
+                        Don't have an account?{" "}
+                        <span
+                            onClick={() => router.push("/sign-up")}
+                            className="text-purple-500 cursor-pointer hover:underline">
+                            Sign Up
+                        </span>
+                    </p>
                 </form>
             </div>
         </div>
