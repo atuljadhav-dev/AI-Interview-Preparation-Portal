@@ -1,4 +1,4 @@
-import FeedBack from "@/components/FeedBack";
+import FeedBack from "@/app/(pages)/feedback/[id]/FeedBackPage";
 import axios from "axios";
 import { cookies } from "next/headers";
 import React, { Suspense } from "react";

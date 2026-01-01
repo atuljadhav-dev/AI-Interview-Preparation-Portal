@@ -1,4 +1,4 @@
-import Interview from "@/components/Interview";
+import Interview from "@/app/(pages)/interview/[id]/InterviewPage";
 import axios from "axios";
 import React, { Suspense } from "react";
 import { cookies } from "next/headers";

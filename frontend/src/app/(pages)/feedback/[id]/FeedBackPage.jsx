@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-const FeedBack = ({ id }) => {
+const FeedBackPage = ({ id }) => {
     const [feedback, setFeedback] = useState({});
     const [interview, setInterview] = useState({});
     const [conversation, setConversation] = useState([]);
@@ -236,4 +236,4 @@ const FeedBack = ({ id }) => {
     );
 };
 
-export default FeedBack;
+export default FeedBackPage;

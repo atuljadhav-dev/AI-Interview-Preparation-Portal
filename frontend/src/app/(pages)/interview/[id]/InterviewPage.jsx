@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-const Interview = ({ id }) => {
+const InterviewPage = ({ id }) => {
     const [conversation, setConversation] = useState([]);
     const [input, setInput] = useState(
         `Start Interview Current Time: ${new Date().toLocaleString("en-IN", {
@@ -183,4 +183,4 @@ const Interview = ({ id }) => {
         </div>
     );
 };
-export default Interview;
+export default InterviewPage;

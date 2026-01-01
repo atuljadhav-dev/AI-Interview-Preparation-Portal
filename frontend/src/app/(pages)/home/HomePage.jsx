@@ -3,8 +3,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import interview from "/public/home.png";
 import Image from "next/image";
-import InterviewCard from "./InterviewCard";
 import axios from "axios";
+import InterviewCard from "@/components/InterviewCard";
 const HomePage = () => {
     const router = useRouter();
     const [interviews, setInterviews] = useState([]);

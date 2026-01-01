@@ -1,4 +1,4 @@
-import HomePage from "@/components/HomePage";
+import HomePage from "@/app/(pages)/home/HomePage";
 export const metadata = {
     title: "PlacementReady - Your Path to Career Success",
     description:

@@ -3,8 +3,9 @@ import { useUser } from "@/hooks/useUser";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
 
-const CreateInterview = () => {
+const CreateInterviewPage = () => {
     const { resume, user, loading } = useUser();
     const router = useRouter();
     const textareaRef = useRef(null);
@@ -171,4 +172,4 @@ const CreateInterview = () => {
     );
 };
 
-export default CreateInterview;
+export default CreateInterviewPage;

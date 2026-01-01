@@ -1,4 +1,4 @@
-import CreateInterview from "@/components/CreateInterview";
+import CreateInterview from "@/app/(pages)/interview/CreateInterviewPage";
 
 export const metadata = {
     title: "Create Interview - PlacementReady",
