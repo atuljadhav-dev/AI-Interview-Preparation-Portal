@@ -2,6 +2,8 @@ from utils.ai import AIClient,GeminiExhaustedError
 from pydantic import BaseModel
 from datetime import datetime
 import pytz
+import httpx
+from google.genai import types
 tz_india = pytz.timezone('Asia/Kolkata')    
 timestamp = datetime.now(tz_india).strftime("%Y-%m-%d %I:%M:%S %p IST")
 class QAItem(BaseModel):
@@ -317,9 +319,25 @@ def convertTextToJSON(text):
     prompt=f"""
     Convert the following text to a JSON object. 
     Ensure the JSON is properly formatted.
+   You are converting raw resume text into a structured JSON object.
 
-    Text:
-    {text}
+RULES (IMPORTANT):
+- Preserve the original wording exactly inside all values.
+- Do NOT correct spelling or grammar in the content.
+- Do NOT normalize skill names or casing inside values.
+- Do NOT infer or invent information that is not present.
+- Do NOT omit any information from the text.
+- You MAY create appropriate JSON keys and structure to represent the content clearly.
+- Use arrays where multiple items exist.
+- Use lowercase snake_case for JSON keys.
+- If a section is missing, include it as an empty array or null.
+
+OUTPUT REQUIREMENTS:
+- Output VALID JSON ONLY.
+- No explanations, comments, or extra text.
+
+Resume Text:
+{text}
     Do not add any extra information or explanation.
     Example JSON format:
     {{
@@ -333,6 +351,43 @@ def convertTextToJSON(text):
     }
     try:
         response = AIClient(prompt, config)
+        return response
+    except GeminiExhaustedError:
+        return None
+
+def convertPDFToJSON(url):
+    doc_data=httpx.get(url).content
+    if not doc_data:
+        return None
+    prompt=f"""
+    You are converting a resume document into a structured JSON object.
+
+RULES (IMPORTANT):
+- Preserve the original wording exactly inside all values.
+- Do NOT correct spelling or grammar in the content.
+- Do NOT normalize skill names or casing inside values.
+- Do NOT infer or invent information that is not present.
+- Do NOT omit any information visible in the document.
+- You MAY create appropriate JSON keys and structure to represent the content clearly.
+- Use arrays where multiple items exist.
+- Use lowercase snake_case for JSON keys.
+- If a section is missing, include it as an empty array or null.
+
+OUTPUT REQUIREMENTS:
+- Output VALID JSON ONLY.
+- No explanations, comments, or extra text.
+    Example JSON format:
+    {{
+        "key1": "value1",
+        "key2": "value2",
+        ...
+    }}
+    """
+    config={
+        "response_mime_type": "application/json",
+    }
+    try:
+        response = AIClient([prompt,types.Part.from_bytes(data=doc_data,mime_type='application/pdf')], config)
         return response
     except GeminiExhaustedError:
         return None

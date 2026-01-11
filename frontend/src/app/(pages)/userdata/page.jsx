@@ -11,7 +11,7 @@ export default function ProfileUpload() {
     const [uploading, setUploading] = useState(false);
     const [name, setName] = useState("");
     const router = useRouter();
-    const { setLoading } = useUser();
+    const { setLoading, resume } = useUser();
     const handleFileChange = (e) => {
         setFile(e.target.files[0]);
     };
@@ -21,7 +21,7 @@ export default function ProfileUpload() {
             toast.error("Please select a file");
             return;
         }
-        if(!name){
+        if (!name) {
             toast.error("Please enter a name for the resume");
             return;
         }
@@ -52,33 +52,51 @@ export default function ProfileUpload() {
     };
 
     return (
-        <div className="bg-gray-950 min-h-screen flex flex-col items-center justify-start p-6">
-            <h1 className="text-2xl font-bold text-white mt-6">
-                Upload Resume
-            </h1>
-            <form
-                onSubmit={handleSubmit}
-                className="p-6 rounded-lg border-2  border-purple-600 transition-colors flex items-center justify-center flex-col">
-                <input
-                    type="text"
-                    autoFocus
-                    placeholder="Enter name to resume Eg.Software Engineer Resume"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="mb-4 p-2 rounded-md bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-600 w-full"
-                />
-                <input
-                    type="file"
-                    onChange={handleFileChange}
-                    className="block w-full text-gray-300 h-10 bg-gray-800 rounded-lg border border-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-600 "
-                />
-                <button
-                    type="submit"
-                    disabled={uploading}
-                    className="bg-purple-500 text-white cursor-pointer px-4 py-2 rounded-md m-3">
-                    Upload
-                </button>
-            </form>
-        </div>
+        <>
+            {" "}
+            <div className="bg-gray-950 min-h-screen flex flex-col items-center justify-start p-6">
+                <h1 className="text-2xl font-bold text-white mt-6">
+                    Upload Resume
+                </h1>
+                <form
+                    onSubmit={handleSubmit}
+                    className="p-6 rounded-lg border-2  border-purple-600 transition-colors flex items-center justify-center flex-col">
+                    <input
+                        type="text"
+                        autoFocus
+                        placeholder="Enter name to resume Eg.Software Engineer Resume"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className="mb-4 p-2 rounded-md bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-600 w-full"
+                    />
+                    <input
+                        type="file"
+                        accept=".pdf"
+                        onChange={handleFileChange}
+                        className="block w-full text-gray-300 h-10 bg-gray-800 rounded-lg border border-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-600 "
+                    />
+                    <button
+                        type="submit"
+                        disabled={uploading}
+                        className="bg-purple-500 text-white cursor-pointer px-4 py-2 rounded-md m-3">
+                        Upload
+                    </button>
+                </form>
+            </div>
+            {resume?.map((res) => (
+                <div
+                    key={res._id}
+                    className="p-4 m-4 border border-gray-600 rounded-lg">
+                    <h2 className="text-xl font-semibold text-white">
+                        {res.name}
+                    </h2>
+                    <a
+                        href={`/userdata/${res._id}`}
+                        className="text-purple-400 hover:underline">
+                        View Resume
+                    </a>
+                </div>
+            ))}
+        </>
     );
 }

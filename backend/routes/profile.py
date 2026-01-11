@@ -1,11 +1,12 @@
 from flask import Blueprint, request, jsonify
-from pypdf import PdfReader
 import os
-from service.profile import getProfile, createProfile,updateProfile,deleteProfile
+from service.profile import getProfile, createProfile,deleteProfile
 import json
-from service.ai import convertTextToJSON
+from service.ai import convertTextToJSON,convertPDFToJSON
 from routes.auth import verify_jwt 
 from utils.limiter import limiter
+from service.cloudinary import uploadResumeToCloudinary,deleteResumeFromCloudinary
+from service.pdfParsing import process_resume_pdf,is_poor_extraction
 profile_bp = Blueprint('profile', __name__)
 @profile_bp.route("/profile", methods=["GET"])
 @limiter.limit("10 per minute") # Limit to 10 requests per minute
@@ -46,27 +47,55 @@ def create_profile():
         return jsonify({"success": False, "error": "No file uploaded"}), 400
     if not file.filename.lower().endswith('.pdf'):
         return jsonify({"success": False, "error": "Only PDF files are supported"}), 400
+    MAX_FILE_SIZE = 2 * 1024 * 1024  # 2MB
+    
+    # Check file size
+    file.seek(0, os.SEEK_END)
+    file_size = file.tell()
+    if file_size > MAX_FILE_SIZE:
+        return jsonify({"success": False, "error": "File size exceeds 2MB limit"}), 400
+    file.seek(0)
     data = request.form.to_dict()
     if not data  :
         return jsonify({
             "success": False,
             "error": "Resume data is required"
         }), 400
+    
+    upload_url,public_id=uploadResumeToCloudinary(file)
+    if not upload_url:
+        return jsonify({
+            "success": False,
+            "error": "Failed to upload resume to cloud storage"
+        }), 500
+    file.seek(0)
     extracted_text, error, status = process_resume_pdf(file)
+    
     if error:
+        deleteResumeFromCloudinary(public_id)
         return jsonify({"success": False, "error": error}), status
-    ai=convertTextToJSON(extracted_text)
+    isInValidText=is_poor_extraction(extracted_text)
+    ai=None
+    if isInValidText:
+        ai=convertPDFToJSON(upload_url)
+    else:
+        ai=convertTextToJSON(extracted_text)
     if ai is None:
+        deleteResumeFromCloudinary(public_id)
         return jsonify({
                 "success":False,
                 "error":"AI response error"
             }),500
+    profile=None
     try:
         resume=json.loads(ai.text)
-        profile = createProfile(token_user, resume, data.get('name', '')) 
+        profile = createProfile(token_user, resume, data.get('name', ''), upload_url,public_id) 
         if "_id" in profile:
             profile["_id"] = str(profile["_id"])
     except Exception as e:
+        deleteResumeFromCloudinary(public_id)
+        if profile:
+            deleteProfile(token_user,profile.get("_id"))
         return jsonify({
             "success": False,
             "error": "Server error: Could not create profile in database",
@@ -77,79 +106,7 @@ def create_profile():
         "data": profile
     }), 201
 
-@profile_bp.route("/profile", methods=["PUT"])
-@limiter.limit("5 per minute") # Limit profile updates to 5 per minute
-def update_profile():
-    token_user = verify_jwt(request)
-    if not token_user:
-        return jsonify({
-            "success": False, 
-            "error": "Unauthorized"
-            }), 401
-    file = request.files.get("file")
-    if not file:
-        return jsonify({
-            "success": False, 
-            "error": "No file uploaded"
-            }), 400
-    if not file.filename.lower().endswith('.pdf'):
-        return jsonify({"success": False, "error": "Only PDF files are supported"}), 400
-    data = request.form.to_dict()
-    if not data  :
-        return jsonify({
-            "success": False,
-            "error": "Resume are required"
-        }), 400
-    extracted_text, error, status = process_resume_pdf(file)
-    if error:
-        return jsonify({"success": False, "error": error}), status
-    ai=convertTextToJSON(extracted_text)
-    try:
-        resume = json.loads(ai.text)
-        profile = updateProfile(token_user, resume)
-        if "_id" in profile:
-            profile["_id"] = str(profile["_id"])
-    except Exception as e:
-        return jsonify({
-            "success": False,
-            "error": "Server error: Could not update profile in database",
-        }), 500
-    return jsonify({
-        "success": True,
-        "message": "Profile updated successfully!",
-        "data": profile
-    }), 201
 
-def process_resume_pdf(file):
-    """
-    Handles file size validation, page count limits, and text extraction.
-    Returns (extracted_text, error_message, status_code)
-    """
-    MAX_FILE_SIZE = 2 * 1024 * 1024  # 2MB
-    
-    # Check file size
-    file.seek(0, os.SEEK_END)
-    file_size = file.tell()
-    if file_size > MAX_FILE_SIZE:
-        return None, "File too large (Max 2MB)", 413
-    file.seek(0)
-
-    try:
-        reader = PdfReader(file)
-        # Limit page count to prevent resource exhaustion
-        if len(reader.pages) > 10:
-            return None, "PDF too long (Max 10 pages)", 400
-            
-        extracted_text = ""
-        for page in reader.pages:
-            extracted_text += page.extract_text() or ""
-        
-        if not extracted_text.strip():
-            return None, "Could not extract text from PDF", 400
-            
-        return extracted_text, None, 200
-    except Exception as e:
-        return None, f"Failed to read PDF file: {str(e)}", 500
 
 
 @profile_bp.route("/profile", methods=["DELETE"])
@@ -175,6 +132,7 @@ def deleteUser():
                 "error": "Profile not found or could not be deleted"
             }), 404
         res["_id"] = str(res["_id"])
+        deleteResumeFromCloudinary(res.get("public_id"))
         return jsonify({
             "success": True,
             "message": "Profile deleted successfully",
