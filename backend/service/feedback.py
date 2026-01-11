@@ -24,7 +24,7 @@ def getFeedBack(interviewId,userId):
 def allFeedBack(userId):
     try:
         interviews=getInterview(userId) or []
-        feedback_list = []
+        feedbackList = []
         for interview in interviews:
             if "feedbackId" in interview:
                 interview["_id"]=str(interview["_id"])
@@ -32,7 +32,7 @@ def allFeedBack(userId):
                 if feedback:
                     feedback["_id"] = str(feedback["_id"])
                     feedback["interview"]=interview
-                    feedback_list.append(feedback)
-        return feedback_list
+                    feedbackList.append(feedback)
+        return feedbackList
     except Exception as e:
         return None

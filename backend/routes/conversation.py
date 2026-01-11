@@ -1,14 +1,14 @@
 from flask import Blueprint, request, jsonify
 from service.conversation import createConversation,getConversation
-from routes.auth import verify_jwt  # <-- Import here
+from routes.auth import verifyJWT  # <-- Import here
 from utils.limiter import limiter
 con_bp = Blueprint('conversation', __name__)
 
 @con_bp.route("/conversation", methods=["POST"])
 @limiter.limit("10 per minute") # Limit to 10 requests per minute
-def create_conversation():
-    token_user = verify_jwt(request)
-    if not token_user:
+def createConversationRoute():
+    userId = verifyJWT(request)
+    if not userId:
         return jsonify({
             "success": False, 
             "error": "Unauthorized"
@@ -28,7 +28,7 @@ def create_conversation():
                 "success": False,
                 "error": "Invalid input data"
             }), 400
-        response = createConversation(conversations, userId=token_user, interviewId=interviewId)
+        response = createConversation(conversations, userId=userId, interviewId=interviewId)
         return jsonify({
             "success": True,
             "message": "Conversation created successfully",
@@ -41,9 +41,9 @@ def create_conversation():
         }), 500
 @con_bp.route("/conversation", methods=["GET"])
 @limiter.limit("10 per minute") # Limit to 10 requests per minute
-def get_conversation():
-    token_user = verify_jwt(request)
-    if not token_user:
+def getConversationRoute():
+    userId = verifyJWT(request)
+    if not userId:
         return jsonify({
             "success": False, 
             "error": "Unauthorized"
@@ -55,7 +55,7 @@ def get_conversation():
             "error": "interviewId are required"
         }), 400
     try:
-        response = getConversation(userId=token_user, interviewId=interviewId)
+        response = getConversation(userId=userId, interviewId=interviewId)
         return jsonify({
             "success": True,
             "message": "Conversation fetched successfully",

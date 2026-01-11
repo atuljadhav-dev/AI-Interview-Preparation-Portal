@@ -5,7 +5,6 @@ def uploadResumeToCloudinary(file):
     try:
         response = cloudinary.uploader.upload(
             file,
-            # public_id=public_id,
             resource_type="auto",
             use_filename=True,
             unique_filename=True, 

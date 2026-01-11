@@ -2,14 +2,14 @@ from flask import Blueprint, request, jsonify
 from service.interview import createInterview, getInterview,getSpecificInterview
 from service.ai import generateQuestions
 import json
-from routes.auth import verify_jwt 
+from routes.auth import verifyJWT 
 from utils.limiter import limiter
 interview_bp = Blueprint('interview', __name__)
 @interview_bp.route("/interview", methods=["POST"])
 @limiter.limit("5 per minute") # Limit to 5 requests per minute
-def create_interview():
-    token_user = verify_jwt(request)
-    if not token_user:
+def createInterviewRoute():
+    userId = verifyJWT(request)
+    if not userId:
         return jsonify({
             "success": False, 
             "error": "Unauthorized"
@@ -21,17 +21,17 @@ def create_interview():
             "error":"No data provided"
             }),400
     try:
-        job_description=data['jobDescription']
-        round_name=data['round_name']
+        jobDescription=data['jobDescription']
+        roundName=data['roundName']
         resume=data['resume']
         title=data["jobRole"]
         resumeId=data["resumeId"]
-        if not all([job_description, round_name, resume, title,resumeId]):
+        if not all([jobDescription, roundName, resume, title,resumeId]):
             return jsonify({
                 "success":False,
                 "error":"Invalid input data"
                 }),400
-        response=generateQuestions(job_description,round_name,resume)
+        response=generateQuestions(jobDescription,roundName,resume)
         if response is None:
             return jsonify({
                 "success":False,
@@ -44,11 +44,12 @@ def create_interview():
             "error":"Server error: Could not generate questions",
             }),500
     try:
-        interview = createInterview( title=title,round_name=round_name,userId=token_user,description=job_description,question_answer=response["questionAnswer"],resumeId=resumeId,skills=response["skills"])
+        interview = createInterview( userId,title,roundName,jobDescription,resumeId,questionAnswer=response["questionAnswer"],skills=response["skills"])
         
         if "_id" in interview:
             interview["_id"] = str(interview["_id"])
     except Exception as e:
+        print(e)
         return jsonify({
             "success": False,
             "error": "Could not create interview",
@@ -60,20 +61,20 @@ def create_interview():
     }), 201
 @interview_bp.route("/interview", methods=["GET"])
 @limiter.limit("10 per minute") # Limit to 10 requests per minute
-def get_All_interview():
-    token_user = verify_jwt(request)
-    if not token_user :
+def getAllInterview():
+    userId = verifyJWT(request)
+    if not userId :
         return jsonify({
             "success": False, 
             "error": "Unauthorized"
             }), 401
     try:
-        interviews = getInterview(token_user)
-        interview_list = []
+        interviews = getInterview(userId)
+        interviewList = []
         for interview in interviews:
             if "_id" in interview:
                 interview["_id"] = str(interview["_id"])
-            interview_list.append(interview)
+            interviewList.append(interview)
     except Exception as e:
         return jsonify({
             "success": False,
@@ -83,13 +84,13 @@ def get_All_interview():
     return jsonify({
         "success": True,
         "message": "Interviews fetched successfully",
-        "data": interview_list
+        "data": interviewList
     }), 200
 
 @interview_bp.route("/interview/specific/<interviewId>", methods=["GET"])
 @limiter.limit("10 per minute") # Limit to 10 requests per minute
-def get_specific_interview(interviewId):
-    userId = verify_jwt(request)
+def getSpecificInterviewRoute(interviewId):
+    userId = verifyJWT(request)
     if not userId:
         return jsonify({
             "success": False, 

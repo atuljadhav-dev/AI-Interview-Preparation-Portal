@@ -11,7 +11,7 @@ class QAItem(BaseModel):
     question: str
     answer: str
 
-def generateQuestions(job_description, resume, round_name="Technical Interview"):
+def generateQuestions(jobDescription, resume, roundName="Technical Interview"):
     """
     Generates interview questions based on the provided role and skills.
     """
@@ -21,9 +21,9 @@ def generateQuestions(job_description, resume, round_name="Technical Interview")
     Based on the following data, generate interview questions 
     and return them in **strict JSON array** format.
 
-    data: job description: {job_description}
+    data: job description: {jobDescription}
     data: resume: {resume}
-    data: round name: {round_name}
+    data: round name: {roundName}
 
     Example JSON:
 {{ "skills": ["Python", "Django", "REST APIs"],
@@ -69,10 +69,9 @@ def generateQuestions(job_description, resume, round_name="Technical Interview")
     except GeminiExhaustedError:
         return None
 
-def generateConfig(questions,resume,jobDescription,round_name):
+def generateConfig(questions,resume,jobDescription,roundName):
     return f"""
-You are an AI Interviewer conducting the {round_name}.
-
+You are an AI Interviewer conducting the {roundName}.
 Your role is to simulate a real human interviewer.
 You must ask questions naturally, one at a time, and wait for the candidate’s response before continuing.
 
@@ -81,8 +80,8 @@ You must ask questions naturally, one at a time, and wait for the candidate’s 
 ### 👤 Candidate Context
 - Resume: {resume}
 - Job Description: {jobDescription}
-- Interview Round: {round_name}
-- Current Time (IST): {timestamp} //use this to make the interview feel more real
+- Interview Round: {roundName}
+- Current Time (IST): {timestamp} -use this to make the interview feel more real
 
 ---
 
@@ -108,7 +107,7 @@ You must ask questions naturally, one at a time, and wait for the candidate’s 
     - Always wait for the candidate’s reply before proceeding.
     - If the candidate asks for clarification:
     - Provide a **short, neutral explanation only**
-    - Do NOT hint at the expected answer.
+    - Give hint of expected answer without revealing it.
 
 4. **Tone & Style**
     - Maintain a professional, calm, and conversational tone.
@@ -124,7 +123,6 @@ You must ask questions naturally, one at a time, and wait for the candidate’s 
 6. **Authenticity Check**
     - If a response appears AI-generated or copy-pasted:
         - Politely ask the candidate to answer in their own words
-        - Do NOT accuse or mention AI explicitly
         - User response should not consist decorated text or code blocks.
         - Example:
             ## **Architecture Approach**
@@ -143,6 +141,10 @@ You must ask questions naturally, one at a time, and wait for the candidate’s 
     - End the interview if:
         - All predefined questions are completed, OR
         - The conversation exceeds **30 total exchanges**
+        - The candidate uses abusive language.
+        - User send irrelevant or nonsensical answers.
+        - User is unresponsive for more than 2 consecutive questions.
+        - User give decorated text or code blocks in more than 2 answers.
 
 9. **Closing**
     - Conclude with:
@@ -162,8 +164,8 @@ You must ask questions naturally, one at a time, and wait for the candidate’s 
 
 Your goal is to simulate a realistic, professional interview experience with natural human flow.
 """
-def AIInterviewStimulation(questions,resume,jobDescription,round_name,content):
-    prompt=generateConfig(questions,resume,jobDescription,round_name)
+def AIInterviewStimulation(questions,resume,jobDescription,roundName,content):
+    prompt=generateConfig(questions,resume,jobDescription,roundName)
     config={
         "response_mime_type": "text/plain",
         "system_instruction": prompt,
@@ -175,7 +177,7 @@ def AIInterviewStimulation(questions,resume,jobDescription,round_name,content):
         return None
     
 
-def generateSummary(jobTitle,resume, questionAnswer, userAnswer, job_description, round_name,skills) :
+def generateSummary(jobTitle,resume, questionAnswer, userAnswer, jobDescription, roundName,skills) :
     return f"""
 You are an AI Interview Evaluator.
 
@@ -186,9 +188,9 @@ You must behave like a real technical/HR interviewer, not a tutor or assistant.
 
 ### 📌 Input Context
 
-- **Round Name**: {round_name}
+- **Round Name**: {roundName}
 - **Job Title**: {jobTitle}
-- **Job Description**: {job_description}
+- **Job Description**: {jobDescription}
 - **Candidate Resume**: {resume}
 - **Interview Questions with Ideal (Model) Answers**: {questionAnswer}
 - **Skills to be Rated**: {skills}
@@ -258,9 +260,9 @@ You must behave like a real technical/HR interviewer, not a tutor or assistant.
 ### ✅ Required Output JSON Schema
 
 {str({
-    "roundName": "round_name",
+    "roundName": "roundName",
     "jobTitle": "jobTitle",
-    "skillsRating":[{"skill_name": "rating (1-5)"}],
+    "skillsRating":[{"skillName": "rating (1-5)"}],
     "evaluation": {
         "strengths": ["string"],
         "weaknesses": ["string"],
@@ -269,8 +271,8 @@ You must behave like a real technical/HR interviewer, not a tutor or assistant.
     }
 })}
 """
-def generateFeedback(jobTitle,resume, questionAnswer, userAnswer, job_description, round_name,skills=None): 
-    prompt=generateSummary(jobTitle,resume, questionAnswer, userAnswer, job_description, round_name,skills)
+def generateFeedback(jobTitle,resume, questionAnswer, userAnswer, jobDescription, roundName,skills=None): 
+    prompt=generateSummary(jobTitle,resume, questionAnswer, userAnswer, jobDescription, roundName,skills)
     config={
         "response_mime_type": "application/json",
         "response_schema": {
@@ -283,10 +285,10 @@ def generateFeedback(jobTitle,resume, questionAnswer, userAnswer, job_descriptio
                     "items": {
                         "type": "object",
                         "properties": {
-                            "skill_name": {"type": "string"},
+                            "skillName": {"type": "string"},
                             "rating": {"type": "integer", "minimum": 1, "maximum": 5}
                         },
-                        "required": ["skill_name", "rating"]
+                        "required": ["skillName", "rating"]
                     }
                 },
                 "evaluation": {
@@ -319,7 +321,7 @@ def convertTextToJSON(text):
     prompt=f"""
     Convert the following text to a JSON object. 
     Ensure the JSON is properly formatted.
-   You are converting raw resume text into a structured JSON object.
+    You are converting raw resume text into a structured JSON object.
 
 RULES (IMPORTANT):
 - Preserve the original wording exactly inside all values.
@@ -356,8 +358,8 @@ Resume Text:
         return None
 
 def convertPDFToJSON(url):
-    doc_data=httpx.get(url).content
-    if not doc_data:
+    data=httpx.get(url).content
+    if not data:
         return None
     prompt=f"""
     You are converting a resume document into a structured JSON object.
@@ -387,8 +389,150 @@ OUTPUT REQUIREMENTS:
         "response_mime_type": "application/json",
     }
     try:
-        response = AIClient([prompt,types.Part.from_bytes(data=doc_data,mime_type='application/pdf')], config)
+        response = AIClient([prompt,types.Part.from_bytes(data=data,mime_type='application/pdf')], config)
         return response
     except GeminiExhaustedError:
         return None
 
+def generateATSReport(jobDescription, resume):
+    prompt= f"""
+    You are an expert Applicant Tracking System (ATS) and Technical Recruiter. 
+    Analyze the attached resume against the Job Description provided below. 
+
+    Job Description:
+    {jobDescription}
+
+    Resume: 
+    {resume}
+
+    Perform a deep analysis and output the results in strict JSON format. 
+    Your analysis must cover the following sections based on industry standards:
+
+    1. **Match Rate**: Calculate a percentage score (0-100) based on keyword matching and relevance.
+    2. **Searchability**: Verify the presence of Name, Phone, Email, LinkedIn, and Location.
+    3. **Hard Skills Analysis**: Compare skills in the resume vs. the job description. List 'Matched' and 'Missing'.
+    4. **Soft Skills Analysis**: Identify key soft skills (limit to top relevant ones).
+    5. **Formatting & Quality Check**:
+        - Check for "Skill Casing" errors (e.g., writing 'react' instead of 'React' or 'Jquery' instead of 'jQuery').
+        - Check for repetitive verbs or passive voice.
+    6. **Recruiter Tips**: Identify if the resume uses measurable results (numbers/metrics) and if the word count is appropriate.
+
+    Output valid JSON only. Structure the JSON exactly as follows:
+    {{
+        "atsScore": "integer",
+        "summary": "string",
+        "searchability": {{
+            "namePresent": "boolean",
+            "emailPresent": "boolean",
+            "phonePresent": "boolean",
+            "linkedinPresent": "boolean",
+            "locationPresent": "boolean",
+            "jobTitleMatch": "boolean"
+        }},
+        "skillsAnalysis": {{
+            "hardSkillsMatched": ["list", "of", "skills"],
+            "hardSkillsMissing": ["list", "of", "skills"],
+            "softSkillsFound": ["list", "of", "skills"]
+        }},
+        "formattingCheck": {{
+            "skillCasingErrors": ["list", "of", "incorrectly", "cased", "skills"],
+            "usageOfActiveVoice": "stringComment",
+            "repetitionCheck": "stringComment"
+        }},
+        "grammerCheck": {{
+            "spellingErrorsFound": "boolean",
+            "grammarIssuesFound": "boolean",
+            "correctionsSuggested": ["list", "of", "corrections"]
+        }},
+        "recruiterTips": {{
+            "measurableResultsFound": "boolean",
+            "improvementSuggestions": ["list", "of", "actionable", "tips"]
+        }},
+        "recommendation": {{
+            "interviewRecommendation": "string",
+            "resumeRecommendation":"string"
+        }}
+    }}
+    """
+    config={
+        "response_mime_type": "application/json",
+        "response_schema": {
+            "type": "object",
+            "properties": {
+                "atsScore": {"type": "integer"},
+                "summary": {"type": "string"},
+                "searchability": {
+                    "type": "object",
+                    "properties": {
+                        "namePresent": {"type": "boolean"},
+                        "emailPresent": {"type": "boolean"},
+                        "phonePresent": {"type": "boolean"},
+                        "linkedinPresent": {"type": "boolean"},
+                        "locationPresent": {"type": "boolean"},
+                        "jobTitleMatch": {"type": "boolean"}
+                    }
+                },
+                "skillsAnalysis": {
+                    "type": "object",
+                    "properties": {
+                        "hardSkillsMatched": {
+                            "type": "array",
+                            "items": {"type": "string"}
+                        },
+                        "hardSkillsMissing": {
+                            "type": "array",
+                            "items": {"type": "string"}
+                        },
+                        "softSkillsFound": {
+                            "type": "array",
+                            "items": {"type": "string"}
+                        }
+                    }
+                },
+                "formattingCheck": {
+                    "type": "object",
+                    "properties": {
+                        "skillCasingErrors": {
+                            "type": "array",
+                            "items": {"type": "string"}
+                        },
+                        "usageOfActiveVoice": {"type": "string"},
+                        "repetitionCheck": {"type": "string"}
+                    }
+                },
+                "grammerCheck": {
+                    "type": "object",
+                    "properties": {
+                        "spellingErrorsFound": {"type": "boolean"},
+                        "grammarIssuesFound": {"type": "boolean"},
+                        "correctionsSuggested": {
+                            "type": "array",
+                            "items": {"type": "string"}
+                        }
+                    }
+                },
+                "recruiterTips": {
+                    "type": "object",
+                    "properties": {
+                        "measurableResultsFound": {"type": "boolean"},
+                        "improvementSuggestions": {
+                            "type": "array",
+                            "items": {"type": "string"}
+                        }
+                    }
+                },
+                "recommendation": {
+                    "type": "object",
+                    "properties": {
+                        "interviewRecommendation": {"type": "string"}
+                        ,"resumeRecommendation":{"type":"string"}
+                    }
+                }
+            }
+        }
+    }
+    try:
+        response = AIClient(prompt, config)
+        return response
+    except GeminiExhaustedError:
+        return None

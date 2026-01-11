@@ -13,7 +13,7 @@ const CreateInterviewPage = () => {
     const [formData, setFormData] = useState({
         jobRole: "",
         jobDescription: "",
-        round_name: "",
+        roundName: "",
         resumeId: "",
         resume: {},
     });
@@ -143,13 +143,13 @@ const CreateInterviewPage = () => {
                             Select Interview Round
                         </h2>
                         <input
-                            list="round_name"
-                            name="round_name"
-                            value={formData.round_name}
+                            list="roundName"
+                            name="roundName"
+                            value={formData.roundName}
                             onChange={handleFormChange}
                             className="w-full bg-gray-800 text-gray-300 p-3 rounded-lg border border-gray-600 focus:ring-2 focus:ring-purple-600"
                         />
-                        <datalist id="round_name">
+                        <datalist id="roundName">
                             <option value="Technical Round" />
                             <option value="HR Round" />
                             <option value="Managerial Round" />

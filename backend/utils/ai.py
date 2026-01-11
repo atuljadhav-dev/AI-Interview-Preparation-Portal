@@ -1,18 +1,18 @@
 from google import genai
-from utils.gemini_keys import get_next_key, GEMINI_KEYS
+from utils.gemini_keys import getNextKey, GEMINI_KEYS
 class GeminiExhaustedError(Exception):
     '''Custom exception to indicate all Gemini API keys are exhausted.'''
     pass
 
 def AIClient(content, config):
     attempts = 0
-    max_attempts = len(GEMINI_KEYS) # number of keys to try
+    maxAttempts = len(GEMINI_KEYS) # number of keys to try
 
-    while attempts < max_attempts:
-        api_key = get_next_key()
+    while attempts < maxAttempts:
+        apiKey = getNextKey()
 
         try:
-            client = genai.Client(api_key=api_key)
+            client = genai.Client(api_key=apiKey)
             response = client.models.generate_content(
                 model="gemini-2.5-flash",
                 contents=content,

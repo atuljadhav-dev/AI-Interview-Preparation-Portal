@@ -1,20 +1,50 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { useUser } from "@/hooks/useUser";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import useDebounce from "@/hooks/useDebounce";
 
 export default function ProfileUpload() {
     const [file, setFile] = useState(null);
     const [uploading, setUploading] = useState(false);
     const [name, setName] = useState("");
+    const [available, setAvailable] = useState(true);
+    const debouncedName = useDebounce(name, 500);
     const router = useRouter();
     const { setLoading, resume } = useUser();
     const handleFileChange = (e) => {
         setFile(e.target.files[0]);
     };
+    useEffect(() => {
+        const checkAvialability = async () => {
+            try {
+                const res = await axios.post(
+                    `${process.env.NEXT_PUBLIC_BASE_URL}/profile/check-name`,
+                    {
+                        name: debouncedName,
+                    },
+                    {
+                        withCredentials: true,
+                    }
+                );
+
+                if (res.data.data.exists === true) {
+                    setAvailable(false);
+                } else {
+                    setAvailable(true);
+                }
+            } catch (err) {
+                console.error("Error checking name availability", err);
+            }
+        };
+        if (debouncedName) {
+            checkAvialability();
+        }
+    }, [debouncedName]);
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!file) {
@@ -23,6 +53,10 @@ export default function ProfileUpload() {
         }
         if (!name) {
             toast.error("Please enter a name for the resume");
+            return;
+        }
+        if (!available) {
+            toast.error("Please choose a different name for the resume");
             return;
         }
         if (uploading) return;
@@ -46,6 +80,7 @@ export default function ProfileUpload() {
             router.back();
         } catch (err) {
             toast.error("Upload failed. Please try again.");
+            console.error("Error uploading resume:", err);
         } finally {
             setUploading(false);
         }
@@ -69,6 +104,17 @@ export default function ProfileUpload() {
                         onChange={(e) => setName(e.target.value)}
                         className="mb-4 p-2 rounded-md bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-600 w-full"
                     />
+                    {name &&
+                        (available ? (
+                            <p className="pb-2 text-green-600">
+                                ✅ {name} is available.
+                            </p>
+                        ) : (
+                            <p className="pb-2 text-red-600">
+                                {" "}
+                                ❌ {name} is not available.
+                            </p>
+                        ))}
                     <input
                         type="file"
                         accept=".pdf"
@@ -78,8 +124,12 @@ export default function ProfileUpload() {
                     <button
                         type="submit"
                         disabled={uploading}
-                        className="bg-purple-500 text-white cursor-pointer px-4 py-2 rounded-md m-3">
-                        Upload
+                        className={`bg-purple-500 text-white cursor-pointer px-4 py-2 rounded-md m-3 ${
+                            uploading
+                                ? "cursor-not-allowed animate-pulse"
+                                : "hover:bg-purple-600"
+                        }`}>
+                        {uploading ? "Uploading..." : "Upload Resume"}
                     </button>
                 </form>
             </div>
@@ -90,11 +140,11 @@ export default function ProfileUpload() {
                     <h2 className="text-xl font-semibold text-white">
                         {res.name}
                     </h2>
-                    <a
+                    <Link
                         href={`/userdata/${res._id}`}
                         className="text-purple-400 hover:underline">
                         View Resume
-                    </a>
+                    </Link>
                 </div>
             ))}
         </>

@@ -9,7 +9,7 @@ auth_bp = Blueprint('auth', __name__)
 SECRET_KEY = os.getenv("JWT_SECRET")  
 if not SECRET_KEY:
     raise ValueError("Secret is Missing!")
-def create_jwt(userId):
+def createJWT(userId):
     '''Create a JWT token for the given user ID with a 2-day expiry.'''
     payload = {
         "userId": str(userId),
@@ -17,7 +17,7 @@ def create_jwt(userId):
     }
     return jwt.encode(payload, SECRET_KEY, algorithm="HS256")
 
-def verify_jwt(request):
+def verifyJWT(request):
     '''Verify the JWT token from the request cookies and return the user ID if valid.'''
     token = request.cookies.get("authToken")
     if not token:
@@ -66,7 +66,7 @@ def signup():
             "error": "Could not create user"
             }), 500
     
-    token = create_jwt(user["_id"])# Create JWT token
+    token = createJWT(user["_id"])# Create JWT token
 
     response = make_response(jsonify({
         "success": True,
@@ -105,7 +105,7 @@ def signin():
     user["_id"] = str(user["_id"])
     user.pop("password", None)
 
-    token = create_jwt(user["_id"])
+    token = createJWT(user["_id"])
 
     response = make_response(jsonify({
         "success": True,
@@ -144,7 +144,7 @@ def verify():
             "success": False, 
             "error": "Unauthorized"
             }), 403
-    decoded = verify_jwt(request)
+    decoded = verifyJWT(request)
     if not decoded:
         response = make_response(jsonify({
         "success": False,

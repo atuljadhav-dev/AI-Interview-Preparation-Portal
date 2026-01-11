@@ -1,22 +1,22 @@
 from flask import Blueprint, request, jsonify
 import os
-from service.profile import getProfile, createProfile,deleteProfile
+from service.profile import getProfile, createProfile,deleteProfile,checkExistProfile
 import json
 from service.ai import convertTextToJSON,convertPDFToJSON
-from routes.auth import verify_jwt 
+from routes.auth import verifyJWT 
 from utils.limiter import limiter
 from service.cloudinary import uploadResumeToCloudinary,deleteResumeFromCloudinary
-from service.pdfParsing import process_resume_pdf,is_poor_extraction
+from service.pdfParsing import processResumePdf,isPoorExtraction
 profile_bp = Blueprint('profile', __name__)
 @profile_bp.route("/profile", methods=["GET"])
 @limiter.limit("10 per minute") # Limit to 10 requests per minute
-def get_profile():
-    token_user = verify_jwt(request)
-    if not token_user :
+def getProfileRoute():
+    userId = verifyJWT(request)
+    if not userId :
         return jsonify({
             "success": False, 
             "error": "Unauthorized"}), 401
-    resumes = getProfile(token_user)
+    resumes = getProfile(userId)
     if not resumes:
         return jsonify({
             "success": False,
@@ -35,9 +35,9 @@ def get_profile():
 
 @profile_bp.route("/profile", methods=["POST"])
 @limiter.limit("5 per minute") # Limit resume uploads to 5 per minute
-def create_profile():
-    token_user = verify_jwt(request)
-    if not token_user:
+def createProfileRoute():
+    userId = verifyJWT(request)
+    if not userId:
         return jsonify({
             "success": False, 
             "error": "Unauthorized"
@@ -51,8 +51,8 @@ def create_profile():
     
     # Check file size
     file.seek(0, os.SEEK_END)
-    file_size = file.tell()
-    if file_size > MAX_FILE_SIZE:
+    fileSize = file.tell()
+    if fileSize > MAX_FILE_SIZE:
         return jsonify({"success": False, "error": "File size exceeds 2MB limit"}), 400
     file.seek(0)
     data = request.form.to_dict()
@@ -62,26 +62,28 @@ def create_profile():
             "error": "Resume data is required"
         }), 400
     
-    upload_url,public_id=uploadResumeToCloudinary(file)
-    if not upload_url:
+    url,publicId=uploadResumeToCloudinary(file)
+    if not url:
         return jsonify({
             "success": False,
             "error": "Failed to upload resume to cloud storage"
         }), 500
     file.seek(0)
-    extracted_text, error, status = process_resume_pdf(file)
+    extractedText, error, status = processResumePdf(file)
     
     if error:
-        deleteResumeFromCloudinary(public_id)
+        deleteResumeFromCloudinary(publicId)
         return jsonify({"success": False, "error": error}), status
-    isInValidText=is_poor_extraction(extracted_text)
+    isInValidText=isPoorExtraction(extractedText)
     ai=None
     if isInValidText:
-        ai=convertPDFToJSON(upload_url)
+        print("Poor text extraction, using PDF to JSON conversion")
+        ai=convertPDFToJSON(url)
     else:
-        ai=convertTextToJSON(extracted_text)
+        print("Using text to JSON conversion")
+        ai=convertTextToJSON(extractedText)
     if ai is None:
-        deleteResumeFromCloudinary(public_id)
+        deleteResumeFromCloudinary(publicId)
         return jsonify({
                 "success":False,
                 "error":"AI response error"
@@ -89,13 +91,14 @@ def create_profile():
     profile=None
     try:
         resume=json.loads(ai.text)
-        profile = createProfile(token_user, resume, data.get('name', ''), upload_url,public_id) 
+        profile = createProfile(userId, resume, data.get('name', ''), url,publicId) 
         if "_id" in profile:
             profile["_id"] = str(profile["_id"])
     except Exception as e:
-        deleteResumeFromCloudinary(public_id)
+        print(e)
+        deleteResumeFromCloudinary(publicId)
         if profile:
-            deleteProfile(token_user,profile.get("_id"))
+            deleteProfile(userId,profile.get("_id"))
         return jsonify({
             "success": False,
             "error": "Server error: Could not create profile in database",
@@ -106,13 +109,10 @@ def create_profile():
         "data": profile
     }), 201
 
-
-
-
 @profile_bp.route("/profile", methods=["DELETE"])
 @limiter.limit("5 per minute") # Limit profile deletions to 5 per minute
 def deleteUser():
-    userId = verify_jwt(request)
+    userId = verifyJWT(request)
     if not userId:
         return jsonify({
             "success": False, 
@@ -132,7 +132,8 @@ def deleteUser():
                 "error": "Profile not found or could not be deleted"
             }), 404
         res["_id"] = str(res["_id"])
-        deleteResumeFromCloudinary(res.get("public_id"))
+        if res:
+            deleteResumeFromCloudinary(res.get("publicId"))
         return jsonify({
             "success": True,
             "message": "Profile deleted successfully",
@@ -144,3 +145,27 @@ def deleteUser():
             "error": "Server error: Could not delete profile",
         }), 500
     
+@profile_bp.route("/profile/check-name", methods=["POST"])
+@limiter.limit("20 per minute") # Limit to 20 requests per minute
+def checkExistProfile():
+    data = request.get_json()
+    if not data or 'name' not in data:
+        return jsonify({
+            "success": False,
+            "error": "Profile name is required"
+        }), 400
+    name = data['name']
+    try:
+        print("Checking existence for profile name:", name)
+        exists = checkExistProfile(name)
+        print(exists)
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "error": "Server error: Could not check profile existence",
+        }), 500
+    return jsonify({
+        "success": True,
+        "message": "Profile existence checked successfully",
+        "data": {"exists": exists}
+    }), 200

@@ -33,7 +33,8 @@ const InterviewPage = ({ id }) => {
                 }
             } catch (e) {
                 toast.error("Failed to fetch interview data.");
-                router.push("/home");
+                console.log(e);
+                //router.push("/home");
             }
         };
         fetchData();

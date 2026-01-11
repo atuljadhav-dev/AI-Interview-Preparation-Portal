@@ -3,13 +3,13 @@ from bson import ObjectId
 def getProfile(userId):
     user=db.profiles.find({"userId":userId})
     return user
-def createProfile(userId, resume,name,url=None,public_id=None):
+def createProfile(userId, resume,name,url=None,publicId=None):
     profile={
         "userId":userId,
         "resume":resume,
         "name":name,
         "url":url,
-        "public_id":public_id
+        "publicId":publicId
         }
     res=db.profiles.insert_one(profile)
     profile["_id"] = res.inserted_id
@@ -21,7 +21,7 @@ def deleteProfile(userId,profileId):
     return res
 
 def checkExistProfile(name):
-    res=db.profiles.find_one({name})
+    res=db.profiles.find_one({"name":name})
     if res:
         return True
     return False

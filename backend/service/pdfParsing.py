@@ -1,5 +1,5 @@
 from pypdf import PdfReader
-def is_poor_extraction(text: str) -> bool:
+def isPoorExtraction(text: str) -> bool:
     lines = [l.strip() for l in text.splitlines() if l.strip()]
 
     # Too short for a resume
@@ -7,8 +7,8 @@ def is_poor_extraction(text: str) -> bool:
         return True
 
     # Excessive single-word or very short lines
-    single_word_lines = sum(1 for l in lines if len(l.split()) <= 2)
-    if single_word_lines / max(len(lines), 1) > 0.4:
+    singleWordLines = sum(1 for l in lines if len(l.split()) <= 2)
+    if singleWordLines / max(len(lines), 1) > 0.4:
         return True
 
     # Missing key sections
@@ -18,10 +18,10 @@ def is_poor_extraction(text: str) -> bool:
 
     return False
 
-def process_resume_pdf(file):
+def processResumePdf(file):
     """
     Handles file size validation, page count limits, and text extraction.
-    Returns (extracted_text, error_message, status_code)
+    Returns (extractedText, errormessage, statusCode)
     """
     try:
         reader = PdfReader(file)
@@ -29,13 +29,13 @@ def process_resume_pdf(file):
         if len(reader.pages) > 3:
             return None, "PDF too long (Max 3 pages)", 400
             
-        extracted_text = ""
+        extractedText = ""
         for page in reader.pages:
-            extracted_text += page.extract_text() or ""
+            extractedText += page.extract_text() or ""
         
-        if not extracted_text.strip():
+        if not extractedText.strip():
             return None, "Could not extract text from PDF", 400
             
-        return extracted_text, None, 200
+        return extractedText, None, 200
     except Exception as e:
         return None, f"Failed to read PDF file: {str(e)}", 500

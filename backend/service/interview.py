@@ -2,14 +2,14 @@ from utils.db import db
 from datetime import datetime
 import pytz
 from bson import ObjectId
-def createInterview(userId,title,round_name,description,question_answer,resumeId,skills):
+def createInterview(userId,title,roundName,jobDescription,resumeId,questionAnswer,skills):
     tz_india = pytz.timezone('Asia/Kolkata')
     interview={
         "userId":userId,
         "title":title,
-        "roundName":round_name,
-        "jobDescription":description,
-        "questions":question_answer,
+        "roundName":roundName,
+        "jobDescription":jobDescription,
+        "questions":questionAnswer,
         "skills":skills,
         "status": "Scheduled",
         "resumeId":resumeId,

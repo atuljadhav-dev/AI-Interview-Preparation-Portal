@@ -1,7 +1,7 @@
 from flask import Blueprint,request,jsonify
 import json
 from service.ai import generateFeedback,AIInterviewStimulation
-from routes.auth import verify_jwt 
+from routes.auth import verifyJWT 
 from utils.limiter import limiter
 ai_bp=Blueprint('ai',__name__)
 
@@ -9,7 +9,7 @@ ai_bp=Blueprint('ai',__name__)
 @limiter.limit("5 per minute") # Limit to 5 requests per minute
 def feedbackGeneration():
     '''Generate feedback based on resume, questionAnswer, userAnswer, jobTitle, jobDescription, roundName'''
-    if not verify_jwt(request):# prevent unauthorized access
+    if not verifyJWT(request):# prevent unauthorized access
         return jsonify({
             "success": False, 
             "error": "Unauthorized"
@@ -25,15 +25,15 @@ def feedbackGeneration():
         questionAnswer=data['questionAnswer']
         userAnswer=data['userAnswer']
         jobTitle=data["jobTitle"]
-        job_description=data['jobDescription']
-        round_name=data['roundName']
+        jobDescription=data['jobDescription']
+        roundName=data['roundName']
         skills=data['skills']
-        if not all([resume, questionAnswer, userAnswer, jobTitle, job_description, round_name,skills]):# validate input
+        if not all([resume, questionAnswer, userAnswer, jobTitle, jobDescription, roundName,skills]):# validate input
             return jsonify({
                 "success":False,
                 "error":"Invalid input data"
                 }),400
-        response=generateFeedback(jobTitle,resume, questionAnswer, userAnswer, job_description, round_name,skills)
+        response=generateFeedback(jobTitle,resume, questionAnswer, userAnswer, jobDescription, roundName,skills)
         if response is None:
             return jsonify({
                 "success":False,
@@ -54,7 +54,7 @@ def feedbackGeneration():
 @limiter.limit("10 per minute") # Limit to 10 requests per minute
 def interviewStimulation():
     '''Generate interview simulation based on questions, resume, jobDescription, roundName, content'''
-    if not verify_jwt(request):
+    if not verifyJWT(request):
         return jsonify({
             "success": False, 
             "error": "Unauthorized"
@@ -69,14 +69,14 @@ def interviewStimulation():
         questions=data['questions']
         resume=data['resume']
         jobDescription=data['jobDescription']
-        round_name=data['roundName']
+        roundName=data['roundName']
         content=data['content']
-        if not all([questions, resume, jobDescription, round_name, content]):
+        if not all([questions, resume, jobDescription, roundName, content]):
             return jsonify({
                 "success":False,
                 "error":"Invalid input data"
                 }),400
-        response=AIInterviewStimulation(questions,resume,jobDescription,round_name,content)
+        response=AIInterviewStimulation(questions,resume,jobDescription,roundName,content)
         if response is None:
             return jsonify({
                 "success":False,
