@@ -44,7 +44,7 @@ const HomePage = () => {
     }, [filter, interviews]);
     return (
         <>
-            <div className="bg-gray-950 min-h-[calc(100%-4rem)] w-full md:py-0">
+            <div className="min-h-[calc(100%-4rem)] w-full md:py-0">
                 <div className="container mx-auto h-full flex flex-col md:flex-row items-center justify-between px-6 md:px-10">
                     <div className="w-full md:w-5/12 flex flex-col items-center md:items-start text-center md:text-left order-1 md:order-1 mt-8 md:mt-0">
                         <div className="w-full md:max-w-md h-auto  mb-8">
@@ -54,13 +54,13 @@ const HomePage = () => {
                                 alt="image"></Image>
                         </div>
                         <div className="mb-6 w-full px-5">
-                            <p className="text-3xl sm:text-4xl lg:text-5xl text-white font-sans font-extrabold leading-tight">
+                            <p className="text-3xl sm:text-4xl lg:text-5xl  font-sans font-extrabold leading-tight">
                                 AI-Powered
                             </p>
                             <p className="text-3xl sm:text-4xl lg:text-5xl text-purple-500 font-sans font-extrabold leading-tight">
                                 Interview
                             </p>
-                            <p className="text-3xl sm:text-4xl lg:text-5xl text-white font-sans font-extrabold leading-tight">
+                            <p className="text-3xl sm:text-4xl lg:text-5xl font-sans font-extrabold leading-tight">
                                 Preparation Portal
                             </p>
                         </div>
@@ -88,7 +88,7 @@ const HomePage = () => {
                                 onClick={() => {
                                     router.push("/interview");
                                 }}
-                                className="bg-purple-500 cursor-pointer mt-12 justify-start items-start rounded-xl sm:font-semibold font-sansmy-15 transition hover:-translate-y-1 hover:scale-110 hover:bg-purple-400 ease-in w-[150px] sm:h-10 sm:w-[250px] mx-15 ">
+                                className="bg-purple-500 cursor-pointer text-white mt-12 justify-start items-start rounded-xl sm:font-semibold font-sansmy-15 transition hover:-translate-y-1 hover:scale-110 hover:bg-purple-400 ease-in w-[150px] sm:h-10 sm:w-[250px] mx-15 ">
                                 Start Interview
                             </button>
                         </div>
@@ -97,12 +97,12 @@ const HomePage = () => {
             </div>
             <div className="container mx-auto px-10 mt-20">
                 <div className="flex justify-between items-center mb-8">
-                    <h2 className="md:text-2xl text-xl text-white font-bold mb-6">
+                    <h2 className="md:text-2xl text-xl  font-bold mb-6">
                         Your Previous Interviews
                     </h2>
                     <select
                         value={filter}
-                        className="bg-gray-800 text-white px-4 py-2 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-600"
+                        className="px-4 py-2 rounded-md border dark:bg-black border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-600"
                         onChange={(e) => {
                             setFilter(e.target.value);
                         }}>

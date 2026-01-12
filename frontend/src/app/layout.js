@@ -1,16 +1,13 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "./globals.css";
-import { UserProvider } from "@/hooks/useUser";
 import { ToastContainer } from "react-toastify";
+import { Providers } from "@/components/Providers";
+import ThemeToggle from "@/components/ThemeToggle";
 
-const geistSans = Geist({
-    variable: "--font-geist-sans",
-    subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-    variable: "--font-geist-mono",
-    subsets: ["latin"],
+const geistPoppins = Poppins({
+    variable: "--font-geist-poppins", // Define a CSS variable for the font
+    subsets: ["latin"], // Specify the character subsets you need
+    weight: ["400", "500", "600", "700", "800"], // Add weights as needed
 });
 // metadata for the PlacementReady  help to improve SEO and provide essential information about the website.
 export const metadata = {
@@ -78,11 +75,12 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
     return (
-        <html lang="en">
-            <body
-                className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <html lang="en" suppressHydrationWarning>
+            <body className={`${geistPoppins.variable} antialiased`}>
                 <ToastContainer />
-                <UserProvider>{children}</UserProvider>
+                <Providers>
+                    {children}
+                </Providers>
             </body>
         </html>
     );

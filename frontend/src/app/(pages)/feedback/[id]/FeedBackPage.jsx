@@ -27,7 +27,7 @@ const FeedBackPage = ({ id }) => {
             }
             try {
                 const int = await axios.get(
-                    `${process.env.NEXT_PUBLIC_BASE_URL}/interview/specific/${id}`,
+                    `${process.env.NEXT_PUBLIC_BASE_URL}/interview/${id}`,
                     { withCredentials: true }
                 );
                 setInterview(int.data.data);
@@ -56,10 +56,10 @@ const FeedBackPage = ({ id }) => {
     }, [user, id, loading]);
     if (isFetching || loading) {
         return (
-            <div className="h-screen w-full flex flex-col justify-center items-center bg-gray-950 text-white">
+            <div className="h-screen w-full flex flex-col justify-center items-center">
                 <svg
                     aria-hidden="true"
-                    className="w-16 h-16 text-gray-700 animate-spin fill-indigo-500"
+                    className="w-16 h-16  animate-spin fill-indigo-500"
                     viewBox="0 0 100 101"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg">
@@ -79,17 +79,17 @@ const FeedBackPage = ({ id }) => {
         );
     }
     return (
-        <div className="bg-gray-950 min-h-screen text-white py-10 px-5">
+        <div className="min-h-screen py-10 px-5">
             <h1 className="text-4xl md:text-5xl font-bold text-center mb-10 text-indigo-400">
                 Interview Feedback
             </h1>
 
-            <div className="max-w-5xl mx-auto bg-gray-900 rounded-2xl shadow-lg p-6 space-y-8">
+            <div className="max-w-5xl mx-auto rounded-2xl shadow-lg p-6 space-y-8">
                 <section>
                     <h2 className="text-2xl font-semibold border-b border-gray-700 pb-2 mb-4">
                         Job Details
                     </h2>
-                    <div className="space-y-2 text-gray-300">
+                    <div className="space-y-2 ">
                         <p>
                             <span className="font-semibold text-indigo-400">
                                 Job Title:
@@ -115,7 +115,7 @@ const FeedBackPage = ({ id }) => {
                     <h2 className="text-2xl font-semibold border-b border-gray-700 pb-2 mb-4">
                         Evaluation Summary
                     </h2>
-                    <div className="space-y-4 text-gray-300">
+                    <div className="space-y-4 ">
                         <p>
                             <span className="font-semibold text-indigo-400">
                                 Interview Score:
@@ -126,7 +126,7 @@ const FeedBackPage = ({ id }) => {
                             <h4 className="font-semibold text-indigo-400">
                                 Justification:
                             </h4>
-                            <p className="mt-1 text-gray-400">
+                            <p className="mt-1 ">
                                 {feedback?.evaluation?.justification ||
                                     "No justification provided."}
                             </p>
@@ -139,13 +139,13 @@ const FeedBackPage = ({ id }) => {
                         Strengths
                     </h2>
                     {feedback?.evaluation?.strengths?.length ? (
-                        <ul className="list-disc ml-6 text-gray-300 space-y-1">
+                        <ul className="list-disc ml-6  space-y-1">
                             {feedback.evaluation.strengths.map((cur, idx) => (
                                 <li key={idx}>{cur}</li>
                             ))}
                         </ul>
                     ) : (
-                        <p className="text-gray-400">
+                        <p className="">
                             No strengths were recorded.
                         </p>
                     )}
@@ -155,13 +155,13 @@ const FeedBackPage = ({ id }) => {
                         Weaknesses
                     </h2>
                     {feedback?.evaluation?.weaknesses?.length ? (
-                        <ul className="list-disc ml-6 text-gray-300 space-y-1">
+                        <ul className="list-disc ml-6  space-y-1">
                             {feedback.evaluation.weaknesses.map((cur, idx) => (
                                 <li key={idx}>{cur}</li>
                             ))}
                         </ul>
                     ) : (
-                        <p className="text-gray-400">
+                        <p className="">
                             No noticeable shortcomings observed.
                         </p>
                     )}
@@ -175,24 +175,24 @@ const FeedBackPage = ({ id }) => {
                             {interview.questions.map((cur, idx) => (
                                 <div
                                     key={idx}
-                                    className="bg-gray-800 p-4 rounded-xl border border-gray-700">
+                                    className="p-4 rounded-xl border border-gray-700">
                                     <h4 className="text-indigo-400 font-semibold">
                                         Question {idx + 1}:
                                     </h4>
-                                    <p className="text-gray-200 mt-1">
+                                    <p className=" mt-1">
                                         {cur.question}
                                     </p>
                                     <h5 className="text-indigo-400 font-semibold mt-3">
                                         Expected Answer:
                                     </h5>
-                                    <p className="text-gray-300 mt-1">
+                                    <p className=" mt-1">
                                         {cur.answer}
                                     </p>
                                 </div>
                             ))}
                         </div>
                     ) : (
-                        <p className="text-gray-400">
+                        <p className="">
                             No questions available for this interview.
                         </p>
                     )}
@@ -214,8 +214,8 @@ const FeedBackPage = ({ id }) => {
                                         key={i}
                                         className={`p-3 rounded-md ${
                                             role === "model"
-                                                ? "bg-indigo-900 text-white"
-                                                : "bg-gray-800 text-gray-200"
+                                                ? "bg-indigo-300 dark:bg-indigo-800"
+                                                : ""
                                         }`}>
                                         <div className="text-sm font-medium mb-1">
                                             {role === "model" ? "AI" : "You"}
@@ -228,7 +228,7 @@ const FeedBackPage = ({ id }) => {
                             })}
                         </div>
                     ) : (
-                        <p className="text-gray-400">No conversation found.</p>
+                        <p className="">No conversation found.</p>
                     )}
                 </section>
             </div>

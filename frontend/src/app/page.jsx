@@ -10,7 +10,7 @@ const page = () => {
     return (
         <>
             <div
-                className="absolute inset-0 bg-gray-900 bg-cover bg-center"
+                className="absolute inset-0  bg-cover bg-center"
                 style={{
                     backgroundImage:
                         "linear-gradient(to right, rgba(200, 68, 68, 1), rgba(59, 130, 255, 1))",
@@ -29,7 +29,12 @@ const page = () => {
 
             <div className="relative z-10 flex flex-col h-screen">
                 <div className="flex justify-between items-center  px-4 sm:px-6 pt-4">
-                    <Image src={logo} height={50} width={150} alt="Background Image" />
+                    <Image
+                        src={logo}
+                        height={50}
+                        width={150}
+                        alt="Background Image"
+                    />
                 </div>
 
                 <div className="flex flex-col justify-center flex-1  px-4 sm:px-6 md:px-20 text-center sm:text-left absolute top-[15%]">
@@ -40,7 +45,7 @@ const page = () => {
                         Journey!!
                     </h1>
 
-                    <p className="text-base sm:text-lg md:text-xl text-black-500  max-w-2xl mx-auto sm:mx-0 mb-8 sm:mb-10">
+                    <p className="text-base sm:text-lg md:text-xl max-w-2xl mx-auto sm:mx-0 mb-8 sm:mb-10">
                         Unlock Your Potential, Empower Your Career.
                     </p>
                 </div>
@@ -52,59 +57,69 @@ const page = () => {
                     </a>
                 </div>
             </div>
-            <div className="bg-gray-950 py-16 md:py-20 border-t border-gray-800">
+            <div className=" py-16 md:py-20 ">
                 <div className="container mx-auto px-6">
-                    <div className="bg-gray-900 p-8 rounded-xl mb-16">
-                        <h3 className="text-3xl font-bold text-white mb-6 text-center">
+                    <div className=" p-8 mb-16 border-2 border-gray-950 dark:border-gray-100 rounded-2xl">
+                        <h3 className="text-3xl font-bold  mb-6 text-center">
                             Our Commitment
                         </h3>
-                        <p className="text-lg md:text-xl text-gray-300 max-w-4xl mx-auto mb-8 leading-relaxed">
-                            At <span className="font-bold text-purple-400">PlacementReady</span>, we believe that every career journey is an
-                            opportunity for growth. We've built a platform that removes
-                            the guesswork from job hunting, allowing you to focus on
-                            what you do best. Our tools are designed to help you prepare
-                            with confidence, build a professional brand, and stand out
-                            in a competitive job market.
+                        <p className="text-lg md:text-xl  max-w-4xl mx-auto mb-8 leading-relaxed">
+                            At{" "}
+                            <span className="font-bold text-purple-400">
+                                PlacementReady
+                            </span>
+                            , we believe that every career journey is an
+                            opportunity for growth. We've built a platform that
+                            removes the guesswork from job hunting, allowing you
+                            to focus on what you do best. Our tools are designed
+                            to help you prepare with confidence, build a
+                            professional brand, and stand out in a competitivej
+                            job market.
                         </p>
-                        <p className="text-lg md:text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
-                            Whether you are a recent graduate, a seasoned professional,
-                            or considering a career change, your path to success starts
-                            here. We're committed to providing the resources and
-                            guidance you need to achieve your goals and predict your
-                            future by creating it.
+                        <p className="text-lg md:text-xl  max-w-4xl mx-auto leading-relaxed">
+                            Whether you are a recent graduate, a seasoned
+                            professional, or considering a career change, your
+                            path to success starts here. We're committed to
+                            providing the resources and guidance you need to
+                            achieve your goals and predict your future by
+                            creating it.
                         </p>
                     </div>
 
                     <section className="mt-12">
-                        <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-12">
+                        <h2 className="text-3xl md:text-4xl font-bold text-center  mb-12">
                             Your Toolkit for Success
                         </h2>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-                            
-                            <div className="bg-gray-800 p-6 md:p-8 rounded-xl shadow-lg border border-purple-500/30 hover:bg-gray-700 transition-colors">
+                            <div className=" p-6 hover:scale-105 md:p-8 rounded-xl shadow-lg border border-purple-500/30  transition-colors">
                                 <h3 className="font-bold text-xl mb-2 text-purple-400">
                                     Comprehensive Preparation
                                 </h3>
-                                <p className="text-gray-300">
-                                    Access a vast library of interview questions, practice scenarios, and expert tips.
+                                <p className="">
+                                    Access a vast library of interview
+                                    questions, practice scenarios, and expert
+                                    tips.
                                 </p>
                             </div>
-                            
-                            <div className="bg-gray-800 p-6 md:p-8 rounded-xl shadow-lg border border-purple-500/30 hover:bg-gray-700 transition-colors">
+
+                            <div className=" p-6 hover:scale-105 md:p-8 rounded-xl shadow-lg border border-purple-500/30  transition-colors">
                                 <h3 className="font-bold text-xl mb-2 text-purple-400">
                                     Professional Branding
                                 </h3>
-                                <p className="text-gray-300">
-                                    Our resume-building tools help you create a powerful document that gets you noticed.
+                                <p className="">
+                                    Our resume-building tools help you create a
+                                    powerful document that gets you noticed.
                                 </p>
                             </div>
-                            
-                            <div className="bg-gray-800 p-6 md:p-8 rounded-xl shadow-lg border border-purple-500/30 hover:bg-gray-700 transition-colors">
+
+                            <div className=" p-6 hover:scale-105 md:p-8 rounded-xl shadow-lg border border-purple-500/30  transition-colors">
                                 <h3 className="font-bold text-xl mb-2 text-purple-400">
                                     Data-Driven Insights
                                 </h3>
-                                <p className="text-gray-300">
-                                    Get personalized feedback on your mock interviews to pinpoint areas for improvement.
+                                <p className="">
+                                    Get personalized feedback on your mock
+                                    interviews to pinpoint areas for
+                                    improvement.
                                 </p>
                             </div>
                         </div>
@@ -112,10 +127,11 @@ const page = () => {
                 </div>
             </div>
 
-            <section className="py-12 md:py-16 text-center bg-gray-900 border-t border-gray-800">
+            <section className="py-12 md:py-16 text-center  ">
                 <div className="container mx-auto px-4">
-                    <h3 className="text-2xl md:text-3xl font-bold text-white mb-6">
-                        Ready to turn your next interview into a great opportunity?
+                    <h3 className="text-2xl md:text-3xl font-bold  mb-6">
+                        Ready to turn your next interview into a great
+                        opportunity?
                     </h3>
                     <a
                         href="/sign-up"
@@ -124,7 +140,6 @@ const page = () => {
                     </a>
                 </div>
             </section>
-        
         </>
     );
 };

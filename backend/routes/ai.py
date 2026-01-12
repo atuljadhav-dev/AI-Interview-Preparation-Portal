@@ -1,6 +1,6 @@
 from flask import Blueprint,request,jsonify
 import json
-from service.ai import generateFeedback,AIInterviewStimulation
+from service.ai import generateFeedback,AIInterviewStimulation,generateATSReport
 from routes.auth import verifyJWT 
 from utils.limiter import limiter
 ai_bp=Blueprint('ai',__name__)
@@ -50,7 +50,7 @@ def feedbackGeneration():
             "error":"Server error: Could not generate feedback",
             }),500
 
-@ai_bp.route("/interview-stimulation", methods=["POST"])
+@ai_bp.route("/interview-simulation", methods=["POST"])
 @limiter.limit("10 per minute") # Limit to 10 requests per minute
 def interviewStimulation():
     '''Generate interview simulation based on questions, resume, jobDescription, roundName, content'''
@@ -92,3 +92,36 @@ def interviewStimulation():
             "success":False,
             "error":"Server error: Could not generate interview simulation",
             }),500
+    
+@ai_bp.route("/resume/ats-report", methods=["POST"])
+@limiter.limit("5 per minute") # Limit to 5 requests per minute
+def atsReport():
+    userId = verifyJWT(request)
+    if not userId:
+        return jsonify({
+            "success": False, 
+            "error": "Unauthorized"
+            }), 401
+
+    data = request.get_json()
+    if not data or 'resume' not in data:
+        return jsonify({
+            "success": False, 
+            "error": "No resume text provided"
+            }), 400
+
+    resume = data['resume']
+    jobDescription = data['jobDescription']
+    try:
+        report = generateATSReport(jobDescription,resume)
+        return jsonify({
+            "success": True,
+            "message": "ATS report generated successfully",
+            "data": json.loads(report.text)
+        }), 200
+
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500

@@ -22,7 +22,7 @@ const CreateInterviewPage = () => {
 
         if (!resume && !loading) {
             toast.info("Please upload or attach your resume");
-            router.push("/userdata");
+            router.push("/my-resume");
         }
     }, [resume, user]);
     useEffect(() => {
@@ -75,13 +75,13 @@ const CreateInterviewPage = () => {
     };
     return (
         <>
-            <div className="bg-gray-950  flex items-center  justify-center p-6">
+            <div className="flex items-center  justify-center p-6">
                 <form
                     method="POST"
                     onSubmit={handleSubmit}
-                    className="w-full max-w-4xl bg-gray-900 border-2 border-purple-900  shadow-md shadow-purple-500 rounded-xl  p-8 space-y-8">
+                    className="w-full max-w-4xl border-2 border-purple-900  shadow-md shadow-purple-500 rounded-xl  p-8 space-y-8">
                     <div className="p-6 rounded-lg border-2 border-gray-700 hover:border-purple-600 transition-colors">
-                        <h2 className="text-xl font-bold text-white mb-2">
+                        <h2 className="text-xl font-bold mb-2">
                             Job Role
                         </h2>
                         <input
@@ -90,11 +90,11 @@ const CreateInterviewPage = () => {
                             autoFocus
                             value={formData.jobRole}
                             onChange={handleFormChange}
-                            className="block w-full text-gray-300 bg-gray-800 pl-3 rounded-lg border border-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-600"
+                            className="block w-full pl-3 rounded-lg border border-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-600"
                         />
                     </div>
                     <div className="p-6 rounded-lg border-2 border-gray-700 hover:border-purple-600 transition-colors">
-                        <h2 className="text-xl font-bold text-white mb-2">
+                        <h2 className="text-xl font-bold mb-2">
                             Description
                         </h2>
                         <textarea
@@ -104,7 +104,7 @@ const CreateInterviewPage = () => {
                             value={formData.jobDescription}
                             onChange={handleFormChange}
                             style={{ height: "auto", overflow: "hidden" }}
-                            className="resize-none overflow-hidden px-3 w-full text-gray-300 bg-gray-800 rounded-lg border border-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-600"></textarea>
+                            className="resize-none overflow-hidden px-3 w-full rounded-lg border border-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-600"></textarea>
                     </div>
                     <div className="p-6 rounded-lg border-2 border-gray-700 hover:border-purple-600 transition-colors">
                         <h2 className="text-xl font-bold text-whiet mb-2">
@@ -117,13 +117,13 @@ const CreateInterviewPage = () => {
                                 const value = e.target.value;
 
                                 if (value === "add") {
-                                    router.push("/userdata");
+                                    router.push("/my-resume");
                                     return;
                                 }
 
                                 handleFormChange(e);
                             }}
-                            className="w-full bg-gray-800 text-gray-300 p-3 rounded-lg border border-gray-600 focus:ring-2 focus:ring-purple-600">
+                            className="w-full p-3 rounded-lg border border-gray-600 focus:ring-2 focus:ring-purple-600">
                             <option value="" disabled>
                                 Select Resume
                             </option>
@@ -139,7 +139,7 @@ const CreateInterviewPage = () => {
                         </select>
                     </div>
                     <div className="p-6 rounded-lg border-2 border-gray-700 hover:border-purple-600 transition-colors">
-                        <h2 className="text-xl font-bold text-white mb-2">
+                        <h2 className="text-xl font-bold mb-2">
                             Select Interview Round
                         </h2>
                         <input
@@ -147,7 +147,7 @@ const CreateInterviewPage = () => {
                             name="roundName"
                             value={formData.roundName}
                             onChange={handleFormChange}
-                            className="w-full bg-gray-800 text-gray-300 p-3 rounded-lg border border-gray-600 focus:ring-2 focus:ring-purple-600"
+                            className="w-full p-3 rounded-lg border border-gray-600 focus:ring-2 focus:ring-purple-600"
                         />
                         <datalist id="roundName">
                             <option value="Technical Round" />
@@ -161,7 +161,7 @@ const CreateInterviewPage = () => {
                         <button
                             type="submit"
                             disabled={sending}
-                            className="bg-linear-to-r from-purple-600 to-purple-800 cursor-pointer text-white font-bold text-lg px-10 py-4 rounded-xl shadow-lg 
+                            className="bg-linear-to-l from-purple-600 to-purple-800 cursor-pointer font-bold text-lg px-10 py-4 rounded-xl shadow-lg 
                      hover:from-purple-700 hover:to-purple-900 transform hover:scale-105 transition duration-300 ease-in-out">
                             Submit
                         </button>

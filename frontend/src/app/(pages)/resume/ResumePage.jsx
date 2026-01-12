@@ -149,7 +149,7 @@ const ResumePage = () => {
                     ))}
                 </select>
             ) : (
-                <p>No Resumes Found</p>
+                <div>No Resumes Found</div>
             )}
             <button onClick={handleSubmit}>submit</button>
             {report && (
@@ -158,20 +158,20 @@ const ResumePage = () => {
                         <h1>ATS Analysis Report</h1>
                         <div>
                             <h2>ATS Score: {report.atsScore}</h2>
-                            <p>
+                            <div>
                                 <div>Interview Outlook:</div>{" "}
                                 {report.recommendation.interviewRecommendation}
-                            </p>
-                            <p>
+                            </div>
+                            <div>
                                 <div>Resume Feedback:</div>{" "}
                                 {report.recommendation.resumeRecommendation}
-                            </p>
+                            </div>
                         </div>
                     </div>
 
                     <div>
                         <h3>Executive Summary</h3>
-                        <p>{report.summary}</p>
+                        <div>{report.summary}</div>
                     </div>
 
                     <div>
@@ -258,18 +258,18 @@ const ResumePage = () => {
 
                         <div>
                             <h4>Grammar Issues</h4>
-                            <p>
+                            <div>
                                 Grammar Errors Found:{" "}
                                 {report.grammerCheck.grammarIssuesFound
                                     ? "Yes"
                                     : "No"}
-                            </p>
-                            <p>
+                            </div>
+                            <div>
                                 Spelling Errors Found:{" "}
                                 {report.grammerCheck.spellingErrorsFound
                                     ? "Yes"
                                     : "No"}
-                            </p>
+                            </div>
                             <ul>
                                 {report.grammerCheck.correctionsSuggested.map(
                                     (correction, index) => (
@@ -314,12 +314,12 @@ const ResumePage = () => {
 
                     <div>
                         <h3>Recruiter's Action Plan</h3>
-                        <p>
+                        <div>
                             <div>Measurable Results Found:</div>{" "}
                             {report.recruiterTips.measurableResultsFound
                                 ? "Yes"
                                 : "No - Needs Improvement"}
-                        </p>
+                        </div>
 
                         <h4>Improvement Suggestions</h4>
                         <ol>

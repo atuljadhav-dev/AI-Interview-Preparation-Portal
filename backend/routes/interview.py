@@ -86,7 +86,7 @@ def getAllInterview():
         "data": interviewList
     }), 200
 
-@interview_bp.route("/interview/specific/<interviewId>", methods=["GET"])
+@interview_bp.route("/interview/<interviewId>", methods=["GET"])
 @limiter.limit("10 per minute") # Limit to 10 requests per minute
 def getSpecificInterviewRoute(interviewId):
     userId = verifyJWT(request)

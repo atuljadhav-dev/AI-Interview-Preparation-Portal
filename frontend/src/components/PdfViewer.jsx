@@ -36,23 +36,20 @@ const PdfViewer = ({ id }) => {
         } catch (e) {}
     };
     return (
-        <div className="relative w-full h-[90vh] border border-gray-300 rounded-md overflow-hidden">
-            {" "}
+        <div className="w-full h-full border border-gray-300 rounded-md ">
             <button
-                className="absolute top-2 right-2 p-2 bg-red-500 rounded-md hover:bg-red-600"
+                className="fixed top-16 right-2 p-2 bg-red-500 rounded-md hover:bg-red-600"
                 onClick={handleDelete}>
                 <Trash />
             </button>
-            <div className="w-full h-full">
-                {url ? (
-                    <iframe
-                        src={url}
-                        className="w-full h-full"
-                        title="PDF Viewer"></iframe>
-                ) : (
-                    <p>No Resume Found</p>
-                )}
-            </div>
+            {url ? (
+                <iframe
+                    src={url}
+                    className="w-full h-full"
+                    title="PDF Viewer"></iframe>
+            ) : (
+                <p>No Resume Found</p>
+            )}
         </div>
     );
 };

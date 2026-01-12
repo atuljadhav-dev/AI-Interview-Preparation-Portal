@@ -25,7 +25,7 @@ export async function middleware(request) {
     // Redirect unauthenticated users to sign-in for protected routes
     if (
         !verified &&
-        ["/interview", "/dashboard", "/home", "/userdata", "/feedback"].some(
+        ["/interview", "/dashboard", "/home", "/my-resume", "/feedback"].some(
             (path) => request.nextUrl.pathname.startsWith(path)
         )
     ) {
@@ -44,7 +44,7 @@ export const config = {
         "/interview/:path*",
         "/dashboard",
         "/home",
-        "/userdata",
+        "/my-resume",
         "/feedback/:path*",
     ],
 };

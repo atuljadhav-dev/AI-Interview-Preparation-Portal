@@ -9,7 +9,7 @@ export const generateMetadata = async ({ params }) => {
     const token = cookieStore.get("authToken")?.value; // Get the authToken cookie value
     try {
         const res = await axios.get(
-            `${process.env.BASE_URL}/interview/specific/${id}`,
+            `${process.env.BASE_URL}/interview/${id}`,
             {
                 headers: {
                     Cookie: `authToken=${token}`, // Include the authToken cookie in the request

@@ -10,7 +10,7 @@ export const generateMetadata = async ({ params }) => {
 
     try {
         const res = await axios.get(
-            `${process.env.BASE_URL}/interview/specific/${id}`,
+            `${process.env.BASE_URL}/interview/${id}`,
             {
                 headers: {
                     Cookie: `authToken=${token}`, // Include the authToken cookie in the request

@@ -18,13 +18,13 @@ const InterviewPage = ({ id }) => {
     const [interview, setInterview] = useState({});
     const [sending, setSending] = useState(false);
     const { resume } = useUser();
-    const [lastAIResponse, setLastAIResponse] = useState("");
+    const [lastAIResponse, setLastAIResponse] = useState("kgiugoiugo");
     const router = useRouter();
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const res = await axios.get(
-                    `${process.env.NEXT_PUBLIC_BASE_URL}/interview/specific/${id}`,
+                    `${process.env.NEXT_PUBLIC_BASE_URL}/interview/${id}`,
                     { withCredentials: true }
                 );
                 setInterview(res.data.data);
@@ -47,7 +47,7 @@ const InterviewPage = ({ id }) => {
     }, [resume, interview]);
     useEffect(() => {
         if (conversation.length == 0 && interview.questions && currentResume) {
-            handleSend(); //auto send to start interview
+          //  handleSend(); //auto send to start interview
         }
     }, [currentResume, interview]);
     const handleSend = async () => {
@@ -62,7 +62,7 @@ const InterviewPage = ({ id }) => {
         try {
             setSending(true);
             const res = await axios.post(
-                `${process.env.NEXT_PUBLIC_BASE_URL}/interview-stimulation`,
+                `${process.env.NEXT_PUBLIC_BASE_URL}/interview-simulation`,
                 {
                     jobDescription: interview.jobDescription,
                     roundName: interview.roundName,
@@ -124,15 +124,15 @@ const InterviewPage = ({ id }) => {
     };
 
     return (
-        <div className="w-full min-h-screen bg-gray-900 ">
+        <div className="w-full min-h-screen  ">
             <div className="h-[60vh] w-full flex flex-row-reverse">
                 {/* this is left */}
                 <div className="h-[60vh] w-6/12 hidden md:flex items-center justify-center">
-                    <div className="h-[60vh] w-[45vw] shadow-md shadow-purple-500  border-2  border-purple-500 rounded-xl backdrop-blur-none flex justify-center items-center bg-white/10">
+                    <div className="h-[60vh] w-[45vw] shadow-md shadow-purple-500  border-2  border-purple-500 rounded-xl backdrop-blur-none flex justify-center items-center ">
                         <div role="status">
                             <svg
                                 aria-hidden="true"
-                                className="w-40 h-40 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+                                className="w-40 h-40 animate-spin fill-blue-600"
                                 viewBox="0 0 100 101"
                                 fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -151,7 +151,7 @@ const InterviewPage = ({ id }) => {
                 </div>
                 {/* this is right */}
                 <div className="h-[60vh] w-full md:w-6/12 flex items-center justify-center">
-                    <div className="h-[60vh] md:w-[45vw] border-2  border-purple-500 rounded-xl backdrop-blur-none shadow-md shadow-purple-500  bg-white/10 ">
+                    <div className="h-[60vh] md:w-[45vw] border-2  border-purple-500 rounded-xl backdrop-blur-none shadow-md shadow-purple-500 ">
                         <video
                             className="h-full w-full object-cover rounded-lg"
                             autoPlay
@@ -162,17 +162,17 @@ const InterviewPage = ({ id }) => {
                 </div>
             </div>
             <div className="min-h-[30vh] w-full flex items-center justify-center">
-                <div className="min-h-[25vh] w-[97vw] border-2 flex flex-col border-purple-500 rounded-xl backdrop-blur-none bg-white/10 p-4">
-                    <p className="text-lg text-white">{lastAIResponse}</p>
+                <div className="min-h-[25vh] w-[97vw] border-2 flex flex-col border-purple-500 rounded-xl backdrop-blur-none  p-4">
+                    <p className="text-lg ">{lastAIResponse}</p>
                     <div className="w-full flex items-end gap-4 mt-auto">
                         <textarea
                             rows={3}
                             cols={50}
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
-                            className="overflow-hidden rounded-xl backdrop-blur-none  bg-white/10 w-[70vw]  mt-auto p-2"></textarea>
+                            className="overflow-hidden rounded-xl backdrop-blur-none border w-[70vw]  mt-auto p-2"></textarea>
                         <button
-                            className="bg-purple-500 p-1 cursor-pointer rounded mx-12 px-5"
+                            className="bg-purple-500 p-1 cursor-pointer text-white rounded mx-12 px-5"
                             onClick={handleSend}>
                             Send
                         </button>

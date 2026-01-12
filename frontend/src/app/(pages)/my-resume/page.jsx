@@ -86,8 +86,8 @@ export default function ProfileUpload() {
     return (
         <>
             {" "}
-            <div className="bg-gray-950 min-h-screen flex flex-col items-center justify-start p-6">
-                <h1 className="text-2xl font-bold text-white mt-6">
+            <div className="min-h-screen flex flex-col items-center justify-start p-6">
+                <h1 className="text-2xl font-bold mt-6">
                     Upload Resume
                 </h1>
                 <form
@@ -99,7 +99,7 @@ export default function ProfileUpload() {
                         placeholder="Enter name to resume Eg.Software Engineer Resume"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="mb-4 p-2 rounded-md bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-600 w-full"
+                        className="mb-4 p-2 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-600 w-full"
                     />
                     {name &&
                         (available ? (
@@ -116,7 +116,7 @@ export default function ProfileUpload() {
                         type="file"
                         accept=".pdf"
                         onChange={handleFileChange}
-                        className="block w-full text-gray-300 h-10 bg-gray-800 rounded-lg border border-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-600 "
+                        className="block w-full h-10  rounded-lg border border-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-600 "
                     />
                     <button
                         type="submit"
@@ -134,12 +134,12 @@ export default function ProfileUpload() {
                 <div
                     key={res._id}
                     className="p-4 m-4 border border-gray-600 rounded-lg">
-                    <h2 className="text-xl font-semibold text-white">
+                    <h2 className="text-xl font-semibold ">
                         {res.name}
                     </h2>
                     <Link
-                        href={`/userdata/${res._id}`}
-                        className="text-purple-400 hover:underline">
+                        href={`/my-resume/${res._id}`}
+                        className="text-purple-800 dark:text-purple-400 hover:underline">
                         View Resume
                     </Link>
                 </div>
