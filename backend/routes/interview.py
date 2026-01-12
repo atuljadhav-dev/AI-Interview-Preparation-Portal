@@ -49,7 +49,6 @@ def createInterviewRoute():
         if "_id" in interview:
             interview["_id"] = str(interview["_id"])
     except Exception as e:
-        print(e)
         return jsonify({
             "success": False,
             "error": "Could not create interview",

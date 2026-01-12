@@ -9,7 +9,7 @@ import { MenuIcon, UserCircle2Icon } from "lucide-react";
 import { useState } from "react";
 const NavBar = () => {
     const router = useRouter();
-    const { user, setUser } = useUser();
+    const { user, setUser ,setResume} = useUser();
     const [showLogout, setShowLogout] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
     const handleLogout = async () => {
@@ -20,6 +20,7 @@ const NavBar = () => {
                 { withCredentials: true }
             );
             setUser(null);
+            setResume(null);
             toast.success("Logged out successfully");
             Cookies.remove("authToken");
             router.push("/sign-in");

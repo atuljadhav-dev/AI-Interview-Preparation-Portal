@@ -88,7 +88,6 @@ def interviewStimulation():
             "data":response
             }),201
     except Exception as e:
-        print(e)
         return jsonify({
             "success":False,
             "error":"Server error: Could not generate interview simulation",

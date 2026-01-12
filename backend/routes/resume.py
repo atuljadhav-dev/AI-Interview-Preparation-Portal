@@ -2,6 +2,7 @@ from service.ai import generateATSReport
 from routes.auth import verifyJWT
 from utils.limiter import limiter
 from flask import Blueprint, request, jsonify
+import json
 
 resume_bp = Blueprint('resume', __name__)
 @resume_bp.route("/resume/ats-report", methods=["POST"])
@@ -28,10 +29,11 @@ def atsReport():
         return jsonify({
             "success": True,
             "message": "ATS report generated successfully",
-            "data": report
+            "data": json.loads(report.text)
         }), 200
 
     except Exception as e:
+
         return jsonify({
             "success": False,
             "error": str(e)

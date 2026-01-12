@@ -37,9 +37,7 @@ export default function ProfileUpload() {
                 } else {
                     setAvailable(true);
                 }
-            } catch (err) {
-                console.error("Error checking name availability", err);
-            }
+            } catch (err) {}
         };
         if (debouncedName) {
             checkAvialability();
@@ -80,7 +78,6 @@ export default function ProfileUpload() {
             router.back();
         } catch (err) {
             toast.error("Upload failed. Please try again.");
-            console.error("Error uploading resume:", err);
         } finally {
             setUploading(false);
         }

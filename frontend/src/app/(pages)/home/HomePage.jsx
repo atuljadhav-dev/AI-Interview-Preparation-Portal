@@ -21,7 +21,7 @@ const HomePage = () => {
                 setInterviews(res.data.data);
                 setFilteredInterview(res.data.data);
             } catch (e) {
-                console.log(e);
+                
             } finally {
                 setLoading(false);
             }

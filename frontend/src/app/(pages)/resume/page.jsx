@@ -1,12 +1,13 @@
-import React from 'react'
+import React from "react";
+import ResumePage from "./ResumePage";
 
 const page = () => {
     //Analyze the resume with job description ats score, keywords, skills etc.
-  return (
-    <div>
-      
-    </div>
-  )
-}
+    return (
+        <>
+            <ResumePage />
+        </>
+    );
+};
 
-export default page
+export default page;

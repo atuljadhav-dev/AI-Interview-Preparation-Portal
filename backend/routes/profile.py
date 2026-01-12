@@ -77,10 +77,8 @@ def createProfileRoute():
     isInValidText=isPoorExtraction(extractedText)
     ai=None
     if isInValidText:
-        print("Poor text extraction, using PDF to JSON conversion")
         ai=convertPDFToJSON(url)
     else:
-        print("Using text to JSON conversion")
         ai=convertTextToJSON(extractedText)
     if ai is None:
         deleteResumeFromCloudinary(publicId)
@@ -95,7 +93,6 @@ def createProfileRoute():
         if "_id" in profile:
             profile["_id"] = str(profile["_id"])
     except Exception as e:
-        print(e)
         deleteResumeFromCloudinary(publicId)
         if profile:
             deleteProfile(userId,profile.get("_id"))
@@ -133,7 +130,13 @@ def deleteUser():
             }), 404
         res["_id"] = str(res["_id"])
         if res:
-            deleteResumeFromCloudinary(res.get("publicId"))
+            try:
+                deleteResumeFromCloudinary(res["publicId"])
+            except Exception as e:
+                return jsonify({
+                    "success": False,
+                    "error": "Profile deleted from database but failed to delete resume from cloud storage",
+                }), 500
         return jsonify({
             "success": True,
             "message": "Profile deleted successfully",
@@ -156,9 +159,7 @@ def checkExistProfile():
         }), 400
     name = data['name']
     try:
-        print("Checking existence for profile name:", name)
         exists = checkExistProfile(name)
-        print(exists)
     except Exception as e:
         return jsonify({
             "success": False,
