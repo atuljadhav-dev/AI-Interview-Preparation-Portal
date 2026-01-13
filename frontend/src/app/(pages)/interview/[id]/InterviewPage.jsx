@@ -62,7 +62,7 @@ const InterviewPage = ({ id }) => {
         try {
             setSending(true);
             const res = await axios.post(
-                `${process.env.NEXT_PUBLIC_BASE_URL}/interview-simulation`,
+                `${process.env.NEXT_PUBLIC_BASE_URL}/ai/simulation`,
                 {
                     jobDescription: interview.jobDescription,
                     roundName: interview.roundName,
@@ -106,7 +106,7 @@ const InterviewPage = ({ id }) => {
                 );
                 //save feedback to db
                 const feedbackSave = await axios.post(
-                    `${process.env.NEXT_PUBLIC_BASE_URL}/feedback`,
+                    `${process.env.NEXT_PUBLIC_BASE_URL}/ai/feedback`,
                     {
                         feedback: feedback.data.data,
                         interviewId: interview._id,

@@ -26,7 +26,7 @@ const SignInPage = () => {
         try {
             setSending(true);
             const res = await axios.post(
-                `${process.env.NEXT_PUBLIC_BASE_URL}/signin`,
+                `${process.env.NEXT_PUBLIC_BASE_URL}/auth/signin`,
                 formData,
                 { withCredentials: true }
             );
@@ -46,7 +46,7 @@ const SignInPage = () => {
         <div className="w-full h-screen  flex  items-center justify-center sm:flex-row ">
             <div className="w-full  h-screen flex justify-center m-auto items-center flex-col sm:w-6/12">
                 <h1 className="text-5xl font-sans my-10 font-bold">LOGIN</h1>
-                
+
                 <form
                     onSubmit={handleSend}
                     className="h-[55vh] w-[85vw] flex items-center justify-center sm:w-[50vh] gap-5 flex-col rounded-2xl border-purple-500 border backdrop-blur-none shadow-md shadow-purple-500">
@@ -82,12 +82,8 @@ const SignInPage = () => {
                     <button
                         type="submit"
                         disabled={sending}
-                        className="border border-gray-500 cursor-pointer 
-        px-6 py-2 sm:px-8 sm:py-2.5 rounded-md 
-        transition 
-        hover:bg-gray-700 hover:text-white hover:border-purple-500 hover:scale-[1.02]
-    ">
-                        Login
+                        className={`border border-gray-500 cursor-pointer px-6 py-2 sm:px-8 sm:py-2.5 rounded-md transition hover:bg-gray-700 hover:text-white hover:border-purple-500 hover:scale-[1.02] ${sending ? "opacity-50 cursor-not-allowed animate-pulse" : ""}`}>
+                        {sending ? "Logging in..." : "Login"}
                     </button>
                     <p className="">
                         Don't have an account?{" "}

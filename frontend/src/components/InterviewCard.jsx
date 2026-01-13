@@ -15,39 +15,39 @@ const InterviewCard = ({ interview }) => {
     } = interview;
 
     return (
-        <div className="bg-gray-900 border border-gray-700 rounded-2xl p-6 shadow-md hover:shadow-purple-600 transition">
+        <div className=" border border-gray-700 rounded-2xl p-6 shadow-md hover:shadow-purple-600 transition">
             {/* Header */}
             <div className="flex justify-between items-start mb-3">
-                <h2 className="text-xl font-bold text-indigo-400 capitalize">
+                <h2 className="text-xl font-bold text-indigo-700 dark:text-indigo-400 capitalize">
                     {title}
                 </h2>
                 <span
                     className={`px-3 py-1 rounded-full text-sm font-semibold ${
                         status === "Done"
-                            ? "bg-green-600/20 text-green-400"
-                            : "bg-yellow-600/20 text-yellow-400"
+                            ? "dark:bg-green-600/20 dark:text-green-400 text-green-700 bg-green-100"
+                            : "dark:bg-yellow-600/20 dark:text-yellow-400 text-yellow-700 bg-yellow-100"
                     }`}>
                     {status}
                 </span>
             </div>
 
             {/* Meta */}
-            <p className="text-gray-300 text-sm mb-1">
-                <span className="font-semibold text-indigo-300">Round:</span>{" "}
+            <p className=" text-sm mb-1">
+                <span className="font-semibold text-indigo-800 dark:text-indigo-300">
+                    Round:
+                </span>{" "}
                 {roundName}
             </p>
 
-            <p className="text-gray-300 text-sm mb-3">
-                <span className="font-semibold text-indigo-300">
+            <p className=" text-sm mb-3">
+                <span className="font-semibold text-indigo-800 dark:text-indigo-300">
                     Questions:
                 </span>{" "}
                 {questions?.length || 0}
             </p>
 
             {/* Description */}
-            <p className="text-gray-400 text-sm line-clamp-3 mb-4">
-                {jobDescription}
-            </p>
+            <p className="text-sm line-clamp-3 mb-4">{jobDescription}</p>
 
             {/* Action */}
             <div className="flex justify-end">

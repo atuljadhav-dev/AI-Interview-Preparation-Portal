@@ -1,7 +1,7 @@
 "use client";
 import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
-
+import Cookies from "js-cookie";
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
@@ -13,7 +13,7 @@ export const UserProvider = ({ children }) => {
         const fetchUserAndResume = async () => {
             try {
                 const res = await axios.get(
-                    `${process.env.NEXT_PUBLIC_BASE_URL}/verify`,
+                    `${process.env.NEXT_PUBLIC_BASE_URL}/auth/verify`,
                     { withCredentials: true } //to send cookies with the request
                 );
                 if (res.data.success) {
@@ -21,7 +21,7 @@ export const UserProvider = ({ children }) => {
                     setUser(verifiedUser);
                     try {
                         const response = await axios.get(
-                            `${process.env.NEXT_PUBLIC_BASE_URL}/profile`,
+                            `${process.env.NEXT_PUBLIC_BASE_URL}/resumes`,
                             { withCredentials: true } //to send cookies with the request
                         );
                         setResume(response.data.data);
@@ -31,6 +31,8 @@ export const UserProvider = ({ children }) => {
                 } else {
                     setUser(null);
                     setResume(null);
+                    console.log("remove");
+                    Cookies.remove("authToken");
                 }
             } catch (err) {
                 setUser(null);

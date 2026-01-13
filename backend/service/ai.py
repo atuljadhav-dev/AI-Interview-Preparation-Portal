@@ -70,6 +70,7 @@ def generateQuestions(jobDescription, resume, roundName="Technical Interview"):
         return None
 
 def generateConfig(questions,resume,jobDescription,roundName):
+    '''Generate the system prompt for interview simulation.'''
     return f"""
 You are an AI Interviewer conducting the {roundName}.
 Your role is to simulate a real human interviewer.
@@ -165,6 +166,7 @@ You must ask questions naturally, one at a time, and wait for the candidate’s 
 Your goal is to simulate a realistic, professional interview experience with natural human flow.
 """
 def AIInterviewStimulation(questions,resume,jobDescription,roundName,content):
+    '''Generate interview simulation based on questions, resume, jobDescription, roundName, content'''
     prompt=generateConfig(questions,resume,jobDescription,roundName)
     config={
         "response_mime_type": "text/plain",
@@ -178,6 +180,7 @@ def AIInterviewStimulation(questions,resume,jobDescription,roundName,content):
     
 
 def generateSummary(jobTitle,resume, questionAnswer, userAnswer, jobDescription, roundName,skills) :
+    '''Generate the system prompt for interview evaluation.'''
     return f"""
 You are an AI Interview Evaluator.
 
@@ -271,7 +274,8 @@ You must behave like a real technical/HR interviewer, not a tutor or assistant.
     }
 })}
 """
-def generateFeedback(jobTitle,resume, questionAnswer, userAnswer, jobDescription, roundName,skills=None): 
+def generateFeedback(jobTitle,resume, questionAnswer, userAnswer, jobDescription, roundName,skills=None):
+    '''Generate feedback based on resume, questionAnswer, userAnswer, jobTitle, jobDescription, roundName''' 
     prompt=generateSummary(jobTitle,resume, questionAnswer, userAnswer, jobDescription, roundName,skills)
     config={
         "response_mime_type": "application/json",
@@ -318,83 +322,122 @@ def generateFeedback(jobTitle,resume, questionAnswer, userAnswer, jobDescription
         return None
 
 def convertTextToJSON(text):
-    prompt=f"""
-    Convert the following text to a JSON object. 
-    Ensure the JSON is properly formatted.
-    You are converting raw resume text into a structured JSON object.
+    '''Convert raw resume text into a structured, domain-agnostic JSON object.'''
+    prompt = f"""
+You are converting raw resume text into a structured, domain-agnostic JSON object.
 
-RULES (IMPORTANT):
-- Preserve the original wording exactly inside all values.
-- Do NOT correct spelling or grammar in the content.
-- Do NOT normalize skill names or casing inside values.
-- Do NOT infer or invent information that is not present.
-- Do NOT omit any information from the text.
-- You MAY create appropriate JSON keys and structure to represent the content clearly.
+The resume may belong to ANY field (Software, Machine Learning, Business, HR, Finance, Marketing, Student, etc.).
+
+RULES (STRICT):
+- Preserve the original wording EXACTLY inside all values.
+- Do NOT correct spelling or grammar.
+- Do NOT normalize skill names, casing, or terminology.
+- Do NOT infer, assume, or invent any information.
+- Do NOT omit any information present in the text.
+- You MAY reorganize information ONLY to create clear structure.
+
+STRUCTURE GUIDELINES:
+- Use lowercase snake_case for all JSON keys.
 - Use arrays where multiple items exist.
-- Use lowercase snake_case for JSON keys.
+- Represent skills as an ARRAY of OBJECTS:
+  [
+    {{
+      "category": "string",
+      "items": ["skill1", "skill2"]
+    }}
+  ]
+- Categories should be inferred from headings if present
+  (e.g., Technical Skills, Tools, Soft Skills, Business Skills, etc.)
 - If a section is missing, include it as an empty array or null.
+
+SECTIONS TO IDENTIFY WHEN PRESENT:
+- name
+- contact (phone, email, location)
+- links (portfolio, linkedin, github, etc.)
+- summary / profile
+- skills (category-based)
+- experience
+- projects / case studies
+- education
+- certifications / achievements
 
 OUTPUT REQUIREMENTS:
 - Output VALID JSON ONLY.
-- No explanations, comments, or extra text.
+- No explanations, comments, markdown, or extra text.
 
-Resume Text:
+RESUME TEXT:
 {text}
-    Do not add any extra information or explanation.
-    Example JSON format:
-    {{
-        "key1": "value1",
-        "key2": "value2",
-        ...
-    }}
-    """
-    config={
+"""
+    config = {
         "response_mime_type": "application/json",
     }
     try:
-        response = AIClient(prompt, config)
-        return response
+        return AIClient(prompt, config)
     except GeminiExhaustedError:
         return None
 
 def convertPDFToJSON(url):
-    data=httpx.get(url).content
+    '''Convert resume PDF from URL into a structured, domain-agnostic JSON object.'''
+    data = httpx.get(url).content
     if not data:
         return None
-    prompt=f"""
-    You are converting a resume document into a structured JSON object.
 
-RULES (IMPORTANT):
-- Preserve the original wording exactly inside all values.
-- Do NOT correct spelling or grammar in the content.
-- Do NOT normalize skill names or casing inside values.
-- Do NOT infer or invent information that is not present.
+    prompt = """
+You are converting a resume document into a structured, domain-agnostic JSON object.
+
+The resume may belong to ANY field (Software, Machine Learning, Business, HR, Finance, Marketing, Student, etc.).
+
+RULES (STRICT):
+- Preserve the original wording EXACTLY inside all values.
+- Do NOT correct spelling or grammar.
+- Do NOT normalize skill names, casing, or terminology.
+- Do NOT infer, assume, or invent any information.
 - Do NOT omit any information visible in the document.
-- You MAY create appropriate JSON keys and structure to represent the content clearly.
+- You MAY reorganize information ONLY to create clear structure.
+
+STRUCTURE GUIDELINES:
+- Use lowercase snake_case for all JSON keys.
 - Use arrays where multiple items exist.
-- Use lowercase snake_case for JSON keys.
+- Represent skills as an ARRAY of OBJECTS:
+  [
+    {
+      "category": "string",
+      "items": ["skill1", "skill2"]
+    }
+  ]
+- Categories should be inferred from section headings if visible.
 - If a section is missing, include it as an empty array or null.
+
+SECTIONS TO IDENTIFY WHEN PRESENT:
+- name
+- contact (phone, email, location)
+- links (portfolio, linkedin, github, etc.)
+- summary / profile
+- skills (category-based)
+- experience
+- projects / case studies
+- education
+- certifications / achievements
 
 OUTPUT REQUIREMENTS:
 - Output VALID JSON ONLY.
-- No explanations, comments, or extra text.
-    Example JSON format:
-    {{
-        "key1": "value1",
-        "key2": "value2",
-        ...
-    }}
-    """
-    config={
+- No explanations, comments, markdown, or extra text.
+"""
+
+    config = {
         "response_mime_type": "application/json",
     }
+
     try:
-        response = AIClient([prompt,types.Part.from_bytes(data=data,mime_type='application/pdf')], config)
-        return response
+        return AIClient(
+            [prompt, types.Part.from_bytes(data=data, mime_type="application/pdf")],
+            config
+        )
     except GeminiExhaustedError:
         return None
 
 def generateATSReport(jobDescription, resume):
+    '''Generate an ATS report analyzing the resume against the job description.'''
     prompt= f"""
     You are an expert Applicant Tracking System (ATS) and Technical Recruiter. 
     Analyze the attached resume against the Job Description provided below. 
@@ -534,5 +577,153 @@ def generateATSReport(jobDescription, resume):
     try:
         response = AIClient(prompt, config)
         return response
+    except GeminiExhaustedError:
+        return None
+    
+def generateATSfriendlyResume(
+    resume,
+    jobDescription=None,
+    atsReport=None,
+    additionalResumes=None
+):
+    """
+    Generates an ATS-optimized resume variant.
+    Always returns STRUCTURED JSON.
+    """
+
+    prompt = f"""
+You are an expert ATS resume optimizer.
+
+Your task is to generate a CLEAN, ATS-FRIENDLY resume JSON
+based strictly on the provided inputs.
+
+INPUT DATA:
+- Base Resume (PRIMARY SOURCE):
+{resume}
+
+{"- Additional Resumes (REFERENCE ONLY):" if additionalResumes else ""}
+{additionalResumes if additionalResumes else ""}
+
+{"- Job Description:" if jobDescription else ""}
+{jobDescription if jobDescription else ""}
+
+{"- ATS Report (Gaps & Suggestions):" if atsReport else ""}
+{atsReport if atsReport else ""}
+
+STRICT RULES:
+- Do NOT invent experience, skills, companies, dates, or achievements.
+- Do NOT exaggerate or fabricate metrics.
+- Reword and reorganize ONLY what already exists.
+- Use job-description keywords ONLY if they already match resume content.
+- Preserve factual accuracy at all times.
+
+OPTIMIZATION GOALS:
+- Improve ATS keyword alignment (when JD is provided).
+- Improve clarity, action verbs, and bullet structure.
+- Highlight measurable outcomes WHEN ALREADY PRESENT.
+- Maintain simple, ATS-safe structure (single column, no graphics).
+
+OUTPUT FORMAT (STRICT JSON ONLY):
+{{
+  "name": string,
+  "contact": {{
+    "email": string | null,
+    "phone": string | null,
+    "location": string | null
+  }},
+  "summary": string,
+  "skills": [
+    {{
+      "category": string,
+      "items": [string]
+    }}
+  ],
+  "experience": [
+    {{
+      "title": string,
+      "company": string,
+      "location": string | null,
+      "dates": string,
+      "responsibilities": [string]
+    }}
+  ],
+  "projects": [
+    {{
+      "name": string,
+      "description": [string]
+    }}
+  ],
+  "education": [
+    {{
+      "degree": string,
+      "institution": string,
+      "dates": string,
+      "details": string | null
+    }}
+  ],
+  "certifications": [string],
+  "optimization_notes": [
+    "Short explanation of what was improved"
+  ]
+}}
+
+OUTPUT REQUIREMENTS:
+- Output VALID JSON ONLY
+- No explanations, comments, markdown, or extra text
+"""
+
+    config = {
+        "response_mime_type": "application/json",
+    }
+
+    try:
+        return AIClient(prompt, config)
+    except GeminiExhaustedError:
+        return None
+
+def generateApplicationEmail(resume, jobDescription):
+    """
+    Generates a professional job application email.
+    Returns JSON so UI can render / edit.
+    """
+
+    prompt = f"""
+You are an expert professional communication assistant.
+
+Generate a concise, formal job application email
+based strictly on the provided resume and job description.
+
+RESUME:
+{resume}
+
+JOB DESCRIPTION:
+{jobDescription}
+
+RULES:
+- Do NOT invent experience or skills.
+- Keep tone professional and confident.
+- Avoid generic filler phrases.
+- Email must be suitable for direct recruiter submission.
+
+OUTPUT FORMAT (JSON ONLY):
+{{
+  "subject": string,
+  "greeting": string,
+  "body_paragraphs": [string],
+  "closing": string,
+  "signature_hint": string
+}}
+
+OUTPUT REQUIREMENTS:
+- Output VALID JSON ONLY
+- No markdown, explanations, or extra text
+"""
+
+    config = {
+        "response_mime_type": "application/json",
+    }
+
+    try:
+        return AIClient(prompt, config)
     except GeminiExhaustedError:
         return None

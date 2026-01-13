@@ -17,7 +17,7 @@ const NavBar = () => {
     const handleLogout = async () => {
         try {
             await axios.post(
-                `${process.env.NEXT_PUBLIC_BASE_URL}/signout`,
+                `${process.env.NEXT_PUBLIC_BASE_URL}/auth/signout`,
                 {},
                 { withCredentials: true }
             );
@@ -49,8 +49,11 @@ const NavBar = () => {
                         <Link className="hidden md:flex" href={"/feedback"}>
                             Feedbacks
                         </Link>
-                        <Link className="hidden md:flex" href={"/my-resume"}>
-                            Profile
+                        <Link className="hidden md:flex" href={"/resume"}>
+                            Resume
+                        </Link>
+                        <Link className="hidden md:flex" href={"/resume/ats-report"}>
+                            ATS Resume Parser
                         </Link>
                         <MenuIcon
                             className="md:hidden cursor-pointer"
@@ -105,8 +108,16 @@ const NavBar = () => {
                                  font-medium text-xs sm:text-sm 
                                     transition
                                     hover:hover:shadow-md"
-                                    href={"/userdata"}>
-                                    Profile
+                                    href={"/resume"}>
+                                    Resume
+                                </Link>
+                                <Link
+                                    className="px-3 py-1 sm:px-4 sm:py-2 rounded-lg cursor-pointer
+                                 font-medium text-xs sm:text-sm 
+                                    transition
+                                    hover:hover:shadow-md"
+                                    href={"/resume/ats-report"}>
+                                    ATS Resume Parser
                                 </Link>
                             </div>
                         )}

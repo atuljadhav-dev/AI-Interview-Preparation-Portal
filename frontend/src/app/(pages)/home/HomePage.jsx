@@ -118,8 +118,8 @@ const HomePage = () => {
                     <p className="text-gray-400">No interviews found.</p>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                        {filteredInterview?.map((interview) => {
-                            return <InterviewCard interview={interview} />;
+                        {filteredInterview?.map((interview,idx) => {
+                            return <InterviewCard key={idx} interview={interview} />;
                         })}
                     </div>
                 )}

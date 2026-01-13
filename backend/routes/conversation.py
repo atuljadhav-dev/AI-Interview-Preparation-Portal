@@ -39,6 +39,7 @@ def createConversationRoute():
             "success": False,
             "error": "Server error: Could not create conversation",
         }), 500
+    
 @con_bp.route("/conversation", methods=["GET"])
 @limiter.limit("10 per minute") # Limit to 10 requests per minute
 def getConversationRoute():

@@ -22,7 +22,7 @@ const CreateInterviewPage = () => {
 
         if (!resume && !loading) {
             toast.info("Please upload or attach your resume");
-            router.push("/my-resume");
+            router.push("/resume");
         }
     }, [resume, user]);
     useEffect(() => {
@@ -117,7 +117,7 @@ const CreateInterviewPage = () => {
                                 const value = e.target.value;
 
                                 if (value === "add") {
-                                    router.push("/my-resume");
+                                    router.push("/resume");
                                     return;
                                 }
 
