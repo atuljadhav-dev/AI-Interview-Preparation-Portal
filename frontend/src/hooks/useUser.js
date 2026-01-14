@@ -11,6 +11,8 @@ export const UserProvider = ({ children }) => {
 
     useEffect(() => {
         const fetchUserAndResume = async () => {
+            const authToken = Cookies.get("authToken");
+            console.log("auth", authToken);
             try {
                 const res = await axios.get(
                     `${process.env.NEXT_PUBLIC_BASE_URL}/auth/verify`,
@@ -31,7 +33,6 @@ export const UserProvider = ({ children }) => {
                 } else {
                     setUser(null);
                     setResume(null);
-                    console.log("remove");
                     Cookies.remove("authToken");
                 }
             } catch (err) {
