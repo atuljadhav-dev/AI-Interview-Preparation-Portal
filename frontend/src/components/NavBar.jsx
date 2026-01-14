@@ -52,7 +52,9 @@ const NavBar = () => {
                         <Link className="hidden md:flex" href={"/resume"}>
                             Resume
                         </Link>
-                        <Link className="hidden md:flex" href={"/resume/ats-report"}>
+                        <Link
+                            className="hidden md:flex"
+                            href={"/resume/ats-report"}>
                             ATS Resume Parser
                         </Link>
                         <MenuIcon
@@ -115,7 +117,7 @@ const NavBar = () => {
                                     className="px-3 py-1 sm:px-4 sm:py-2 rounded-lg cursor-pointer
                                  font-medium text-xs sm:text-sm 
                                     transition
-                                    hover:hover:shadow-md"
+                                    hover:shadow-md"
                                     href={"/resume/ats-report"}>
                                     ATS Resume Parser
                                 </Link>
