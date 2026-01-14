@@ -142,8 +142,8 @@ def verify():
     if not authToken:
         return jsonify({
             "success": False, 
-            "error": "Unauthorized"
-            }), 403
+            "message": "No user logged in "
+            }), 200
     decoded = verifyJWT(request)
     if not decoded:
         response = make_response(jsonify({
