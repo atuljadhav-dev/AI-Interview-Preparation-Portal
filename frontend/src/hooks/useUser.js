@@ -12,7 +12,13 @@ export const UserProvider = ({ children }) => {
     useEffect(() => {
         const fetchUserAndResume = async () => {
             const authToken = Cookies.get("authToken");
-            console.log("auth", authToken);
+            //only works for different domain and cookies set by js-cookies which help to access the cookes by javascript 
+            if (!authToken) {
+                setUser(null);
+                setResume(null);
+                setLoading(false);
+                return;
+            }
             try {
                 const res = await axios.get(
                     `${process.env.NEXT_PUBLIC_BASE_URL}/auth/verify`,

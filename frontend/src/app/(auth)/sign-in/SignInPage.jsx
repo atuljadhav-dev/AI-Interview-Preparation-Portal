@@ -32,7 +32,7 @@ const SignInPage = () => {
             );
             if (res.data.success) {
                 setUser(res.data.data);
-                Cookies.set("authToken", res.data.token, { expires: 2 }); //cookies set by the server are not accessible in client side,nextjs app. Cookies set by backend is has different domain. Hence setting cookie in client side also.It helps to middleware to identify authenticated user.
+                Cookies.set("authToken", res.data.token, { expires: 2 }); //cookies set by the server are not accessible in client side,nextjs app. Cookies set by backend is has different domain. Hence setting cookie in client side also.It helps to middleware to identify authenticated user.Server side cookies are set http only so that cookies will not be accessible in the middleware.
                 toast.success("Login Successfully");
                 router.push("/home");
             }
