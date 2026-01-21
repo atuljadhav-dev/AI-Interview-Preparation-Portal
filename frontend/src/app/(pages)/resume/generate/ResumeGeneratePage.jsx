@@ -29,28 +29,28 @@ const ResumePage = () => {
                 details: "Percentage-77",
                 institution: "Krishna Mahavidyalaya, Rethare Bk",
             },
-            // {
-            //     dates: "06/2019 – 04/2020",
-            //     degree: "Secondary School Certificate (SSC)",
-            //     details: "Percentage- 92",
-            //     institution:
-            //         "Sou. Tarabai Madhavrao Mohite Vidyalaya, Rethare Bk",
-            // },
+            {
+                dates: "06/2019 – 04/2020",
+                degree: "Secondary School Certificate (SSC)",
+                details: "Percentage- 92",
+                institution:
+                    "Sou. Tarabai Madhavrao Mohite Vidyalaya, Rethare Bk",
+            },
         ],
         experience: [
-            // {
-            //     company: "Plasmid Innovation LTD",
-            //     dates: "06/2025 – 08/2025",
-            //     location: "Bengaluru",
-            //     responsibilities: [
-            //         "Engaged in frontend development, applying HTML5, CSS3, JavaScript (ES6+), and Bootstrap to build web interfaces.",
-            //         "Designed and developed responsive web pages, emphasizing user-friendly (UI/UX) interfaces.",
-            //         "Implemented JavaScript for form validation and interactive features.",
-            //         "Developed and deployed mini-projects to Netlify, reinforcing core web development concepts.",
-            //         "Improved skills in debugging, responsive design principles, and clean code practices.",
-            //     ],
-            //     title: "Web Developer Intern",
-            // },
+            {
+                company: "Plasmid Innovation LTD",
+                dates: "06/2025 – 08/2025",
+                location: "Bengaluru",
+                responsibilities: [
+                    "Engaged in frontend development, applying HTML5, CSS3, JavaScript (ES6+), and Bootstrap to build web interfaces.",
+                    "Designed and developed responsive web pages, emphasizing user-friendly (UI/UX) interfaces.",
+                    "Implemented JavaScript for form validation and interactive features.",
+                    "Developed and deployed mini-projects to Netlify, reinforcing core web development concepts.",
+                    "Improved skills in debugging, responsive design principles, and clean code practices.",
+                ],
+                title: "Web Developer Intern",
+            },
         ],
         name: "Atul Mohan Jadhav",
         links: {
