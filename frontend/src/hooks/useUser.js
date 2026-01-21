@@ -12,8 +12,8 @@ export const UserProvider = ({ children }) => {
     useEffect(() => {
         const fetchUserAndResume = async () => {
             const authToken = Cookies.get("authToken");
-            //only works for different domain and cookies set by js-cookies which help to access the cookes by javascript 
-            if (!authToken) {
+            //only works for different domain and cookies set by js-cookies which help to access the cookes by javascript
+            if (!authToken && process.env.NEXT_PUBLIC_ENVIRONMENT!="development") {
                 setUser(null);
                 setResume(null);
                 setLoading(false);

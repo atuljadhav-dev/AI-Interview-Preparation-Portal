@@ -23,7 +23,7 @@ const NavBar = () => {
             );
             setUser(null);
             setResume(null);
-            toast.success("Logged out successfully");
+            toast.success("Sign out successfully");
             Cookies.remove("authToken");
             router.push("/sign-in");
         } catch (e) {

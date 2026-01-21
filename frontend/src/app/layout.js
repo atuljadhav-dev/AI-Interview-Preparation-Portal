@@ -2,7 +2,6 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import { ToastContainer } from "react-toastify";
 import { Providers } from "@/components/Providers";
-import ThemeToggle from "@/components/ThemeToggle";
 
 const geistPoppins = Poppins({
     variable: "--font-geist-poppins", // Define a CSS variable for the font
@@ -76,11 +75,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
     return (
         <html lang="en" suppressHydrationWarning>
+            {/* suppressHydrationWarning to prevent hydration mismatch warnings */}
             <body className={`${geistPoppins.variable} antialiased`}>
                 <ToastContainer />
-                <Providers>
-                    {children}
-                </Providers>
+                <Providers>{children}</Providers>
             </body>
         </html>
     );

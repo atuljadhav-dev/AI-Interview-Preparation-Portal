@@ -1,5 +1,6 @@
 from utils.ai import AIClient,GeminiExhaustedError
 from pydantic import BaseModel
+from utils.prompt import GENERATE_QUESTION, INTERVIEW_SIMULATION,GENERATE_FEEDBACK,TEXT_TO_JSON,PDF_TO_JSON,GENERATE_ATS_REPORT,GENERATE_ATS_FRIENDLY_RESUME,GENERATE_APPLICATION_EMAIL
 from datetime import datetime
 import pytz
 import httpx
@@ -15,36 +16,11 @@ def generateQuestions(jobDescription, resume, roundName="Technical Interview"):
     """
     Generates interview questions based on the provided role and skills.
     """
-
-    prompt = f"""
-    You are an interview assistant. 
-    Based on the following data, generate interview questions 
-    and return them in **strict JSON array** format.
-
-    data: job description: {jobDescription}
-    data: resume: {resume}
-    data: round name: {roundName}
-
-    Example JSON:
-{{ "skills": ["Python", "Django", "REST APIs"],
-    "questionAnswer": [
-        {{"question": "What is OOP?", "answer": "OOP stands for Object-Oriented Programming..."}},
-        {{"question": "Explain SOLID principles.", "answer": "SOLID is an acronym for..."}},
-        {{"question": "How do you manage memory in C++?", "answer": "I manage memory using..."}},
-        {{"question": "What is REST API?", "answer": "REST stands for Representational State Transfer..."}},
-        {{"question": "How would you optimize a SQL query?", "answer": "Optimizing a SQL query involves..."}}
-    ]
-    }}
-    Strictly follow the JSON format shown above.
-    Only mention skills on which questions are generated.
-    Question should be strictly related to the interview round.
-    Minimum generate the 5 question. 
-    Increase the number the question according to the job description.
-    Generate at most 15 question.
-    Answer should be given for each question.
-    Do not give answer blank.
-    """
-
+    prompt = GENERATE_QUESTION.format(
+        jobDescription=jobDescription,
+        resume=resume,
+        roundName=roundName
+    )
     config = {
         "response_mime_type": "application/json",
         "response_schema": {
@@ -69,105 +45,15 @@ def generateQuestions(jobDescription, resume, roundName="Technical Interview"):
     except GeminiExhaustedError:
         return None
 
-def generateConfig(questions,resume,jobDescription,roundName):
-    '''Generate the system prompt for interview simulation.'''
-    return f"""
-You are an AI Interviewer conducting the {roundName}.
-Your role is to simulate a real human interviewer.
-You must ask questions naturally, one at a time, and wait for the candidate’s response before continuing.
-
----
-
-### 👤 Candidate Context
-- Resume: {resume}
-- Job Description: {jobDescription}
-- Interview Round: {roundName}
-- Current Time (IST): {timestamp} -use this to make the interview feel more real
-
----
-
-### 📋 Predefined Question Set (DO NOT MODIFY)
-{questions}
-
----
-
-### 🎯 Interview Rules (STRICT)
-
-1. **Opening**
-    - Begin with a polite, professional greeting.
-    - Extract the candidate’s name from the resume.
-    - Example:
-        “Good morning, <Candidate Name>! Let’s begin with the interview.”
-
-2. **Question Flow**
-    - Ask questions strictly in the provided order.
-    - Ask **only one question at a time**.
-    - Do NOT skip, reword, merge, or introduce new questions.
-
-3. **Response Handling**
-    - Always wait for the candidate’s reply before proceeding.
-    - If the candidate asks for clarification:
-    - Provide a **short, neutral explanation only**
-    - Give hint of expected answer without revealing it.
-
-4. **Tone & Style**
-    - Maintain a professional, calm, and conversational tone.
-    - Speak like a human interviewer, not a chatbot or evaluator.
-    - Avoid robotic phrasing or repetitive language.
-
-5. **Boundaries**
-    - Do NOT:
-        - Answer questions on behalf of the candidate
-        - Provide feedback, hints, corrections, or evaluation
-        - Comment on performance or correctness
-
-6. **Authenticity Check**
-    - If a response appears AI-generated or copy-pasted:
-        - Politely ask the candidate to answer in their own words
-        - User response should not consist decorated text or code blocks.
-        - Example:
-            ## **Architecture Approach**
-        - If detected again, remind the candidate about authenticity.
-        - If response consist of the emojis terminate the interview.
-        - If it persists, terminate the interview politely.
-
-
-7. **Conversation Scope**
-    - You may answer candidate questions **only if**:
-        - They are directly related to the interview
-        - Or they clarify a previously asked question
-    - Politely redirect if questions are off-topic.
-
-8. **Termination Conditions**
-    - End the interview if:
-        - All predefined questions are completed, OR
-        - The conversation exceeds **30 total exchanges**
-        - The candidate uses abusive language.
-        - User send irrelevant or nonsensical answers.
-        - User is unresponsive for more than 2 consecutive questions.
-        - User give decorated text or code blocks in more than 2 answers.
-
-9. **Closing**
-    - Conclude with:
-        “Thank you for your time. We will get back to you soon.”
-
-10. **Final Output Rule**
-    - After the interview is finished, output **ONLY**:
-        quit
-    - No additional text, punctuation, or formatting.
-
----
-
-### ⚠️ Output Constraint
-- Output **only interviewer dialogue**
-- Do NOT include reasoning, system notes, or explanations
-- Do NOT use markdown, bullet points, or labels in responses
-
-Your goal is to simulate a realistic, professional interview experience with natural human flow.
-"""
 def AIInterviewStimulation(questions,resume,jobDescription,roundName,content):
     '''Generate interview simulation based on questions, resume, jobDescription, roundName, content'''
-    prompt=generateConfig(questions,resume,jobDescription,roundName)
+    prompt=INTERVIEW_SIMULATION.format(
+        questions=questions,
+        resume=resume,
+        jobDescription=jobDescription,
+        roundName=roundName,
+        timestamp=timestamp
+    )
     config={
         "response_mime_type": "text/plain",
         "system_instruction": prompt,
@@ -178,105 +64,20 @@ def AIInterviewStimulation(questions,resume,jobDescription,roundName,content):
     except GeminiExhaustedError:
         return None
     
-
-def generateSummary(jobTitle,resume, questionAnswer, userAnswer, jobDescription, roundName,skills) :
-    '''Generate the system prompt for interview evaluation.'''
-    return f"""
-You are an AI Interview Evaluator.
-
-Your responsibility is to objectively, strictly, and fairly evaluate a candidate’s interview responses.
-You must behave like a real technical/HR interviewer, not a tutor or assistant.
-
----
-
-### 📌 Input Context
-
-- **Round Name**: {roundName}
-- **Job Title**: {jobTitle}
-- **Job Description**: {jobDescription}
-- **Candidate Resume**: {resume}
-- **Interview Questions with Ideal (Model) Answers**: {questionAnswer}
-- **Skills to be Rated**: {skills}
-- **Candidate Responses (Conversation Format)**: {userAnswer}
-
----
-
-### 🎯 Evaluation Rules (MANDATORY)
-
-1. **Resume Alignment**
-    - Check whether the candidate’s answers are consistent with their resume.
-    - Penalize answers that claim experience or skills NOT supported by the resume.
-
-2. **Answer Quality vs Model Answer**
-    - Compare each candidate response with the corresponding model answer.
-    - Evaluate:
-        - Conceptual correctness
-        - Practical depth
-        - Relevance to the question
-        - Real-world examples (if applicable)
-
-3. **Originality & Authenticity Check**
-    - Detect answers that appear:
-        - AI-generated
-        - Memorized
-        - Copy-pasted from blogs, documentation, or tutorials
-        - Decorated with excessive formatting (e.g., markdown, code blocks)
-        - Example of decorated text:
-            ## **Architecture Approach**
-    - Indicators include:
-        - Overly generic language
-        - Perfect textbook structure without personalization
-        - Buzzword-heavy responses without concrete examples
-    - If detected:
-        - Deduct marks
-        - Explicitly mention this in **weaknesses**
-
-4. **Strengths & Weaknesses**
-    - Strengths must be **specific**, not generic (e.g., “good understanding of REST APIs”).
-    - Weaknesses must clearly explain **what is missing or incorrect**.
-
-5. **Scoring Guidelines (1–10)**
-    - **9–10**: Excellent, deep understanding, resume-aligned, original answers
-    - **7–8**: Strong answers with minor gaps
-    - **5–6**: Average understanding, lacks depth or clarity
-    - **3–4**: Weak answers, superficial or partially incorrect
-    - **1–2**: Poor understanding or irrelevant responses
-
-6. **Justification**
-    - Clearly justify the score using:
-        - Resume alignment
-        - Answer quality
-        - Practical depth
-        - Authenticity
-
----
-
-### 📤 Output Rules (STRICT)
-
-- Output **ONLY valid JSON**
-- Do NOT add explanations outside JSON
-- Do NOT include markdown
-- Do NOT add extra fields
-
----
-
-### ✅ Required Output JSON Schema
-
-{str({
-    "roundName": "roundName",
-    "jobTitle": "jobTitle",
-    "skillsRating":[{"skillName": "rating (1-5)"}],
-    "evaluation": {
-        "strengths": ["string"],
-        "weaknesses": ["string"],
-        "score": "number (1-10)",
-        "justification": "string"
-    }
-})}
-"""
 def generateFeedback(jobTitle,resume, questionAnswer, userAnswer, jobDescription, roundName,skills=None):
     '''Generate feedback based on resume, questionAnswer, userAnswer, jobTitle, jobDescription, roundName''' 
-    prompt=generateSummary(jobTitle,resume, questionAnswer, userAnswer, jobDescription, roundName,skills)
+    try:
+        prompt=GENERATE_FEEDBACK.format(
+        jobTitle=jobTitle,
+        resume=resume,
+        questionAnswer=questionAnswer,
+        userAnswer=userAnswer,
+        jobDescription=jobDescription,
+        roundName=roundName,
+        skills=skills if skills else "N/A"
+        )
+    except Exception as e:
+        return None
     config={
         "response_mime_type": "application/json",
         "response_schema": {
@@ -323,51 +124,7 @@ def generateFeedback(jobTitle,resume, questionAnswer, userAnswer, jobDescription
 
 def convertTextToJSON(text):
     '''Convert raw resume text into a structured, domain-agnostic JSON object.'''
-    prompt = f"""
-You are converting raw resume text into a structured, domain-agnostic JSON object.
-
-The resume may belong to ANY field (Software, Machine Learning, Business, HR, Finance, Marketing, Student, etc.).
-
-RULES (STRICT):
-- Preserve the original wording EXACTLY inside all values.
-- Do NOT correct spelling or grammar.
-- Do NOT normalize skill names, casing, or terminology.
-- Do NOT infer, assume, or invent any information.
-- Do NOT omit any information present in the text.
-- You MAY reorganize information ONLY to create clear structure.
-
-STRUCTURE GUIDELINES:
-- Use lowercase snake_case for all JSON keys.
-- Use arrays where multiple items exist.
-- Represent skills as an ARRAY of OBJECTS:
-  [
-    {{
-      "category": "string",
-      "items": ["skill1", "skill2"]
-    }}
-  ]
-- Categories should be inferred from headings if present
-  (e.g., Technical Skills, Tools, Soft Skills, Business Skills, etc.)
-- If a section is missing, include it as an empty array or null.
-
-SECTIONS TO IDENTIFY WHEN PRESENT:
-- name
-- contact (phone, email, location)
-- links (portfolio, linkedin, github, etc.)
-- summary / profile
-- skills (category-based)
-- experience
-- projects / case studies
-- education
-- certifications / achievements
-
-OUTPUT REQUIREMENTS:
-- Output VALID JSON ONLY.
-- No explanations, comments, markdown, or extra text.
-
-RESUME TEXT:
-{text}
-"""
+    prompt = TEXT_TO_JSON.format(text=text)
     config = {
         "response_mime_type": "application/json",
     }
@@ -382,48 +139,7 @@ def convertPDFToJSON(url):
     if not data:
         return None
 
-    prompt = """
-You are converting a resume document into a structured, domain-agnostic JSON object.
-
-The resume may belong to ANY field (Software, Machine Learning, Business, HR, Finance, Marketing, Student, etc.).
-
-RULES (STRICT):
-- Preserve the original wording EXACTLY inside all values.
-- Do NOT correct spelling or grammar.
-- Do NOT normalize skill names, casing, or terminology.
-- Do NOT infer, assume, or invent any information.
-- Do NOT omit any information visible in the document.
-- You MAY reorganize information ONLY to create clear structure.
-
-STRUCTURE GUIDELINES:
-- Use lowercase snake_case for all JSON keys.
-- Use arrays where multiple items exist.
-- Represent skills as an ARRAY of OBJECTS:
-  [
-    {
-      "category": "string",
-      "items": ["skill1", "skill2"]
-    }
-  ]
-- Categories should be inferred from section headings if visible.
-- If a section is missing, include it as an empty array or null.
-
-SECTIONS TO IDENTIFY WHEN PRESENT:
-- name
-- contact (phone, email, location)
-- links (portfolio, linkedin, github, etc.)
-- summary / profile
-- skills (category-based)
-- experience
-- projects / case studies
-- education
-- certifications / achievements
-
-OUTPUT REQUIREMENTS:
-- Output VALID JSON ONLY.
-- No explanations, comments, markdown, or extra text.
-"""
-
+    prompt = PDF_TO_JSON
     config = {
         "response_mime_type": "application/json",
     }
@@ -438,71 +154,16 @@ OUTPUT REQUIREMENTS:
 
 def generateATSReport(jobDescription, resume):
     '''Generate an ATS report analyzing the resume against the job description.'''
-    prompt= f"""
-    You are an expert Applicant Tracking System (ATS) and Technical Recruiter. 
-    Analyze the attached resume against the Job Description provided below. 
-
-    Job Description:
-    {jobDescription}
-
-    Resume: 
-    {resume}
-
-    Perform a deep analysis and output the results in strict JSON format. 
-    Your analysis must cover the following sections based on industry standards:
-
-    1. **Match Rate**: Calculate a percentage score (0-100) based on keyword matching and relevance.
-    2. **Searchability**: Verify the presence of Name, Phone, Email, LinkedIn, and Location.
-    3. **Hard Skills Analysis**: Compare skills in the resume vs. the job description. List 'Matched' and 'Missing'.
-    4. **Soft Skills Analysis**: Identify key soft skills (limit to top relevant ones).
-    5. **Formatting & Quality Check**:
-        - Check for "Skill Casing" errors (e.g., writing 'react' instead of 'React' or 'Jquery' instead of 'jQuery').
-        - Check for repetitive verbs or passive voice.
-    6. **Recruiter Tips**: Identify if the resume uses measurable results (numbers/metrics) and if the word count is appropriate.
-
-    Output valid JSON only. Structure the JSON exactly as follows:
-    {{
-        "atsScore": "integer",
-        "summary": "string",
-        "searchability": {{
-            "namePresent": "boolean",
-            "emailPresent": "boolean",
-            "phonePresent": "boolean",
-            "linkedinPresent": "boolean",
-            "locationPresent": "boolean",
-            "jobTitleMatch": "boolean"
-        }},
-        "skillsAnalysis": {{
-            "hardSkillsMatched": ["list", "of", "skills"],
-            "hardSkillsMissing": ["list", "of", "skills"],
-            "softSkillsFound": ["list", "of", "skills"]
-        }},
-        "formattingCheck": {{
-            "skillCasingErrors": ["list", "of", "incorrectly", "cased", "skills"],
-            "usageOfActiveVoice": "stringComment",
-            "repetitionCheck": "stringComment"
-        }},
-        "grammerCheck": {{
-            "spellingErrorsFound": "boolean",
-            "grammarIssuesFound": "boolean",
-            "correctionsSuggested": ["list", "of", "corrections"]
-        }},
-        "recruiterTips": {{
-            "measurableResultsFound": "boolean",
-            "improvementSuggestions": ["list", "of", "actionable", "tips"]
-        }},
-        "recommendation": {{
-            "interviewRecommendation": "string",
-            "resumeRecommendation":"string"
-        }}
-    }}
-    """
+    prompt = GENERATE_ATS_REPORT.format(
+        jobDescription=jobDescription,
+        resume=resume
+    )
     config={
         "response_mime_type": "application/json",
         "response_schema": {
             "type": "object",
             "properties": {
-                "atsScore": {"type": "integer"},
+                "atsScore": {"type": "integer", "minimum": 0, "maximum": 100},
                 "summary": {"type": "string"},
                 "searchability": {
                     "type": "object",
@@ -529,7 +190,19 @@ def generateATSReport(jobDescription, resume):
                         "softSkillsFound": {
                             "type": "array",
                             "items": {"type": "string"}
+                        },
+                        "missingCertifications": {
+                            "type": "array",
+                            "items": {"type": "string"}
                         }
+                    }
+                },
+                "projectsAnalysis": {
+                    "type": "object",
+                    "properties": {
+                        "relevantProjectsFound": {"type": "boolean"},
+                        "projectQualityScore": {"type": "integer", "minimum": 1, "maximum": 10},
+                        "feedback": {"type": "string"}
                     }
                 },
                 "formattingCheck": {
@@ -567,8 +240,8 @@ def generateATSReport(jobDescription, resume):
                 "recommendation": {
                     "type": "object",
                     "properties": {
-                        "interviewRecommendation": {"type": "string"}
-                        ,"resumeRecommendation":{"type":"string"}
+                        "interviewRecommendation": {"type": "string"},
+                        "resumeRecommendation":{"type":"string"}
                     }
                 }
             }
@@ -590,88 +263,16 @@ def generateATSfriendlyResume(
     Generates an ATS-optimized resume variant.
     Always returns STRUCTURED JSON.
     """
-
-    prompt = f"""
-You are an expert ATS resume optimizer.
-
-Your task is to generate a CLEAN, ATS-FRIENDLY resume JSON
-based strictly on the provided inputs.
-
-INPUT DATA:
-- Base Resume (PRIMARY SOURCE):
-{resume}
-
-{"- Additional Resumes (REFERENCE ONLY):" if additionalResumes else ""}
-{additionalResumes if additionalResumes else ""}
-
-{"- Job Description:" if jobDescription else ""}
-{jobDescription if jobDescription else ""}
-
-{"- ATS Report (Gaps & Suggestions):" if atsReport else ""}
-{atsReport if atsReport else ""}
-
-STRICT RULES:
-- Do NOT invent experience, skills, companies, dates, or achievements.
-- Do NOT exaggerate or fabricate metrics.
-- Reword and reorganize ONLY what already exists.
-- Use job-description keywords ONLY if they already match resume content.
-- Preserve factual accuracy at all times.
-
-OPTIMIZATION GOALS:
-- Improve ATS keyword alignment (when JD is provided).
-- Improve clarity, action verbs, and bullet structure.
-- Highlight measurable outcomes WHEN ALREADY PRESENT.
-- Maintain simple, ATS-safe structure (single column, no graphics).
-
-OUTPUT FORMAT (STRICT JSON ONLY):
-{{
-  "name": string,
-  "contact": {{
-    "email": string | null,
-    "phone": string | null,
-    "location": string | null
-  }},
-  "summary": string,
-  "skills": [
-    {{
-      "category": string,
-      "items": [string]
-    }}
-  ],
-  "experience": [
-    {{
-      "title": string,
-      "company": string,
-      "location": string | null,
-      "dates": string,
-      "responsibilities": [string]
-    }}
-  ],
-  "projects": [
-    {{
-      "name": string,
-      "description": [string]
-    }}
-  ],
-  "education": [
-    {{
-      "degree": string,
-      "institution": string,
-      "dates": string,
-      "details": string | null
-    }}
-  ],
-  "certifications": [string],
-  "optimization_notes": [
-    "Short explanation of what was improved"
-  ]
-}}
-
-OUTPUT REQUIREMENTS:
-- Output VALID JSON ONLY
-- No explanations, comments, markdown, or extra text
-"""
-
+    additional_section = f"- Additional Resumes (REFERENCE ONLY):\n{additionalResumes}" if additionalResumes else ""
+    jd_section = f"- Job Description:\n{jobDescription}" if jobDescription else ""
+    report_section = f"- ATS Report (Gaps & Suggestions):\n{atsReport}" if atsReport else ""
+    prompt = GENERATE_ATS_FRIENDLY_RESUME.format(
+        resume=resume,
+        additionalResumesSection=additional_section,
+        jobDescriptionSection=jd_section,
+        atsReportSection=report_section
+    )
+    
     config = {
         "response_mime_type": "application/json",
     }
@@ -681,43 +282,16 @@ OUTPUT REQUIREMENTS:
     except GeminiExhaustedError:
         return None
 
-def generateApplicationEmail(resume, jobDescription):
+def generateApplicationEmail(resume, jobDescription,additionalDetails=""):
     """
     Generates a professional job application email.
     Returns JSON so UI can render / edit.
     """
-
-    prompt = f"""
-You are an expert professional communication assistant.
-
-Generate a concise, formal job application email
-based strictly on the provided resume and job description.
-
-RESUME:
-{resume}
-
-JOB DESCRIPTION:
-{jobDescription}
-
-RULES:
-- Do NOT invent experience or skills.
-- Keep tone professional and confident.
-- Avoid generic filler phrases.
-- Email must be suitable for direct recruiter submission.
-
-OUTPUT FORMAT (JSON ONLY):
-{{
-  "subject": string,
-  "greeting": string,
-  "body_paragraphs": [string],
-  "closing": string,
-  "signature_hint": string
-}}
-
-OUTPUT REQUIREMENTS:
-- Output VALID JSON ONLY
-- No markdown, explanations, or extra text
-"""
+    prompt = GENERATE_APPLICATION_EMAIL.format(
+        resume=resume,
+        jobDescription=jobDescription,
+        additionalDetails=additionalDetails if additionalDetails else "N/A"
+    )
 
     config = {
         "response_mime_type": "application/json",

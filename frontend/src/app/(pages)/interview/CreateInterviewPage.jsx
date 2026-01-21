@@ -81,9 +81,7 @@ const CreateInterviewPage = () => {
                     onSubmit={handleSubmit}
                     className="w-full max-w-4xl border-2 border-purple-900  shadow-md shadow-purple-500 rounded-xl  p-8 space-y-8">
                     <div className="p-6 rounded-lg border-2 border-gray-700 hover:border-purple-600 transition-colors">
-                        <h2 className="text-xl font-bold mb-2">
-                            Job Role
-                        </h2>
+                        <h2 className="text-xl font-bold mb-2">Job Role</h2>
                         <input
                             type="text"
                             name="jobRole"
@@ -94,9 +92,7 @@ const CreateInterviewPage = () => {
                         />
                     </div>
                     <div className="p-6 rounded-lg border-2 border-gray-700 hover:border-purple-600 transition-colors">
-                        <h2 className="text-xl font-bold mb-2">
-                            Description
-                        </h2>
+                        <h2 className="text-xl font-bold mb-2">Description</h2>
                         <textarea
                             name="jobDescription"
                             rows={5}
@@ -107,7 +103,7 @@ const CreateInterviewPage = () => {
                             className="resize-none overflow-hidden px-3 w-full rounded-lg border border-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-600"></textarea>
                     </div>
                     <div className="p-6 rounded-lg border-2 border-gray-700 hover:border-purple-600 transition-colors">
-                        <h2 className="text-xl font-bold text-whiet mb-2">
+                        <h2 className="text-xl font-bold mb-2">
                             Select the resume
                         </h2>
                         <select
@@ -130,12 +126,17 @@ const CreateInterviewPage = () => {
                             {resume &&
                                 resume.map((cur) => {
                                     return (
-                                        <option value={cur._id}>
+                                        <option
+                                            value={cur._id}
+                                            className="dark:bg-[#0a0a0a]"
+                                            key={cur._id}>
                                             {cur.name}
                                         </option>
                                     );
                                 })}
-                            <option value="add">Add New Resume</option>
+                            <option value="add" className="dark:bg-[#0a0a0a]">
+                                Add New Resume
+                            </option>
                         </select>
                     </div>
                     <div className="p-6 rounded-lg border-2 border-gray-700 hover:border-purple-600 transition-colors">

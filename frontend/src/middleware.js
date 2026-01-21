@@ -14,6 +14,8 @@ async function verifyJWT(token) {
 
 export async function middleware(request) {
     const token = request.cookies.get("authToken")?.value;
+    console.log("Middleware invoked for:", request.nextUrl.pathname);
+    console.log("Auth :", token);
     const verified = token ? await verifyJWT(token) : null;
     // Redirect authenticated users away from auth pages
     if (

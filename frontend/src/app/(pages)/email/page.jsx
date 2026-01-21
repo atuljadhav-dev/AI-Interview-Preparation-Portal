@@ -1,10 +1,10 @@
 import React from "react";
-import ResumePage from "./ResumeGeneratePage";
+import EmailPage from "./EmailPage";
 
 const page = () => {
     return (
         <div>
-            <ResumePage />
+            <EmailPage />
         </div>
     );
 };

@@ -78,6 +78,16 @@ const FeedBackPage = ({ id }) => {
             </div>
         );
     }
+    const getLevel = (rating) => {
+        if (rating >= 5)
+            return { label: "Expert", color: "bg-indigo-100 text-indigo-700" };
+        if (rating >= 4)
+            return {
+                label: "Advanced",
+                color: "bg-emerald-100 text-emerald-700",
+            };
+        return { label: "Intermediate", color: "bg-blue-100 text-blue-700" };
+    };
     return (
         <div className="min-h-screen py-10 px-5">
             <h1 className="text-4xl md:text-5xl font-bold text-center mb-10 text-indigo-400">
@@ -110,7 +120,34 @@ const FeedBackPage = ({ id }) => {
                         </p>
                     </div>
                 </section>
-
+                <section>
+                    <h2 className="text-2xl font-semibold border-b text-indigo-400 border-gray-700 pb-2 mb-4">
+                        Skill Rating
+                    </h2>
+                    <div className=" mx-auto p-6 rounded-xl shadow-md border border-slate-100">
+                        <div className="flex justify-between gap-2 flex-wrap">
+                            {feedback.skillsRating.map((skill, index) => (
+                                <div className="flex flex-col gap-1">
+                                    <span className="text-sm font-medium text-slate-500">
+                                        {skill.skill_name}
+                                    </span>
+                                    <div className="flex gap-1">
+                                        {[...Array(5)].map((_, i) => (
+                                            <div
+                                                key={i}
+                                                className={`h-2 w-8 rounded-sm ${
+                                                    i < skill.rating
+                                                        ? "bg-sky-500"
+                                                        : "bg-slate-200"
+                                                }`}
+                                            />
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
                 <section>
                     <h2 className="text-2xl font-semibold border-b border-gray-700 pb-2 mb-4">
                         Evaluation Summary
@@ -145,9 +182,7 @@ const FeedBackPage = ({ id }) => {
                             ))}
                         </ul>
                     ) : (
-                        <p className="">
-                            No strengths were recorded.
-                        </p>
+                        <p className="">No strengths were recorded.</p>
                     )}
                 </section>
                 <section>
@@ -161,9 +196,7 @@ const FeedBackPage = ({ id }) => {
                             ))}
                         </ul>
                     ) : (
-                        <p className="">
-                            No noticeable shortcomings observed.
-                        </p>
+                        <p className="">No noticeable shortcomings observed.</p>
                     )}
                 </section>
                 <section>
@@ -179,15 +212,11 @@ const FeedBackPage = ({ id }) => {
                                     <h4 className="text-indigo-400 font-semibold">
                                         Question {idx + 1}:
                                     </h4>
-                                    <p className=" mt-1">
-                                        {cur.question}
-                                    </p>
+                                    <p className=" mt-1">{cur.question}</p>
                                     <h5 className="text-indigo-400 font-semibold mt-3">
                                         Expected Answer:
                                     </h5>
-                                    <p className=" mt-1">
-                                        {cur.answer}
-                                    </p>
+                                    <p className=" mt-1">{cur.answer}</p>
                                 </div>
                             ))}
                         </div>

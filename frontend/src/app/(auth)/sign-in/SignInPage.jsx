@@ -32,8 +32,8 @@ const SignInPage = () => {
             );
             if (res.data.success) {
                 setUser(res.data.data);
-                Cookies.set("authToken", res.data.token, { expires: 2 }); //cookies set by the server are not accessible in client side,nextjs app. Cookies set by backend is has different domain. Hence setting cookie in client side also.It helps to middleware to identify authenticated user.Server side cookies are set http only so that cookies will not be accessible in the middleware.
-                toast.success("Login Successfully");
+                //Cookies.set("authToken", res.data.token, { expires: 2 }); //cookies set by the server are not accessible in client side,nextjs app. Cookies set by backend is has different domain. Hence setting cookie in client side also.It helps to middleware to identify authenticated user.Server side cookies are set http only so that cookies will not be accessible in the middleware.
+                toast.success("Sign In Successfully");
                 router.push("/home");
             }
         } catch (err) {
@@ -45,8 +45,7 @@ const SignInPage = () => {
     return (
         <div className="w-full h-screen  flex  items-center justify-center sm:flex-row ">
             <div className="w-full  h-screen flex justify-center m-auto items-center flex-col sm:w-6/12">
-                <h1 className="text-5xl font-sans my-10 font-bold">LOGIN</h1>
-
+                <h1 className="text-5xl font-sans my-10 font-bold">Sign In</h1>
                 <form
                     onSubmit={handleSend}
                     className="h-[55vh] w-[85vw] flex items-center justify-center sm:w-[50vh] gap-5 flex-col rounded-2xl border-purple-500 border backdrop-blur-none shadow-md shadow-purple-500">
@@ -82,7 +81,11 @@ const SignInPage = () => {
                     <button
                         type="submit"
                         disabled={sending}
-                        className={`border border-gray-500 cursor-pointer px-6 py-2 sm:px-8 sm:py-2.5 rounded-md transition hover:bg-gray-700 hover:text-white hover:border-purple-500 hover:scale-[1.02] ${sending ? "opacity-50 cursor-not-allowed animate-pulse" : ""}`}>
+                        className={`border border-gray-500 cursor-pointer px-6 py-2 sm:px-8 sm:py-2.5 rounded-md transition hover:bg-gray-700 hover:text-white hover:border-purple-500 hover:scale-[1.02] ${
+                            sending
+                                ? "opacity-50 cursor-not-allowed animate-pulse"
+                                : ""
+                        }`}>
                         {sending ? "Logging in..." : "Login"}
                     </button>
                     <p className="">

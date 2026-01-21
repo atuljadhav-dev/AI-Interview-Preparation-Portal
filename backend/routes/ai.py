@@ -33,7 +33,11 @@ def feedbackGeneration():
                 "success":False,
                 "error":"Invalid input data"
                 }),400
-        response=generateFeedback(jobTitle,resume, questionAnswer, userAnswer, jobDescription, roundName,skills)
+        response=None
+        try:
+            response=generateFeedback(jobTitle,resume, questionAnswer, userAnswer, jobDescription, roundName,skills)
+        except Exception as e:
+            response=None
         if response is None:
             return jsonify({
                 "success":False,
@@ -137,16 +141,17 @@ def applicationEmail():
             }), 401
 
     data = request.get_json()
-    if not data or 'jobDescription' not in data or 'companyName' not in data :
+    if not data or 'jobDescription' not in data  :
         return jsonify({
             "success": False, 
             "error": "Incomplete data provided"
             }), 400
 
     jobDescription = data['jobDescription']
-    companyName = data['companyName']
+    resume = data['resume']
+    additionalDetails=data["additionalDetails"] 
     try:
-        emailContent = generateApplicationEmail(jobDescription, companyName)
+        emailContent = generateApplicationEmail(resume,jobDescription,additionalDetails)
         return jsonify({
             "success": True,
             "message": "Application email generated successfully",

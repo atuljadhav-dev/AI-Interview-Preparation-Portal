@@ -25,7 +25,7 @@
 body {
     background: var(--background);
     color: var(--foreground);
-    font-family: poppins;
+    font-family: poppins, sans-serif;
 }
 input:-webkit-autofill,
 input:-webkit-autofill:hover,

@@ -12,8 +12,8 @@ const InterviewCard = ({ interview }) => {
         jobDescription,
         questions,
         feedbackId,
+        skills,
     } = interview;
-
     return (
         <div className=" border border-gray-700 rounded-2xl p-6 shadow-md hover:shadow-purple-600 transition">
             {/* Header */}
@@ -30,7 +30,18 @@ const InterviewCard = ({ interview }) => {
                     {status}
                 </span>
             </div>
-
+            <div className="flex justify-between gap-1 flex-wrap">
+                {skills &&
+                    skills.map((cur, idx) => {
+                        return (
+                            <div
+                                className="px-3 py-1 rounded-full text-sm font-semibold dark:bg-green-600/20 dark:text-green-400 text-green-700 bg-green-100"
+                                key={idx}>
+                                {cur}
+                            </div>
+                        );
+                    })}
+            </div>
             {/* Meta */}
             <p className=" text-sm mb-1">
                 <span className="font-semibold text-indigo-800 dark:text-indigo-300">

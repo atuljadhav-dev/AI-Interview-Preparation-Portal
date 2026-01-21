@@ -8,17 +8,18 @@ import { toast } from "react-toastify";
 const InterviewPage = ({ id }) => {
     const [conversation, setConversation] = useState([]);
     const [input, setInput] = useState(
-        `Start Interview Current Time: ${new Date().toLocaleString("en-IN", {
-            timeZone: "Asia/Kolkata",
-            dateStyle: "medium",
-            timeStyle: "medium",
-        })}`
+        // `Start Interview Current Time: ${new Date().toLocaleString("en-IN", {
+        //     timeZone: "Asia/Kolkata",
+        //     dateStyle: "medium",
+        //     timeStyle: "medium",
+        // })}`
+        "quit"
     );
     const [currentResume, setCurrentResume] = useState(null);
     const [interview, setInterview] = useState({});
     const [sending, setSending] = useState(false);
     const { resume } = useUser();
-    const [lastAIResponse, setLastAIResponse] = useState("kgiugoiugo");
+    const [lastAIResponse, setLastAIResponse] = useState("quit");
     const router = useRouter();
     useEffect(() => {
         const fetchData = async () => {
@@ -47,7 +48,7 @@ const InterviewPage = ({ id }) => {
     }, [resume, interview]);
     useEffect(() => {
         if (conversation.length == 0 && interview.questions && currentResume) {
-          //  handleSend(); //auto send to start interview
+            handleSend(); //auto send to start interview
         }
     }, [currentResume, interview]);
     const handleSend = async () => {
@@ -82,17 +83,10 @@ const InterviewPage = ({ id }) => {
             setLastAIResponse(res.data.data);
             if (res.data.data.includes("quit")) {
                 //interview end condition
-                await axios.post(
-                    `${process.env.NEXT_PUBLIC_BASE_URL}/conversation`,
-                    {
-                        interviewId: interview._id,
-                        conversations: finalConversation,
-                    },
-                    { withCredentials: true }
-                );
+
                 //generate feedback
                 const feedback = await axios.post(
-                    `${process.env.NEXT_PUBLIC_BASE_URL}/generate-feedback`,
+                    `${process.env.NEXT_PUBLIC_BASE_URL}/ai/feedback`,
                     {
                         resume,
                         questionAnswer: interview.questions,
@@ -106,10 +100,18 @@ const InterviewPage = ({ id }) => {
                 );
                 //save feedback to db
                 const feedbackSave = await axios.post(
-                    `${process.env.NEXT_PUBLIC_BASE_URL}/ai/feedback`,
+                    `${process.env.NEXT_PUBLIC_BASE_URL}/feedback`,
                     {
                         feedback: feedback.data.data,
                         interviewId: interview._id,
+                    },
+                    { withCredentials: true }
+                );
+                await axios.post(
+                    `${process.env.NEXT_PUBLIC_BASE_URL}/conversation`,
+                    {
+                        interviewId: interview._id,
+                        conversations: finalConversation,
                     },
                     { withCredentials: true }
                 );

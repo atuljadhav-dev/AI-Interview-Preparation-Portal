@@ -21,7 +21,7 @@ export default function ProfileUpload() {
     };
     useEffect(() => {
         const checkAvialability = () => {
-            if (resume.some((res) => res.name === debouncedName)) {
+            if (resume && resume.some((res) => res.name === debouncedName)) {
                 setAvailable(false);
             } else {
                 setAvailable(true);
