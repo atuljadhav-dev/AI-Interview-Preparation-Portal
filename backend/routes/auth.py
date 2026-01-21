@@ -78,9 +78,9 @@ def signup():
     response.set_cookie(
         "authToken",
         token,
-        httponly=True,
-        samesite="None",
-        secure=True,
+        httponly=True,# Prevent access via JavaScript
+        samesite="None",# Allow cross-site requests
+        secure=True,# Only send over HTTPS
         max_age=2*24*60*60  #2 days
     )
     return response
@@ -117,7 +117,7 @@ def signin():
     response.set_cookie(
         "authToken",
         token,
-        httponly=True,
+        # httponly=True,
         samesite="None",
         secure=True,
         max_age=2*24*60*60 
