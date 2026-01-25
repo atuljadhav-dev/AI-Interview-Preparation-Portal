@@ -78,16 +78,6 @@ const FeedBackPage = ({ id }) => {
             </div>
         );
     }
-    const getLevel = (rating) => {
-        if (rating >= 5)
-            return { label: "Expert", color: "bg-indigo-100 text-indigo-700" };
-        if (rating >= 4)
-            return {
-                label: "Advanced",
-                color: "bg-emerald-100 text-emerald-700",
-            };
-        return { label: "Intermediate", color: "bg-blue-100 text-blue-700" };
-    };
     return (
         <div className="min-h-screen py-10 px-5">
             <h1 className="text-4xl md:text-5xl font-bold text-center mb-10 text-indigo-400">
@@ -129,7 +119,7 @@ const FeedBackPage = ({ id }) => {
                             {feedback.skillsRating.map((skill, index) => (
                                 <div className="flex flex-col gap-1">
                                     <span className="text-sm font-medium text-slate-500">
-                                        {skill.skill_name}
+                                        {skill.skillName}
                                     </span>
                                     <div className="flex gap-1">
                                         {[...Array(5)].map((_, i) => (

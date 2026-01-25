@@ -1,4 +1,3 @@
-import React from "react";
 import ResumePage from "./ResumePage";
 
 const page = () => {

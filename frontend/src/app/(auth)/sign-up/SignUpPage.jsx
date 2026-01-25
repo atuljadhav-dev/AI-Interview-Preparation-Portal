@@ -5,6 +5,7 @@ import { useRef, useState } from "react";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
 import axios from "axios";
+import Link from "next/link";
 const SignUpPage = () => {
     const [formData, setFormData] = useState({
         name: "",
@@ -23,7 +24,7 @@ const SignUpPage = () => {
             [e.target.name]: e.target.value,
         });
     };
-    const { setUser, setLoading } = useUser();
+    const { refreshUser } = useUser();
     const handleKeydown = (e, name) => {
         if (e.key === "Enter") {
             e.preventDefault(); // Prevents the form from submitting early
@@ -46,8 +47,7 @@ const SignUpPage = () => {
             );
             toast.success("Registration Successfully");
             Cookies.set("authToken", res.data.token, { expires: 2 });
-            setUser(res.data.data);
-            setLoading(true);
+            refreshUser(); //to refetch the user data in the useUser hook
             router.push("/home");
         } catch (err) {
             toast.error(err.response.data.error);
@@ -113,9 +113,9 @@ const SignUpPage = () => {
                     </button>
                     <p className="">
                         Alredy have an account?{" "}
-                        <a href="/sign-in" className="text-purple-500">
+                        <Link href="/sign-in" className="text-purple-500">
                             Login
-                        </a>
+                        </Link>
                     </p>
                 </form>
             </div>

@@ -1,6 +1,7 @@
 import Image from "next/image";
-import React from "react";
+
 import logo from "/public/logo1.png";
+import Link from "next/link";
 export const metadata = {
     title: "PlacementReady - Your Path to Career Success",
     description:
@@ -50,11 +51,11 @@ const page = () => {
                     </p>
                 </div>
                 <div className="absolute bottom-[10%] left-[6%]">
-                    <a
+                    <Link
                         href="/sign-up"
                         className="inline-block bg-purple-600 text-white font-bold text-lg px-25 py-3   rounded-xl animate-bounce shadow-xl hover:bg-purple-700 transition-all transform hover:scale-105">
                         Start Now
-                    </a>
+                    </Link>
                 </div>
             </div>
             <div className=" py-16 md:py-20 ">
@@ -133,11 +134,11 @@ const page = () => {
                         Ready to turn your next interview into a great
                         opportunity?
                     </h3>
-                    <a
+                    <Link
                         href="/sign-up"
                         className="inline-block bg-purple-600 text-white font-bold text-lg px-8 py-4 rounded-full shadow-lg hover:bg-purple-700 transition-colors transform hover:scale-105">
                         Get Started
-                    </a>
+                    </Link>
                 </div>
             </section>
         </>

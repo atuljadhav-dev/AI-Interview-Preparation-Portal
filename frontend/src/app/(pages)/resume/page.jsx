@@ -15,7 +15,7 @@ export default function ProfileUpload() {
     const [available, setAvailable] = useState(true);
     const debouncedName = useDebounce(name, 500);
     const router = useRouter();
-    const { setLoading, resume } = useUser();
+    const { refreshResume, resume } = useUser();
     const handleFileChange = (e) => {
         setFile(e.target.files[0]);
     };
@@ -61,7 +61,7 @@ export default function ProfileUpload() {
                     withCredentials: true,
                 }
             );
-            setLoading(true);
+            refreshResume();//refresh the resume list after successful upload
             toast.success("Resume uploded successfully");
             router.back();
         } catch (err) {

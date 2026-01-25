@@ -3,7 +3,6 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/hooks/useUser";
 import { toast } from "react-toastify";
-import Cookies from "js-cookie";
 import Link from "next/link";
 import { MenuIcon, UserCircle2Icon } from "lucide-react";
 import { useState } from "react";
@@ -11,7 +10,7 @@ import ThemeToggle from "./ThemeToggle";
 import Image from "next/image";
 const NavBar = () => {
     const router = useRouter();
-    const { user, setUser, setResume } = useUser();
+    const { user, signOut } = useUser();
     const [showLogout, setShowLogout] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
     const handleLogout = async () => {
@@ -21,10 +20,8 @@ const NavBar = () => {
                 {},
                 { withCredentials: true }
             );
-            setUser(null);
-            setResume(null);
             toast.success("Sign out successfully");
-            Cookies.remove("authToken");
+            signOut();//clear user data from context
             router.push("/sign-in");
         } catch (e) {
             toast.error("Logout failed");

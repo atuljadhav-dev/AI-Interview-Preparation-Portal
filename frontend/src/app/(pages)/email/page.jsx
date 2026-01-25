@@ -1,4 +1,3 @@
-import React from "react";
 import EmailPage from "./EmailPage";
 
 const page = () => {

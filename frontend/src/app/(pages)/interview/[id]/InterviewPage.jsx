@@ -1,26 +1,33 @@
 "use client";
+import { useSpeechToText } from "@/hooks/useSpeechToText";
+import { useTextToSpeech } from "@/hooks/useTextToSpeech";
 import { useUser } from "@/hooks/useUser";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 
 const InterviewPage = ({ id }) => {
-    const [conversation, setConversation] = useState([]);
     const [input, setInput] = useState(
-        // `Start Interview Current Time: ${new Date().toLocaleString("en-IN", {
-        //     timeZone: "Asia/Kolkata",
-        //     dateStyle: "medium",
-        //     timeStyle: "medium",
-        // })}`
-        "quit"
+        `Start Interview Current Time: ${new Date().toLocaleString("en-IN", {
+            timeZone: "Asia/Kolkata",
+            dateStyle: "medium",
+            timeStyle: "medium",
+        })}`
     );
+    const [conversation, setConversation] = useState([]);
     const [currentResume, setCurrentResume] = useState(null);
     const [interview, setInterview] = useState({});
     const [sending, setSending] = useState(false);
-    const { resume } = useUser();
-    const [lastAIResponse, setLastAIResponse] = useState("quit");
+    const [lastAIResponse, setLastAIResponse] = useState("");
+    const [start, setStart] = useState(false);
+    const [quit, setQuit] = useState(false);
     const router = useRouter();
+    const videoRef = useRef(null);
+    const { resume } = useUser();
+    const { speak, isSpeaking } = useTextToSpeech();
+    const { transcript, isListening, startListening, stopListening } =
+        useSpeechToText();
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -47,13 +54,46 @@ const InterviewPage = ({ id }) => {
         }
     }, [resume, interview]);
     useEffect(() => {
+        if (lastAIResponse) {
+            speak(lastAIResponse);
+        }
+    }, [lastAIResponse]);
+    useEffect(() => {
+        if (!videoRef.current) return;
+
+        if (isSpeaking) {
+            videoRef.current.currentTime = 0;
+            videoRef.current.play().catch((err) => {
+                console.error("Autoplay was prevented:", err);
+            });
+            stopListening();
+        } else {
+            videoRef.current.pause();
+            if (lastAIResponse && !sending && !quit) {
+                startListening();
+            }
+        }
+    }, [isSpeaking, lastAIResponse, sending]);
+
+    useEffect(() => {
+        if (!transcript) return;
+        setInput(transcript);
+    }, [transcript]);
+    useEffect(() => {
+        if (input && !isListening && start) {
+            handleSend();
+        }
+    }, [isListening]);
+    useEffect(() => {
         if (conversation.length == 0 && interview.questions && currentResume) {
-            handleSend(); //auto send to start interview
+            //handleSend(); //auto send to start interview
         }
     }, [currentResume, interview]);
     const handleSend = async () => {
         if (!input.trim()) return; //avoid sending empty messages
         if (sending) return;
+        stopListening();
+        setStart(true);
         const newMessage = { role: "user", parts: [{ text: input }] };
         setInput("");
         const updatedConversation = [...conversation, newMessage];
@@ -80,10 +120,20 @@ const InterviewPage = ({ id }) => {
             };
             const finalConversation = [...updatedConversation, aiResponse];
             setConversation(finalConversation);
-            setLastAIResponse(res.data.data);
+            if (res.data.data.includes("quit")) {
+                let final = res.data.data.replace("quit", "").trim();
+                if (final === "") {
+                    final = "Thank you for attending the interview.";
+                }
+                setQuit(true);
+                setLastAIResponse(final);
+            } else {
+                setLastAIResponse(res.data.data);
+            }
             if (res.data.data.includes("quit")) {
                 //interview end condition
-
+                stopListening();
+                toast.info("Generating your interview feedback...");
                 //generate feedback
                 const feedback = await axios.post(
                     `${process.env.NEXT_PUBLIC_BASE_URL}/ai/feedback`,
@@ -124,7 +174,32 @@ const InterviewPage = ({ id }) => {
             setSending(false);
         }
     };
-
+    if (!start) {
+        return (
+            <div className="w-full min-h-screen flex flex-col items-center justify-center">
+                <div className="text-center mb-8">
+                    <h1 className="text-3xl font-bold mb-4">
+                        Interview for: {interview.title}
+                    </h1>
+                    <p className="mb-6">
+                        Round: {interview.roundName}
+                        <br />
+                    </p>
+                    <h2 className="">Instructions:</h2>
+                    <li className="text-left mx-20">
+                        Answer will auto send when you stop speaking for 2 sec.
+                    </li>
+                </div>
+                <button
+                    className="bg-purple-500 p-4 cursor-pointer text-white rounded mx-12 px-5"
+                    onClick={() => {
+                        handleSend();
+                    }}>
+                    Start Interview
+                </button>
+            </div>
+        );
+    }
     return (
         <div className="w-full min-h-screen  ">
             <div className="h-[60vh] w-full flex flex-row-reverse">
@@ -156,9 +231,10 @@ const InterviewPage = ({ id }) => {
                     <div className="h-[60vh] md:w-[45vw] border-2  border-purple-500 rounded-xl backdrop-blur-none shadow-md shadow-purple-500 ">
                         <video
                             className="h-full w-full object-cover rounded-lg"
-                            autoPlay
+                            ref={videoRef}
                             src="/interview.mp4"
                             loop
+                            playsInline
                             muted></video>
                     </div>
                 </div>
@@ -172,11 +248,16 @@ const InterviewPage = ({ id }) => {
                             cols={50}
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
+                            placeholder={
+                                isListening
+                                    ? "Listening to your response..."
+                                    : "Type your answer here..."
+                            }
                             className="overflow-hidden rounded-xl backdrop-blur-none border w-[70vw]  mt-auto p-2"></textarea>
                         <button
                             className="bg-purple-500 p-1 cursor-pointer text-white rounded mx-12 px-5"
                             onClick={handleSend}>
-                            Send
+                            {sending ? "Sending..." : "Send"}
                         </button>
                     </div>
                 </div>
