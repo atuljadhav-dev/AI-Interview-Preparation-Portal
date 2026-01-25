@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 
-export const useSpeechToText = (silenceTimeout = 4000) => {
+export const useSpeechToText = (silenceTimeout = 3000) => {
     const [transcript, setTranscript] = useState("");
     const [isListening, setIsListening] = useState(false);
     const recognitionRef = useRef(null);
@@ -11,61 +11,71 @@ export const useSpeechToText = (silenceTimeout = 4000) => {
         const SpeechRecognition =
             window.SpeechRecognition || window.webkitSpeechRecognition;
 
-        if (SpeechRecognition) {
-            recognitionRef.current = new SpeechRecognition();
-            recognitionRef.current.continuous = true;
-            recognitionRef.current.interimResults = true;
-            recognitionRef.current.lang = "en-US";
+        if (SpeechRecognition && !recognitionRef.current) {
+            const recognition = new SpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = "en-US";
 
-            recognitionRef.current.onresult = (event) => {
-                if (timeoutRef.current) clearTimeout(timeoutRef.current); // Clear previous timeout on new result
+            recognition.onresult = (event) => {
+                //Reset timer immediately when user speaks
+                if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
-                let currentTranscript = "";
-                for (let i = 0; i < event.results.length; i++) {
-                    currentTranscript += event.results[i][0].transcript; // Append all results
+                let finalTranscript = "";
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    if (event.results[i].isFinal) {
+                        finalTranscript += event.results[i][0].transcript;
+                    }
                 }
-                setTranscript(currentTranscript); // Update transcript state
 
+                // Append only newly finalized text to the state
+                if (finalTranscript) {
+                    setTranscript(
+                        (prev) =>
+                            prev + (prev ? " " : "") + finalTranscript.trim()
+                    );
+                }
+
+                // 2. Set auto-stop timer
                 timeoutRef.current = setTimeout(() => {
-                    if (
-                        recognitionRef.current &&
-                        currentTranscript.trim() !== ""
-                    ) {
-                        // Only stop if there's some transcript
+                    if (transcript.length > 5) {
+                        console.log("Silence detected. Stopping...");
                         stopListening();
                     }
-                }, silenceTimeout); // Set new timeout
+                }, silenceTimeout);
             };
 
-            recognitionRef.current.onend = () => setIsListening(false); // Handle end event
-            recognitionRef.current.onerror = () => setIsListening(false); // Handle error event
+            recognition.onend = () => setIsListening(false);
+            recognition.onerror = () => setIsListening(false);
+
+            recognitionRef.current = recognition;
         }
 
         return () => {
-            if (timeoutRef.current) clearTimeout(timeoutRef.current); // Cleanup timeout on unmount
+            if (timeoutRef.current) clearTimeout(timeoutRef.current);
         };
     }, [silenceTimeout]);
 
     const startListening = () => {
-        // Double-check to prevent starting multiple instances
         if (recognitionRef.current && !isListening) {
             try {
-                setTranscript("");
+                setTranscript(""); // Clear previous text
                 recognitionRef.current.start();
                 setIsListening(true);
             } catch (e) {
-                console.error("Recognition start failed:", e);
+                console.error("Mic start error:", e);
             }
         }
     };
 
     const stopListening = () => {
         if (recognitionRef.current) {
-            // Prevent multiple stops
             recognitionRef.current.stop();
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+                timeoutRef.current = null;
+            }
             setIsListening(false);
-            if (timeoutRef.current) clearTimeout(timeoutRef.current);
-            timeoutRef.current = null;
         }
     };
 

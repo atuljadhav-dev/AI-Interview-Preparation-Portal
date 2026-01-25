@@ -120,17 +120,13 @@ const InterviewPage = ({ id }) => {
             };
             const finalConversation = [...updatedConversation, aiResponse];
             setConversation(finalConversation);
-            if (res.data.data.includes("quit")) {
-                let final = res.data.data.replace("quit", "").trim();
+            if (res.data.data.toLowerCase().endsWith("quit")) {
+                let final = res.data.data.slice(0, -4).trim();
                 if (final === "") {
                     final = "Thank you for attending the interview.";
                 }
                 setQuit(true);
                 setLastAIResponse(final);
-            } else {
-                setLastAIResponse(res.data.data);
-            }
-            if (res.data.data.includes("quit")) {
                 //interview end condition
                 stopListening();
                 toast.info("Generating your interview feedback...");
@@ -167,6 +163,8 @@ const InterviewPage = ({ id }) => {
                 );
                 toast.success("Feedback generated successfully");
                 router.push(`/feedback/${interview._id}`); //navigate to feedback page
+            } else {
+                setLastAIResponse(res.data.data);
             }
         } catch (e) {
             toast.error(e.response.data.error);
