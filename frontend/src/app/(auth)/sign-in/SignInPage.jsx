@@ -31,9 +31,9 @@ const SignInPage = () => {
                 { withCredentials: true }
             );
             if (res.data.success) {
-                refreshUser(); //to refetch the user data in the useUser hook
                 Cookies.set("authToken", res.data.token, { expires: 2 }); //cookies set by the server are not accessible in client side,nextjs app. Hence setting cookie in client side also.It helps to middleware to identify authenticated user.Server side cookies are set http only so that cookies will not be accessible in the middleware.
                 toast.success("Sign In Successfully");
+                refreshUser(); //to refetch the user data in the useUser hook
                 router.push("/home");
             }
         } catch (err) {
