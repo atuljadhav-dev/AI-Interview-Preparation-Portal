@@ -187,7 +187,7 @@ const InterviewPage = ({ id }) => {
                     </p>
                     <h2 className="">Instructions:</h2>
                     <li className="text-left mx-20">
-                        Answer will auto send when you stop speaking for 2 sec.
+                        Answer will auto send when you stop speaking for 4 sec.
                     </li>
                 </div>
                 <button

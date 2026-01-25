@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 
-export const useSpeechToText = (silenceTimeout = 2000) => {
+export const useSpeechToText = (silenceTimeout = 4000) => {
     const [transcript, setTranscript] = useState("");
     const [isListening, setIsListening] = useState(false);
     const recognitionRef = useRef(null);
