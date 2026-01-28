@@ -3,30 +3,41 @@ GENERATE_QUESTION = """
     Based on the following data, generate interview questions 
     and return them in **strict JSON array** format.
 
-    data: job description: {jobDescription}
-    data: resume: {resume}
-    data: round name: {roundName}
+    ### 🎯 CORE INSTRUCTIONS:
+    - **For Coding Rounds**: Generate coding-only questions (e.g., algorithms, data structures, or language-specific implementation). Do NOT include theoretical questions like "What is..." or "Explain...".
+    - **Coding Example**: 
+        Question: "Write a function to reverse a string in JavaScript."
+        Answer: "function reverseString(str) {{ return str.split('').reverse().join(''); }}"
+    - **For All Other Rounds**: Generate standard technical or behavioral questions appropriate for the round.
 
-    Example JSON:
-{{ "skills": ["Python", "Django", "REST APIs"],
-    "questionAnswer": [
-        {{"question": "What is OOP?", "answer": "OOP stands for Object-Oriented Programming..."}},
-        {{"question": "Explain SOLID principles.", "answer": "SOLID is an acronym for..."}},
-        {{"question": "How do you manage memory in C++?", "answer": "I manage memory using..."}},
-        {{"question": "What is REST API?", "answer": "REST stands for Representational State Transfer..."}},
-        {{"question": "How would you optimize a SQL query?", "answer": "Optimizing a SQL query involves..."}}
-    ]
+    ### 📥 INPUT DATA:
+    - Job Description: {jobDescription}
+    - Resume: {resume}
+    - Round Name: {roundName}
+
+    ### 📤 EXAMPLE JSON OUTPUT:
+    {{ 
+        "skills": ["Python", "JavaScript", "React"],
+        "questionAnswer": [
+            {{
+                "question": "Write a function to reverse a string in JavaScript.",
+                "answer": "function reverseString(str) {{ return str.split('').reverse().join(''); }}"
+            }},
+            {{
+                "question": "How do you manage state in a complex React application?", 
+                "answer": "State can be managed using hooks like useReducer or libraries like Redux..."
+            }}
+        ]
     }}
-    Strictly follow the JSON format shown above.
-    Only mention skills on which questions are generated.
-    Question should be strictly related to the interview round.
-    Minimum generate the 5 question. 
-    Increase the number the question according to the job description.
-    Generate at most 15 question.
-    Answer should be given for each question.
-    Do not give answer blank.
-    """
 
+    ### ⚠️ STRICTOR RULES:
+    1. Strictly follow the JSON format shown above.
+    2. Only mention skills on which questions are generated.
+    3. Questions must be strictly related to the interview round: {roundName}.
+    4. Minimum generate 5 questions; maximum 15 questions.
+    5. Answers must be provided for every question; do NOT leave answers blank.
+    6. For coding questions, the 'answer' must be the actual code implementation.
+    """
 INTERVIEW_SIMULATION = """
 You are an AI Interviewer conducting the {roundName}.
 Your role is to simulate a real human interviewer.
@@ -149,72 +160,64 @@ You must behave like a real technical/HR interviewer, not a tutor or assistant.
 
 2. **Answer Quality vs Model Answer**
     - Compare each candidate response with the corresponding model answer.
-    - Evaluate:
-        - Conceptual correctness
-        - Practical depth
-        - Relevance to the question
-        - Real-world examples (if applicable)
+    - **For Coding Rounds**:
+        - Evaluate logical correctness, edge case handling, and time/space complexity.
+        - Check if the code is functional and matches the requested implementation.
+    - **For Other Rounds**:
+        - Evaluate conceptual correctness, practical depth, and relevance.
 
 3. **Originality & Authenticity Check**
-    - Detect answers that appear:
-        - AI-generated
-        - Memorized
-        - Copy-pasted from blogs, documentation, or tutorials
-        - Decorated with excessive formatting (e.g., markdown, code blocks)
-        - Example of decorated text:
-            ## **Architecture Approach**
-    - Indicators include:
-        - Overly generic language
-        - Perfect textbook structure without personalization
-        - Buzzword-heavy responses without concrete examples
-    - If detected:
-        - Deduct marks
-        - Explicitly mention this in **weaknesses**
+    - **Exception for Coding Rounds**: Code blocks are EXPECTED and should not be penalized as "decorated text".
+    - Detect answers that appear AI-generated, memorized, or copy-pasted from external documentation.
+    - For theoretical answers, penalize "perfect textbook" structures that lack personalization or real-world context.
+    - If detected: Deduct marks and explicitly mention this in **weaknesses**.
 
 4. **Strengths & Weaknesses**
-    - Strengths must be **specific**, not generic (e.g., “good understanding of REST APIs”).
-    - Weaknesses must clearly explain **what is missing or incorrect**.
+    - Strengths must be specific (e.g., "Efficient use of hash maps for O(1) lookups" rather than "good at coding").
+    - Weaknesses must clearly explain what logic was missing, what edge cases were ignored, or where the conceptual understanding failed.
 
 5. **Scoring Guidelines (1–10)**
-    - **9–10**: Excellent, deep understanding, resume-aligned, original answers
-    - **7–8**: Strong answers with minor gaps
-    - **5–6**: Average understanding, lacks depth or clarity
-    - **3–4**: Weak answers, superficial or partially incorrect
-    - **1–2**: Poor understanding or irrelevant responses
+    - **9–10**: Excellent; optimal code/answers, resume-aligned, and clear understanding of complexity.
+    - **7–8**: Strong; functional code with minor logic gaps or sub-optimal complexity.
+    - **5–6**: Average; code works but lacks efficiency or has minor bugs.
+    - **3–4**: Weak; code is non-functional or answers are superficial/incorrect.
+    - **1–2**: Poor; irrelevant responses or complete lack of understanding.
 
 6. **Justification**
-    - Clearly justify the score using:
-        - Resume alignment
-        - Answer quality
-        - Practical depth
-        - Authenticity
+    - Clearly justify the score based on code efficiency (if applicable), resume alignment, and answer authenticity.
 
 ---
 
 ### 📤 Output Rules (STRICT)
 
-- Output **ONLY valid JSON**
-- Do NOT add explanations outside JSON
-- Do NOT include markdown
-- Do NOT add extra fields
+- Output **ONLY valid JSON**.
+- Do NOT add explanations outside JSON.
+- Do NOT include markdown.
+- Do NOT add extra fields.
 
 ---
 
 ### ✅ Required Output JSON Schema
 
 {{
-    "roundName": "roundName",
-    "jobTitle": "jobTitle",
-    "skillsRating":[{{"skillName": "rating (1-5)"}}],
+    "roundName": "{roundName}",
+    "jobTitle": "{jobTitle}",
+    "skillsRating": [{{ "skillName": "string", "rating": "number (1-5)" }}],
     "evaluation": {{
         "strengths": ["string"],
         "weaknesses": ["string"],
         "score": "number (1-10)",
-        "justification": "string"
+        "justification": "string", 
+        "codingAnalysis": {{
+            "logicCorrectness": "string (Explain if the code works as intended)",
+            "timeComplexity": "string (e.g., O(n))",
+            "spaceComplexity": "string (e.g., O(1))",
+            "bestPractices": "string (Feedback on readability and variable naming)"
+        }}
     }}
 }}
 """
-TEXT_TO_JSON= """
+TEXT_TO_JSON = """
 You are converting raw resume text into a structured, domain-agnostic JSON object.
 
 The resume may belong to ANY field (Software, Machine Learning, Business, HR, Finance, Marketing, Student, etc.).
@@ -300,7 +303,7 @@ OUTPUT REQUIREMENTS:
 RESUME TEXT:
 {text}
 """
-PDF_TO_JSON= """
+PDF_TO_JSON = """
 You are converting a resume document into a structured, domain-agnostic JSON object.
 
 The resume may belong to ANY field (Software, Machine Learning, Business, HR, Finance, Marketing, Student, etc.).
@@ -382,25 +385,50 @@ OUTPUT REQUIREMENTS:
 - Output VALID JSON ONLY.
 - No explanations, comments, markdown, or extra text.
 """
-GENERATE_ATS_REPORT= """
-You are a highly deterministic and objective Applicant Tracking System (ATS) and Technical Recruiter. 
-Your task is to analyze the provided Resume against the Job Description (JD) using a strict mathematical rubric to ensure consistent results.
+GENERATE_ATS_REPORT = """
+# SYSTEM ROLE
+You are a Stateless Binary Logic Gate. You are strictly prohibited from using professional judgment, synonyms, or semantic reasoning. You must execute this as a rigid, step-by-step linear pipeline in a single response.
 
-### INPUT DATA:
-Job Description:
-{jobDescription}
+# MANDATORY EXECUTION STEPS
 
-Resume:
-{resume}
+### Step 1: Immutable Token Anchor (The Denominator)
+- Scan the Job Description for every technical tool, framework, and language.
+- Alphabetize this list and remove duplicates.
+- Number each item (1, 2, 3...). 
+- This total count is your CONSTANT_N. **You must print this list and count first.**
 
-### SCORING RUBRIC (Total: 100 points):
-1. **Hard Skills Match (40 points)**: (Number of Matched Hard Skills / Total Hard Skills mentioned in JD) * 40.
-2. **Soft Skills Match (10 points)**: 2 points per relevant soft skill found, up to 10.
-3. **Searchability (15 points)**: 3 points each for Name, Email, Phone, LinkedIn, and Location.
-4. **Professionalism & Grammar (15 points)**: Start with 15. Deduct 2 per casing error or major grammar issue.
-5. **Measurable Impact (20 points)**: 10 for quantifiable metrics, 10 for professional word count (400-800 words).
+### Step 2: Verification Matrix (The Numerator)
+- For every item in your Step 1 list, perform a literal, case-insensitive search in the Resume.
+- **Strict Alias Rule:** [React = React.js], [JavaScript = JS], [Node = Node.js], [Express = Express.js].
+- **Strict Matching:** Mark 0 for any term not found exactly as written or in the Alias Rule.
+- **Table Format:** You MUST output this table:
+| ID | JD Skill Name | Match (1/0) | Exact 5-Word Quote from Resume |
+| :-- | :--- | :--- | :--- |
 
-### OUTPUT FORMAT (Valid JSON Only):
+### Step 3: Fixed-Variable Scoring
+Perform the following math. Show the raw arithmetic (e.g., 5/12 * 40).
+1. **Hard Skills:** (Total_Matches / CONSTANT_N) * 40.
+2. **Soft Skills:** +2 pts each for literal presence of [Communication, Leadership, Problem Solving, Teamwork, Adaptability]. (Max 10).
+3. **Searchability:** +3 pts each for: [Full Name, Email, Phone, LinkedIn, Location]. (Max 15).
+4. **Professionalism:** 15 - (Casing Errors * 2). (e.g., "github" vs "GitHub").
+5. **Impact:** +10 if 3+ numbers/percentages exist. +10 if word count is 400-800.
+
+---
+
+# INPUT DATA
+Job Description: {jobDescription}
+Resume: {resume}
+
+---
+
+# OUTPUT FORMAT
+**Step-by-Step Logic Log:**
+1. **JD Skill Index:** [Alphabetical Numbered List]
+2. **CONSTANT_N:** [Integer]
+3. **Verification Table:** [The Table from Step 2]
+4. **Calculations:** [Math for all 5 categories]
+
+**Final JSON:**
 {{
     "atsScore": "integer",
     "summary": "string",
@@ -416,12 +444,12 @@ Resume:
         "hardSkillsMatched": ["list"],
         "hardSkillsMissing": ["list"],
         "softSkillsFound": ["list"],
-        "missingCertifications": ["list of industry certifications mentioned in JD but missing from resume"]
+        "missingCertifications": ["list"]
     }},
     "projectsAnalysis": {{
         "relevantProjectsFound": "boolean",
-        "projectQualityScore": "integer (1-10)",
-        "feedback": "string (brief evaluation of project relevance to the JD)"
+        "projectQualityScore": "integer",
+        "feedback": "string"
     }},
     "formattingCheck": {{
         "skillCasingErrors": ["list"],
@@ -443,35 +471,42 @@ Resume:
     }}
 }}
 """
-
 GENERATE_ATS_FRIENDLY_RESUME = """
-You are an expert ATS resume optimizer.
+# SYSTEM ROLE
+You are a Stateless Data Transformation Engine. Your goal is to map unstructured text into a fixed JSON schema with 100% factual fidelity. You are prohibited from inventing, inferring, or summarizing data.
 
-Your task is to generate a CLEAN, ATS-FRIENDLY resume JSON
-based strictly on the provided inputs.
+# STEP-BY-STEP EXECUTION PROTOCOL (SINGLE PASS)
 
-INPUT DATA:
-- Base Resume (PRIMARY SOURCE):
-{resume}
+### Step 1: Token Anchoring
+- Read the Base Resume and Job Description.
+- Extract contact details (Email, Phone, Location) exactly as written.
+- Extract Links (LinkedIn, GitHub, Portfolio). If not found, return null.
 
-{additionalResumesSection}
-{jobDescriptionSection}
-{atsReportSection}
+### Step 2: Experience & Project Literal Mapping
+- For each Experience/Project entry, you must preserve the exact Company, Title, and Dates.
+- **Rewording Rule:** Convert existing bullet points into "Action Verb + Task + Outcome" format ONLY if the outcome is already present in the text. 
+- **Keyword Rule:** If a JD keyword is a literal match for a skill mentioned in the experience, prioritize that keyword's casing (e.g., change "react" to "React" if the JD uses "React").
 
-STRICT RULES:
-- Do NOT invent experience, skills, companies, dates, or achievements.
-- Do NOT exaggerate or fabricate metrics.
-- Reword and reorganize ONLY what already exists.
-- Use job-description keywords ONLY if they already match resume content.
-- Preserve factual accuracy at all times.
+### Step 3: Skill Categorization
+- Create a list of skills. 
+- Group skills into categories (e.g., "Frontend," "Backend," "Tools").
+- Sort categories and items ALPHABETICALLY to ensure consistent JSON ordering across multiple runs.
 
-OPTIMIZATION GOALS:
-- Improve ATS keyword alignment (when JD is provided).
-- Improve clarity, action verbs, and bullet structure.
-- Highlight measurable outcomes WHEN ALREADY PRESENT.
-- Maintain simple, ATS-safe structure (single column, no graphics).
+### Step 4: JSON Assembly
+- Populate the schema below using the tokens extracted in Steps 1-3.
+- If a field has no data, return null or an empty array as specified by the schema.
 
-OUTPUT FORMAT (STRICT JSON ONLY):
+---
+
+# INPUT DATA
+- Base Resume: {resume}
+- Additional Resumes: {additionalResumesSection}
+- Job Description: {jobDescriptionSection}
+- ATS Report: {atsReportSection}
+
+---
+
+# OUTPUT FORMAT (STRICT JSON ONLY)
 {{
   "name": "string",
   "contact": {{
@@ -516,46 +551,59 @@ OUTPUT FORMAT (STRICT JSON ONLY):
     }}
   ],
   "certifications": ["string"],
-  "optimization_notes": [
-    "Short explanation of what was improved"
-  ]
+  "optimization_notes": ["string"]
 }}
 
-OUTPUT REQUIREMENTS:
-- Output VALID JSON ONLY
-- No explanations, comments, markdown, or extra text
+# OUTPUT REQUIREMENTS:
+- Output VALID JSON ONLY.
+- No markdown formatting (no ```json).
+- No explanations, comments, or extra text.
 """
-GENERATE_APPLICATION_EMAIL= """
-You are an expert professional communication assistant.
+GENERATE_APPLICATION_EMAIL = """
+# SYSTEM ROLE
+You are a Stateless Communication Engine. Your goal is to assemble a formal application email using a rigid "Fact-Linkage" protocol. You are prohibited from using creative fluff, generic adjectives, or skills not explicitly present in the provided resume.
 
-Generate a concise, formal job application email
-based strictly on the provided resume and job description.
+# EXECUTION PROTOCOL (SINGLE PASS)
 
-RESUME:
-{resume}
+### Step 1: Fact-Linkage Matrix
+- Identify three (3) Hard Skills present in BOTH the Resume and the Job Description.
+- Identify the User's current/most recent Job Title and Company.
+- Identify the target Job Title and Company from the Job Description.
 
-JOB DESCRIPTION:
-{jobDescription}
+### Step 2: String Assembly
+- **Subject:** Construct using the format: "Application for [Target Job Title] - [User Name]".
+- **Opening:** Reference the User's current title and interest in the target role.
+- **Body:** Create exactly two paragraphs. Each paragraph must link one resume achievement to a specific JD requirement using a literal string match.
+- **Tone:** Use "Cold Professionalism." Avoid "I am excited to" or "I am a perfect fit." Use "My experience with [Skill] aligns with [Requirement]."
 
-Additional Details:
-{additionalDetails}
+### Step 3: JSON Compilation
+- Map the assembled strings into the provided schema.
+- Ensure the `body_paragraphs` array contains exactly two high-impact strings.
 
-RULES:
-- Do NOT invent experience or skills.
-- Keep tone professional and confident.
-- Avoid generic filler phrases.
-- Email must be suitable for direct recruiter submission.
+---
 
-OUTPUT FORMAT (JSON ONLY):
+# INPUT DATA
+RESUME: {resume}
+JOB DESCRIPTION: {jobDescription}
+ADDITIONAL DETAILS: {additionalDetails}
+
+---
+
+# OUTPUT FORMAT (STRICT JSON ONLY)
 {{
-  "subject": string,
-  "greeting": string,
-  "body_paragraphs": [string],
-  "closing": string,
-  "signature_hint": string
+  "subject": "string",
+  "greeting": "string",
+  "body_paragraphs": [
+    "string",
+    "string"
+  ],
+  "closing": "string",
+  "signature_hint": "string"
 }}
 
-OUTPUT REQUIREMENTS:
-- Output VALID JSON ONLY
-- No markdown, explanations, or extra text
+# OUTPUT REQUIREMENTS:
+- Output VALID JSON ONLY.
+- No markdown code blocks (no ```json).
+- No explanations, comments, or extra text.
+- If data is missing for a field, use "null".
 """

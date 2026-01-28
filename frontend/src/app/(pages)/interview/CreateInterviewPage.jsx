@@ -154,7 +154,6 @@ const CreateInterviewPage = () => {
                             <option value="Technical Round" />
                             <option value="HR Round" />
                             <option value="Managerial Round" />
-                            <option value="Final Round" />
                         </datalist>
                     </div>
 

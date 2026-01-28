@@ -108,7 +108,16 @@ def generateFeedback(jobTitle,resume, questionAnswer, userAnswer, jobDescription
                             "items": {"type": "string"}
                         },
                         "score": {"type": "integer", "minimum": 1, "maximum": 10},
-                        "justification": {"type": "string"}
+                        "justification": {"type": "string"},
+                        "codingAnalysis": {
+                            "type": "object",
+                            "properties": {
+                                "logicCorrectness": {"type": "string"},
+                                "timeComplexity": {"type": "string"},
+                                "spaceComplexity": {"type": "string"},
+                                "bestPractices": {"type": "string"}
+                            },
+                        }
                     },
                     "required": ["strengths", "weaknesses", "score", "justification"]
                 }
