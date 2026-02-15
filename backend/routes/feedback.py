@@ -11,7 +11,8 @@ feedback_bp = Blueprint("feedback", __name__)
 @limiter.limit("10 per minute")  # Limit to 10 requests per minute
 def feedback():
     if request.method == "POST":
-        if not verifyJWT(request):
+        userId = verifyJWT(request)
+        if not userId:
             return jsonify({"success": False, "error": "Unauthorized"}), 401
 
         data = request.get_json()
@@ -30,7 +31,7 @@ def feedback():
                     ),
                     400,
                 )
-            response = addFeedback(interviewId, feedback)
+            response = addFeedback(interviewId, feedback, userId)
             setFeedback(interviewId, response["_id"])
             return (
                 jsonify(
@@ -56,11 +57,21 @@ def feedback():
         userId = verifyJWT(request)
         if not userId:
             return jsonify({"success": False, "error": "Unauthorized Access"}), 401
-        res = allFeedBack(userId)
+        page= request.args.get("page", default=1, type=int)
+        limit= request.args.get("limit", default=9, type=int)
+        if page < 1:
+            page = 1
+        if limit < 1:
+            limit = 9
+        feedbacks, total_pages, total_feedbacks = allFeedBack(userId,page,limit)
         return (
             jsonify(
                 {
-                    "data": res,
+                    "data": {
+                        "feedbacks": feedbacks,
+                        "totalPages": total_pages,
+                        "totalFeedbacks": total_feedbacks,
+                    },
                     "message": "All feedback fetched successfully",
                     "success": True,
                 }

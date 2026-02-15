@@ -10,38 +10,32 @@ const HomePage = () => {
     const [interviews, setInterviews] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState("all");
-    const [filteredInterview, setFilteredInterview] = useState([]);
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const limit = 10;
     useEffect(() => {
         const fetchInterviews = async () => {
             try {
                 const res = await axios.get(
                     `${process.env.NEXT_PUBLIC_BASE_URL}/interview`,
-                    { withCredentials: true }
+                    {
+                        params: {
+                            page,
+                            limit,
+                            filter,
+                        },
+                        withCredentials: true,
+                    }
                 );
-                setInterviews(res.data.data);
-                setFilteredInterview(res.data.data);
+                setInterviews(res.data.data.interviews);
+                setTotalPages(res.data.data.totalPages);
             } catch (e) {
-                
             } finally {
                 setLoading(false);
             }
         };
         fetchInterviews();
-    }, []);
-    useEffect(() => {
-        if (filter === "all") {
-            setFilteredInterview(interviews);
-        } else if (filter === "done") {
-            setFilteredInterview(interviews.filter((i) => i.status === "Done"));
-        } else if (filter === "scheduled") {
-            setFilteredInterview(interviews.filter((i) => i.status !== "Done"));
-        } else if (filter === "recent") {
-            const sorted = [...interviews].sort(
-                (a, b) => new Date(b.dateCreated) - new Date(a.dateCreated)
-            );
-            setFilteredInterview(sorted);
-        }
-    }, [filter, interviews]);
+    }, [page, filter]);
     return (
         <>
             <div className="min-h-[calc(100%-4rem)] w-full md:py-0">
@@ -109,19 +103,46 @@ const HomePage = () => {
                         <option value="all">All</option>
                         <option value="done">Done</option>
                         <option value="scheduled">Scheduled</option>
-                        <option value="recent">Recent</option>
                     </select>
                 </div>
                 {loading ? (
                     <p className="text-gray-400">Loading interviews...</p>
-                ) : filteredInterview.length === 0 ? (
+                ) : interviews.length === 0 ? (
                     <p className="text-gray-400">No interviews found.</p>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                        {filteredInterview?.map((interview,idx) => {
-                            return <InterviewCard key={idx} interview={interview} />;
-                        })}
-                    </div>
+                    <>
+                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                            {interviews?.map((interview, idx) => {
+                                return (
+                                    <InterviewCard
+                                        key={idx}
+                                        interview={interview}
+                                    />
+                                );
+                            })}
+                        </div>
+                        <div className="flex justify-center mt-8">
+                            <button
+                                onClick={() => {
+                                    if (page > 1) setPage(page - 1);
+                                }}
+                                disabled={page === 1}
+                                className="px-4 py-2 mx-1 rounded-md bg-gray-300 text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                                Previous
+                            </button>
+                            <span className="px-4 py-2 mx-1">
+                                Page {page} of {totalPages}
+                            </span>
+                            <button
+                                onClick={() => {
+                                    if (page < totalPages) setPage(page + 1);
+                                }}
+                                disabled={page === totalPages}
+                                className="px-4 py-2 mx-1 rounded-md bg-gray-300 text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                                Next
+                            </button>
+                        </div>
+                    </>
                 )}
             </div>
         </>

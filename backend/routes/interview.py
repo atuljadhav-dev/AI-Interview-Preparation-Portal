@@ -75,13 +75,25 @@ def createInterviewRoute():
 
 
 @interview_bp.route("/interview", methods=["GET"])
-@limiter.limit("10 per minute")  # Limit to 10 requests per minute
+@limiter.limit("100 per minute")  # Limit to 10 requests per minute
 def getAllInterview():
     userId = verifyJWT(request)
     if not userId:
         return jsonify({"success": False, "error": "Unauthorized"}), 401
+    page = request.args.get("page", default=1, type=int)
+    limit = request.args.get("limit", default=9, type=int)
+    status = request.args.get("filter", default="all", type=str)
+    # Ensure page and limit are positive integers
+    if page < 1:
+        page = 1
+    if limit < 1:
+        limit = 9
+    if status not in ["all", "done", "scheduled"]:
+        status = "all"
     try:
-        interviews = getInterview(userId)
+        interviews, total_pages, total_interviews = getInterview(
+            userId, page, limit, status
+        )
         interviewList = []
         for interview in interviews:
             if "_id" in interview:
@@ -102,7 +114,11 @@ def getAllInterview():
             {
                 "success": True,
                 "message": "Interviews fetched successfully",
-                "data": interviewList,
+                "data": {
+                    "interviews": interviewList,
+                    "totalPages": total_pages,
+                    "totalInterviews": total_interviews,
+                },
             }
         ),
         200,

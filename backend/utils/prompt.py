@@ -386,88 +386,92 @@ OUTPUT REQUIREMENTS:
 - No explanations, comments, markdown, or extra text.
 """
 GENERATE_ATS_REPORT = """
-# SYSTEM ROLE
-You are a Stateless Binary Logic Gate. You are strictly prohibited from using professional judgment, synonyms, or semantic reasoning. You must execute this as a rigid, step-by-step linear pipeline in a single response.
+You are a professional Applicant Tracking System (ATS) explanation assistant.
 
-# MANDATORY EXECUTION STEPS
+IMPORTANT RULES:
+- You MUST use the provided deterministic ATS System Report as factual ground truth.
+- You are strictly prohibited from recalculating the score.
+- You must NOT modify matched or missing skills.
+- You must NOT contradict the System Report.
+- You must NOT generate step-by-step logic, calculations, or scoring formulas.
+- Output must be valid JSON only.
+- Do NOT include explanations outside JSON.
 
-### Step 1: Immutable Token Anchor (The Denominator)
-- Scan the Job Description for every technical tool, framework, and language.
-- Alphabetize this list and remove duplicates.
-- Number each item (1, 2, 3...). 
-- This total count is your CONSTANT_N. **You must print this list and count first.**
+------------------------------------------------------------
 
-### Step 2: Verification Matrix (The Numerator)
-- For every item in your Step 1 list, perform a literal, case-insensitive search in the Resume.
-- **Strict Alias Rule:** [React = React.js], [JavaScript = JS], [Node = Node.js], [Express = Express.js].
-- **Strict Matching:** Mark 0 for any term not found exactly as written or in the Alias Rule.
-- **Table Format:** You MUST output this table:
-| ID | JD Skill Name | Match (1/0) | Exact 5-Word Quote from Resume |
-| :-- | :--- | :--- | :--- |
+DETERMINISTIC ATS SYSTEM REPORT (GROUND TRUTH):
+{systemReport}
 
-### Step 3: Fixed-Variable Scoring
-Perform the following math. Show the raw arithmetic (e.g., 5/12 * 40).
-1. **Hard Skills:** (Total_Matches / CONSTANT_N) * 40.
-2. **Soft Skills:** +2 pts each for literal presence of [Communication, Leadership, Problem Solving, Teamwork, Adaptability]. (Max 10).
-3. **Searchability:** +3 pts each for: [Full Name, Email, Phone, LinkedIn, Location]. (Max 15).
-4. **Professionalism:** 15 - (Casing Errors * 2). (e.g., "github" vs "GitHub").
-5. **Impact:** +10 if 3+ numbers/percentages exist. +10 if word count is 400-800.
+------------------------------------------------------------
 
----
+JOB DESCRIPTION:
+{jobDescription}
 
-# INPUT DATA
-Job Description: {jobDescription}
-Resume: {resume}
+------------------------------------------------------------
 
----
+RESUME:
+{resume}
 
-# OUTPUT FORMAT
-**Step-by-Step Logic Log:**
-1. **JD Skill Index:** [Alphabetical Numbered List]
-2. **CONSTANT_N:** [Integer]
-3. **Verification Table:** [The Table from Step 2]
-4. **Calculations:** [Math for all 5 categories]
+------------------------------------------------------------
 
-**Final JSON:**
+YOUR TASK:
+
+Using the System Report as authoritative data:
+
+1. Explain the ATS score clearly and professionally.
+2. Provide insights into matched and missing hard skills.
+3. Analyze soft skills if present in resume.
+4. Comment on project relevance and overall quality.
+5. Evaluate formatting and professionalism.
+6. Provide actionable improvement suggestions.
+7. Provide recruiter-style interview and resume recommendation.
+8. Ensure your explanation aligns strictly with the System Report.
+9. Do NOT recompute numeric values.
+10. Keep language professional and recruiter-focused.
+
+------------------------------------------------------------
+
+OUTPUT JSON STRUCTURE (STRICTLY FOLLOW THIS FORMAT):
+
 {{
-    "atsScore": "integer",
-    "summary": "string",
+    "atsScore": <use the exact score value from the System Report>,
+    "summary": "Professional explanation of overall ATS performance.",
     "searchability": {{
-        "namePresent": "boolean",
-        "emailPresent": "boolean",
-        "phonePresent": "boolean",
-        "linkedinPresent": "boolean",
-        "locationPresent": "boolean",
-        "jobTitleMatch": "boolean"
+        "namePresent": <boolean>,
+        "emailPresent": <boolean>,
+        "phonePresent": <boolean>,
+        "linkedinPresent": <boolean>,
+        "locationPresent": <boolean>,
+        "jobTitleMatch": <boolean>
     }},
     "skillsAnalysis": {{
-        "hardSkillsMatched": ["list"],
-        "hardSkillsMissing": ["list"],
-        "softSkillsFound": ["list"],
-        "missingCertifications": ["list"]
+        "hardSkillsMatched": ["Use matched skills from System Report"],
+        "hardSkillsMissing": ["Use missing skills from System Report"],
+        "softSkillsFound": ["List detected soft skills if present"],
+        "missingCertifications": ["Suggest relevant certifications if applicable"]
     }},
     "projectsAnalysis": {{
-        "relevantProjectsFound": "boolean",
-        "projectQualityScore": "integer",
-        "feedback": "string"
+        "relevantProjectsFound": <boolean>,
+        "projectQualityScore": <integer 1-10 based on relevance>,
+        "feedback": "Professional evaluation of project alignment."
     }},
     "formattingCheck": {{
-        "skillCasingErrors": ["list"],
-        "usageOfActiveVoice": "string",
-        "repetitionCheck": "string"
+        "skillCasingErrors": ["List casing issues if detected"],
+        "usageOfActiveVoice": "Short professional comment.",
+        "repetitionCheck": "Comment on repetitive phrasing if observed."
     }},
     "grammarCheck": {{
-        "spellingErrorsFound": "boolean",
-        "grammarIssuesFound": "boolean",
-        "correctionsSuggested": ["list"]
+        "spellingErrorsFound": <boolean>,
+        "grammarIssuesFound": <boolean>,
+        "correctionsSuggested": ["Only if relevant"]
     }},
     "recruiterTips": {{
-        "measurableResultsFound": "boolean",
-        "improvementSuggestions": ["list"]
+        "measurableResultsFound": <boolean>,
+        "improvementSuggestions": ["Actionable, realistic suggestions"]
     }},
     "recommendation": {{
-        "interviewRecommendation": "string",
-        "resumeRecommendation": "string"
+        "interviewRecommendation": "Recruiter-style decision summary.",
+        "resumeRecommendation": "Clear resume improvement direction."
     }}
 }}
 """

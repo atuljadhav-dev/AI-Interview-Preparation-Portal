@@ -43,7 +43,7 @@ const ResumePage = () => {
                         const res = resume.find(
                             (cur) => cur._id === e.target.value
                         );
-                        setSelectedResume(res.resume);
+                        setSelectedResume(res);
                     }}>
                     <option value="">Select Resume</option>
                     {resume.map((res) => (

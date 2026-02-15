@@ -1,3 +1,5 @@
+// File overview: Implements logic for frontend/src/app/(pages)/feedback/[id]/page.jsx.
+
 import FeedBack from "@/app/(pages)/feedback/[id]/FeedBackPage";
 import axios from "axios";
 import { cookies } from "next/headers";

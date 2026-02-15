@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 import json
 from service.ai import (
     generateFeedback,
-    AIInterviewStimulation,
+    AIInterviewSimulation,
     generateATSReport,
     generateApplicationEmail,
     generateATSfriendlyResume,
@@ -81,7 +81,7 @@ def feedbackGeneration():
 
 @ai_bp.route("/simulation", methods=["POST"])
 @limiter.limit("10 per minute")  # Limit to 10 requests per minute
-def interviewStimulation():
+def interviewSimulation():
     """Generate interview simulation based on questions, resume, jobDescription, roundName, content"""
     if not verifyJWT(request):
         return jsonify({"success": False, "error": "Unauthorized"}), 401
@@ -96,7 +96,7 @@ def interviewStimulation():
         content = data["content"]
         if not all([questions, resume, jobDescription, roundName, content]):
             return jsonify({"success": False, "error": "Invalid input data"}), 400
-        response = AIInterviewStimulation(
+        response = AIInterviewSimulation(
             questions, resume, jobDescription, roundName, content
         )
         if response is None:
@@ -137,7 +137,7 @@ def atsReport():
     resume = data["resume"]
     jobDescription = data["jobDescription"]
     try:
-        report = generateATSReport(jobDescription, resume)
+        report = generateATSReport(jobDescription, resume["resume"], resume["url"])
         return (
             jsonify(
                 {
@@ -150,6 +150,7 @@ def atsReport():
         )
 
     except Exception as e:
+        print(f"Error generating ATS report: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
 
 

@@ -48,6 +48,7 @@ export const UserProvider = ({ children }) => {
                 `${process.env.NEXT_PUBLIC_BASE_URL}/resumes`,
                 { withCredentials: true } //to send cookies with the request
             );
+            console.log("Resume response:", response.data);
             setResume(response.data?.data || null);
         } catch (resumeErr) {
             setResume(null);
