@@ -150,7 +150,6 @@ def atsReport():
         )
 
     except Exception as e:
-        print(f"Error generating ATS report: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
 
 

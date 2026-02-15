@@ -476,59 +476,81 @@ OUTPUT JSON STRUCTURE (STRICTLY FOLLOW THIS FORMAT):
 }}
 """
 GENERATE_ATS_FRIENDLY_RESUME = """
-# SYSTEM ROLE
-You are a Stateless Data Transformation Engine. Your goal is to map unstructured text into a fixed JSON schema with 100% factual fidelity. You are prohibited from inventing, inferring, or summarizing data.
-
-# STEP-BY-STEP EXECUTION PROTOCOL (SINGLE PASS)
-
-### Step 1: Token Anchoring
-- Read the Base Resume and Job Description.
-- Extract contact details (Email, Phone, Location) exactly as written.
-- Extract Links (LinkedIn, GitHub, Portfolio). If not found, return null.
-
-### Step 2: Experience & Project Literal Mapping
-- For each Experience/Project entry, you must preserve the exact Company, Title, and Dates.
-- **Rewording Rule:** Convert existing bullet points into "Action Verb + Task + Outcome" format ONLY if the outcome is already present in the text. 
-- **Keyword Rule:** If a JD keyword is a literal match for a skill mentioned in the experience, prioritize that keyword's casing (e.g., change "react" to "React" if the JD uses "React").
-
-### Step 3: Skill Categorization
-- Create a list of skills. 
-- Group skills into categories (e.g., "Frontend," "Backend," "Tools").
-- Sort categories and items ALPHABETICALLY to ensure consistent JSON ordering across multiple runs.
-
-### Step 4: JSON Assembly
-- Populate the schema below using the tokens extracted in Steps 1-3.
-- If a field has no data, return null or an empty array as specified by the schema.
-
----
-
-# INPUT DATA
-- Base Resume: {resume}
-- Additional Resumes: {additionalResumesSection}
-- Job Description: {jobDescriptionSection}
-- ATS Report: {atsReportSection}
-
----
-
-# OUTPUT FORMAT (STRICT JSON ONLY)
+You are a deterministic ATS Resume Optimization Engine.
+Your task is to generate a professionally optimized, ATS-friendly resume using:
+- Primary Resume (base structure)
+- Additional Resumes (supplemental data)
+- Job Description (target alignment)
+- ATS Report (gap analysis and weaknesses)
+You must strictly follow all rules below.
+STRICT RULES
+1. You are NOT allowed to invent new experiences, companies, dates, certifications, or achievements.
+2. You may reword existing content for clarity and impact.
+3. You may improve bullet phrasing.
+4. You may reorder sections for optimization.
+5. You must prioritize:
+   - Skills listed as missing in ATS Report
+   - Keywords from Job Description
+6. You must NOT fabricate quantified metrics.
+7. If ATS Report shows missing skills:
+   - Only include them if they exist in Primary or Additional resumes.
+   - Do NOT add missing skills that do not exist.
+8. Preserve factual accuracy of:
+   - Titles
+   - Dates
+   - Institutions
+   - Companies
+9. Maintain consistent professional formatting.
+10. Output STRICT JSON only.
+INPUT DATA
+PRIMARY RESUME:
+{resume}
+ADDITIONAL RESUMES:
+{additionalResumesSection}
+JOB DESCRIPTION:
+{jobDescriptionSection}
+ATS REPORT (GROUND TRUTH):
+{atsReportSection}
+EXECUTION STEPS
+Step 1 — Skill Prioritization  
+- Extract hardSkillsMissing from ATS Report.
+- Extract hardSkillsMatched.
+- Prioritize matched skills that appear in JD.
+- Reorder skill section to emphasize relevant skills.
+Step 2 — Experience Optimization  
+- Rephrase bullets into strong action format.
+- If measurable impact exists, highlight it.
+- Align bullet wording with JD terminology.
+- Do NOT invent impact.
+Step 3 — Project Optimization  
+- Emphasize projects relevant to JD.
+- Reorder projects by relevance.
+Step 4 — Summary Optimization  
+- Rewrite summary to align with Job Description.
+- Use only existing experience and skills.
+- Do NOT exaggerate.
+Step 5 — Final Assembly  
+- Produce clean structured JSON resume.
+------------------------------------------------------------
+OUTPUT FORMAT (STRICT JSON ONLY)
 {{
   "name": "string",
   "contact": {{
-    "email": "string | null",
-    "phone": "string | null",
-    "location": "string | null"
+    "email": "string",
+    "phone": "string",
+    "location": "string"
   }},
   "summary": "string",
   "links": {{
     "linkedin": "string | null",
     "github": "string | null",
     "portfolio": "string | null",
-    "others": ["string"]
+    "others": []
   }},
   "skills": [
     {{
       "category": "string",
-      "items": ["string"]
+      "items": []
     }}
   ],
   "experience": [
@@ -537,13 +559,13 @@ You are a Stateless Data Transformation Engine. Your goal is to map unstructured
       "company": "string",
       "location": "string | null",
       "dates": "string",
-      "responsibilities": ["string"]
+      "responsibilities": []
     }}
   ],
   "projects": [
     {{
       "name": "string",
-      "description": ["string"]
+      "description": []
     }}
   ],
   "education": [
@@ -554,14 +576,15 @@ You are a Stateless Data Transformation Engine. Your goal is to map unstructured
       "details": "string | null"
     }}
   ],
-  "certifications": ["string"],
-  "optimization_notes": ["string"]
+  "certifications": [],
+  "optimization_notes": []
 }}
-
-# OUTPUT REQUIREMENTS:
-- Output VALID JSON ONLY.
-- No markdown formatting (no ```json).
-- No explanations, comments, or extra text.
+OUTPUT REQUIREMENTS
+- Output valid JSON only.
+- No markdown formatting.
+- No explanations.
+- No comments.
+- No additional text outside JSON.
 """
 GENERATE_APPLICATION_EMAIL = """
 # SYSTEM ROLE

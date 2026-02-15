@@ -1,14 +1,109 @@
 "use client";
 import { useUser } from "@/hooks/useUser";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 
 const ResumePage = () => {
-    const [report, setReport] = useState(null);
-    const [jobDescription, setJobDescription] = useState("");
+    const [report, setReport] = useState({
+        atsScore: 74,
+        formattingCheck: {
+            repetitionCheck:
+                "No significant repetition of phrases or concepts was detected in the primary sections.",
+            skillCasingErrors: [],
+            usageOfActiveVoice:
+                "The summary contains first-person phrasing ('I am') which can be revised for a more professional, action-oriented tone. Experience descriptions generally use active voice.",
+        },
+        grammerCheck: {
+            correctionsSuggested: [
+                "Avoid first-person 'I am'. Use action-oriented verbs like 'Developed' or 'Built' in the summary and objective statements.",
+            ],
+            grammarIssuesFound: true,
+            spellingErrorsFound: false,
+        },
+        projectsAnalysis: {
+            feedback:
+                "The projects are highly relevant to MERN stack development, showcasing practical application of key technologies like MongoDB, Flask (backend logic), Next.js (React framework), and API integrations. The diversity and complexity of projects ('PlacementReady- AI interview Portal', 'FitBuddy', 'GitHubExplain') demonstrate robust full-stack capabilities and problem-solving skills.",
+            projectQualityScore: 9,
+            relevantProjectsFound: true,
+        },
+        recommendation: {
+            interviewRecommendation:
+                "Given the strong technical skill match (all hard skills found) and impressive project portfolio, this candidate is recommended for an interview to further assess their practical experience and cultural fit.",
+            resumeRecommendation:
+                "The resume is strong but would benefit from refining the summary, incorporating quantifiable achievements, and explicitly targeting the 'MERN Developer' role to maximize ATS ranking and recruiter appeal.",
+        },
+        recruiterTips: {
+            improvementSuggestions: [
+                "Quantify achievements in experience and project descriptions wherever possible (e.g., 'Developed X feature, resulting in Y improvement').",
+                "Tailor the resume summary to explicitly mention 'MERN Developer' or related full-stack roles to align more closely with job descriptions.",
+                "Rephrase the resume summary to eliminate first-person pronouns and start with strong action verbs, aligning with professional resume best practices.",
+            ],
+            measurableResultsFound: false,
+        },
+        searchability: {
+            emailPresent: true,
+            jobTitleMatch: false,
+            linkedinPresent: true,
+            locationPresent: true,
+            namePresent: true,
+            phonePresent: true,
+        },
+        skillsAnalysis: {
+            hardSkillsMatched: [
+                "react",
+                "css",
+                "mongodb",
+                "javascript",
+                "restapi",
+                "expressjs",
+                "nodejs",
+            ],
+            hardSkillsMissing: [],
+            missingCertifications: [
+                "Consider certifications in specific MERN stack technologies (e.g., MongoDB, React, Node.js) or full-stack web development to further demonstrate expertise.",
+            ],
+            softSkillsFound: [
+                "results-driven",
+                "quickly learning new concepts",
+                "collaborating within teams",
+                "commitment to delivering high-quality solutions",
+                "tackle complex challenges effectively",
+            ],
+        },
+        summary:
+            "The resume demonstrates a strong foundational match for MERN Developer roles, achieving an ATS score of 74. Key MERN stack technologies are prominently featured and matched, indicating a solid technical background. However, specific areas for optimization, such as resume summary phrasing and quantifiable achievements, are noted to further enhance candidate appeal.",
+    });
+    const [jobDescription, setJobDescription] =
+        useState(`A MERN Developer specializes in building full-stack web applications using a unified JavaScript ecosystem. The term is an acronym for the four core technologies used: MongoDB, Express.js, React.js, and Node.js.
+
+Core Stack Components
+The MERN stack is designed to handle the entire development lifecycle, from the user interface to the database.
+
+MongoDB (Database): A NoSQL, document-oriented database that stores data in flexible, JSON-like formats (BSON).
+
+Express.js (Backend Framework): A minimalist web framework for Node.js used to build robust server-side logic and RESTful APIs.
+
+React.js (Frontend Library): A library developed by Meta for building dynamic, component-based user interfaces with an efficient Virtual DOM for fast rendering.
+
+Node.js (Runtime Environment): A JavaScript runtime that allows code to run on the server side, utilizing an event-driven, non-blocking I/O model for high performance.
+
+Key Responsibilities
+A MERN developer manages both client-side and server-side development.
+
+Frontend Development: Building responsive and interactive user interfaces using React components, state management (e.g., Redux or Context API), and modern CSS.
+
+Backend Development: Creating scalable server-side applications and managing API endpoints with Node.js and Express.
+
+Database Management: Designing schemas, handling data storage, and optimizing queries in MongoDB.
+
+API Integration: Connecting the frontend to the backend via RESTful services or GraphQL, often using tools like Axios or the Fetch API.
+
+Maintenance and Testing: Debugging, writing unit tests (using Jest or Mocha), and optimizing performance across the entire stack.`);
     const [selectedResume, setSelectedResume] = useState(null);
-    const { resume } = useUser();
+    const router = useRouter();
+    const { resumes } = useUser();
     const handleSubmit = async () => {
         try {
             const { data } = await axios.post(
@@ -36,17 +131,17 @@ const ResumePage = () => {
                     setJobDescription(e.target.value);
                 }}
             />
-            {resume && resume.length > 0 ? (
+            {resumes && resumes.length > 0 ? (
                 <select
                     value={selectedResume ? selectedResume._id : ""}
                     onChange={(e) => {
-                        const res = resume.find(
+                        const res = resumes.find(
                             (cur) => cur._id === e.target.value
                         );
                         setSelectedResume(res);
                     }}>
                     <option value="">Select Resume</option>
-                    {resume.map((res) => (
+                    {resumes.map((res) => (
                         <option key={res._id} value={res._id}>
                             {res.name}
                         </option>
@@ -56,6 +151,23 @@ const ResumePage = () => {
                 <div>No Resumes Found</div>
             )}
             <button onClick={handleSubmit}>submit</button>
+            {report && (
+                <>
+                    <button
+                        onClick={() => {
+                            const data = encodeURIComponent(
+                                JSON.stringify({
+                                    jobDescription,
+                                    resume: selectedResume._id,
+                                    atsReport: report,
+                                })
+                            );
+                            router.push(`/resume/generate?data=${data}`);
+                        }}>
+                        Fix Resume
+                    </button>
+                </>
+            )}
             {report && (
                 <div>
                     <div>

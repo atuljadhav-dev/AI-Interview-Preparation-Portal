@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 
 const CreateInterviewPage = () => {
-    const { resume, user, loading } = useUser();
+    const { resumes, user, loading } = useUser();
     const router = useRouter();
     const textareaRef = useRef(null);
     const [sending, setSending] = useState(false);
@@ -20,11 +20,11 @@ const CreateInterviewPage = () => {
     useEffect(() => {
         if (!user) return;
 
-        if (!resume && !loading) {
+        if (!resumes && !loading) {
             toast.info("Please upload or attach your resume");
             router.push("/resume");
         }
-    }, [resume, user]);
+    }, [resumes, user]);
     useEffect(() => {
         const el = textareaRef.current;
         if (!el) return;
@@ -56,7 +56,7 @@ const CreateInterviewPage = () => {
         if (sending) return;
         try {
             setSending(true);
-            const filterResume = resume.filter(
+            const filterResume = resumes.filter(
                 (cur) => cur._id == formData.resumeId
             );
             formData.resume = filterResume[0]?.resume;
@@ -123,8 +123,8 @@ const CreateInterviewPage = () => {
                             <option value="" disabled>
                                 Select Resume
                             </option>
-                            {resume &&
-                                resume.map((cur) => {
+                            {resumes &&
+                                resumes.map((cur) => {
                                     return (
                                         <option
                                             value={cur._id}

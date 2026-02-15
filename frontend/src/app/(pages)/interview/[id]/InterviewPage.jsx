@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 const InterviewPage = ({ id }) => {
     const router = useRouter();
     const videoRef = useRef(null);
-    const { resume } = useUser();
+    const { resumes } = useUser();
 
     // Context / Global States
     const [interview, setInterview] = useState({});
@@ -57,10 +57,10 @@ const InterviewPage = ({ id }) => {
 
     // 2. Resume Selection Sync
     useEffect(() => {
-        if (!resume || !interview.resumeId) return;
-        const filtered = resume.find((cur) => cur._id === interview.resumeId);
+        if (!resumes || !interview.resumeId) return;
+        const filtered = resumes.find((cur) => cur._id === interview.resumeId);
         if (filtered) setCurrentResume(filtered.resume);
-    }, [resume, interview]);
+    }, [resumes, interview]);
 
     // 3. Centralized AI Speech Trigger
     useEffect(() => {

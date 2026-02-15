@@ -38,7 +38,6 @@ export const useSpeechToText = (silenceTimeout = 3000) => {
 
                 // 2. Set auto-stop timer
                 timeoutRef.current = setTimeout(() => {
-                    console.log("Silence detected. Stopping...");
                     stopListening();
                 }, silenceTimeout);
             };
