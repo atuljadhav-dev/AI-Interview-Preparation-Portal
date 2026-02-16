@@ -46,7 +46,6 @@ Maintenance and Testing: Debugging, writing unit tests (using Jest or Mocha), an
                     }
                 );
                 setReports(data?.data);
-                console.log(data);
             } catch (e) {
                 toast.error("Failed to fetch reports.");
             }

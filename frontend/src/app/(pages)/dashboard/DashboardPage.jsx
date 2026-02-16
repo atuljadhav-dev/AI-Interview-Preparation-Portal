@@ -18,7 +18,6 @@ const DashboardPage = () => {
                     }
                 );
                 setStats(res.data.data);
-                console.log(res.data.data);
                 toast.success("Dashboard stats fetched successfully.");
             } catch (e) {
                 toast.error("Failed to fetch dashboard stats.");

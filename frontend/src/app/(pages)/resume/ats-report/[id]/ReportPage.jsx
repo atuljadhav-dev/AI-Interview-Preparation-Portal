@@ -20,7 +20,6 @@ const ReportPage = ({ id }) => {
                 toast.success("Report fetched successfully.");
             } catch (e) {
                 toast.error("Failed to fetch report.");
-                console.error("Failed to fetch report:", e);
             }
         };
         fetchReport();

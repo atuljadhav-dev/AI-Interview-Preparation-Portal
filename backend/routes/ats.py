@@ -55,7 +55,6 @@ def generateATSReportRoute():
             200,
         )
     except Exception as e:
-        print(f"Error generating ATS report: {str(e)}")
         return jsonify({"success": False, "error": str(e)}), 500
 
 
@@ -78,7 +77,6 @@ def getATSReportsRoute():
             200,
         )
     except Exception as e:
-        print(f"Error fetching ATS reports: {str(e)}")
         return jsonify({"success": False, "error": str(e)}), 500
 
 
@@ -103,7 +101,6 @@ def getATSReportByIdRoute(reportId):
             200,
         )
     except Exception as e:
-        print(f"Error fetching ATS report: {str(e)}")
         return jsonify({"success": False, "error": str(e)}), 500
 
 
@@ -128,5 +125,4 @@ def getATSReportByResumeIdRoute(resumeId):
             200,
         )
     except Exception as e:
-        print(f"Error fetching ATS report: {str(e)}")
         return jsonify({"success": False, "error": str(e)}), 500
