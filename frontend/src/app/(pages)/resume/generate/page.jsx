@@ -1,10 +1,11 @@
+import { Suspense } from "react";
 import ResumePage from "./ResumeGeneratePage";
 
 const page = () => {
     return (
-        <div>
+        <Suspense fallback={<div>Loading...</div>}>
             <ResumePage />
-        </div>
+        </Suspense>
     );
 };
 
