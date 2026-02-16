@@ -7,6 +7,8 @@ from routes.conversation import con_bp
 from routes.feedback import feedback_bp
 from flask_cors import CORS
 from utils.limiter import limiter
+from routes.dashboard import dashboard_bp
+from routes.ats import ats_bp
 import os
 
 app = Flask(__name__)
@@ -21,6 +23,8 @@ app.register_blueprint(interview_bp, url_prefix="/api")
 app.register_blueprint(ai_bp, url_prefix="/api/ai")
 app.register_blueprint(con_bp, url_prefix="/api")
 app.register_blueprint(feedback_bp, url_prefix="/api")
+app.register_blueprint(dashboard_bp, url_prefix="/api/dashboard")
+app.register_blueprint(ats_bp, url_prefix="/api/ats")
 
 
 @app.route("/")

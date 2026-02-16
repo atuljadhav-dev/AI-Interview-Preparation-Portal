@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
+import { toast } from "react-toastify";
 
 export const useSpeechToText = (silenceTimeout = 3000) => {
     const [transcript, setTranscript] = useState("");
@@ -60,7 +61,9 @@ export const useSpeechToText = (silenceTimeout = 3000) => {
                 recognitionRef.current.start();
                 setIsListening(true);
             } catch (e) {
-                console.error("Mic start error:", e);
+                toast.error(
+                    "Speech recognition is not supported in this browser."
+                );
             }
         }
     };

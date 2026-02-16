@@ -185,6 +185,7 @@ const InterviewPage = ({ id }) => {
                 );
 
                 router.push(`/feedback/${interview._id}`);
+                toast.success("Feedback generated. Redirecting to results...");
             } else {
                 setLastAIResponse(aiText);
             }

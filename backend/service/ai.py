@@ -6,7 +6,6 @@ from utils.prompt import (
     GENERATE_FEEDBACK,
     TEXT_TO_JSON,
     PDF_TO_JSON,
-    GENERATE_ATS_REPORT,
     GENERATE_ATS_FRIENDLY_RESUME,
     GENERATE_APPLICATION_EMAIL,
 )
@@ -14,10 +13,7 @@ from datetime import datetime
 import pytz
 import httpx
 from google.genai import types
-import io
-from pypdf import PdfReader
-import requests
-from service.ats import calculate_ats_report
+
 
 tz_india = pytz.timezone("Asia/Kolkata")
 timestamp = datetime.now(tz_india).strftime("%Y-%m-%d %I:%M:%S %p IST")
@@ -170,118 +166,6 @@ def convertPDFToJSON(url):
             [prompt, types.Part.from_bytes(data=data, mime_type="application/pdf")],
             config,
         )
-    except GeminiExhaustedError:
-        return None
-
-
-def generateATSReport(jobDescription, resume, url=None):
-    """Generate an ATS report analyzing the resume against the job description."""
-    doc_data = requests.get(url)
-    f = io.BytesIO(doc_data.content)
-    reader = PdfReader(f)
-
-    full_text = ""
-    for i, page in enumerate(reader.pages):
-        text = page.extract_text()
-        full_text += f"\n{text}"
-    systemReport=calculate_ats_report(full_text, jobDescription)
-    prompt = GENERATE_ATS_REPORT.format(jobDescription=jobDescription, resume=resume, systemReport=systemReport)
-    config = {
-        "response_mime_type": "application/json",
-        "response_schema": {
-            "type": "object",
-            "properties": {
-                "atsScore": {"type": "integer", "minimum": 0, "maximum": 100},
-                "summary": {"type": "string"},
-                "searchability": {
-                    "type": "object",
-                    "properties": {
-                        "namePresent": {"type": "boolean"},
-                        "emailPresent": {"type": "boolean"},
-                        "phonePresent": {"type": "boolean"},
-                        "linkedinPresent": {"type": "boolean"},
-                        "locationPresent": {"type": "boolean"},
-                        "jobTitleMatch": {"type": "boolean"},
-                    },
-                },
-                "skillsAnalysis": {
-                    "type": "object",
-                    "properties": {
-                        "hardSkillsMatched": {
-                            "type": "array",
-                            "items": {"type": "string"},
-                        },
-                        "hardSkillsMissing": {
-                            "type": "array",
-                            "items": {"type": "string"},
-                        },
-                        "softSkillsFound": {
-                            "type": "array",
-                            "items": {"type": "string"},
-                        },
-                        "missingCertifications": {
-                            "type": "array",
-                            "items": {"type": "string"},
-                        },
-                    },
-                },
-                "projectsAnalysis": {
-                    "type": "object",
-                    "properties": {
-                        "relevantProjectsFound": {"type": "boolean"},
-                        "projectQualityScore": {
-                            "type": "integer",
-                            "minimum": 1,
-                            "maximum": 10,
-                        },
-                        "feedback": {"type": "string"},
-                    },
-                },
-                "formattingCheck": {
-                    "type": "object",
-                    "properties": {
-                        "skillCasingErrors": {
-                            "type": "array",
-                            "items": {"type": "string"},
-                        },
-                        "usageOfActiveVoice": {"type": "string"},
-                        "repetitionCheck": {"type": "string"},
-                    },
-                },
-                "grammerCheck": {
-                    "type": "object",
-                    "properties": {
-                        "spellingErrorsFound": {"type": "boolean"},
-                        "grammarIssuesFound": {"type": "boolean"},
-                        "correctionsSuggested": {
-                            "type": "array",
-                            "items": {"type": "string"},
-                        },
-                    },
-                },
-                "recruiterTips": {
-                    "type": "object",
-                    "properties": {
-                        "measurableResultsFound": {"type": "boolean"},
-                        "improvementSuggestions": {
-                            "type": "array",
-                            "items": {"type": "string"},
-                        },
-                    },
-                },
-                "recommendation": {
-                    "type": "object",
-                    "properties": {
-                        "interviewRecommendation": {"type": "string"},
-                        "resumeRecommendation": {"type": "string"},
-                    },
-                },
-            },
-        },
-    }
-    try:
-        response = AIClient(prompt, config)
-        return response
     except GeminiExhaustedError:
         return None
 

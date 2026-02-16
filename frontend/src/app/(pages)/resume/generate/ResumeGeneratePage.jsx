@@ -22,8 +22,9 @@ const ResumePage = () => {
                 setReport(data.atsReport || "");
                 const selected = resumes.find((cur) => cur._id === data.resume);
                 setSelectedResume(selected || null);
+                toast.success("Data loaded from URL successfully.");
             } catch (err) {
-                console.error("Error parsing URL data:", err);
+                toast.error("Failed to parse data from URL.");
             }
         }
     }, [searchParams, resumes]);
@@ -50,6 +51,7 @@ const ResumePage = () => {
                 }
             );
             setResume(data?.data);
+            toast.success("Resume generated successfully.");
         } catch (e) {
             toast.error("Failed to generate Resume.");
         }

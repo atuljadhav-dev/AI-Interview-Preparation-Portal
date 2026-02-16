@@ -3,6 +3,7 @@
 import FeedBackCard from "@/components/FeedBackCard";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 const FeedBacksPage = () => {
     const [feedbacks, setFeedbacks] = useState([]);
@@ -19,7 +20,9 @@ const FeedBacksPage = () => {
                 );
                 setFeedbacks(res.data.data.feedbacks);
                 setTotalPages(res.data.data.totalPages);
+                toast.success("Feedbacks fetched successfully.");
             } catch (e) {
+                toast.error("Failed to fetch feedbacks.");
             } finally {
                 setLoading(false);
             }

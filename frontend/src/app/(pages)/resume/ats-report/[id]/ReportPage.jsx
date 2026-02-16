@@ -1,0 +1,52 @@
+"use client";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+
+const ReportPage = ({ id }) => {
+    const [report, setReport] = useState(null);
+    const router=useRouter();
+    useEffect(() => {
+        const fetchReport = async () => {
+            try {
+                const { data } = await axios.get(
+                    `${process.env.NEXT_PUBLIC_BASE_URL}/ats/report/${id}`,
+                    {
+                        withCredentials: true,
+                    }
+                );
+                setReport(data?.data);
+                toast.success("Report fetched successfully.");
+            } catch (e) {
+                toast.error("Failed to fetch report.");
+                console.error("Failed to fetch report:", e);
+            }
+        };
+        fetchReport();
+    });
+    return (
+        <div>
+            {" "}
+            {report && (
+                <>
+                    <button
+                        onClick={() => {
+                            const data = encodeURIComponent(
+                                JSON.stringify({
+                                    jobDescription,
+                                    resume: selectedResume._id,
+                                    atsReport: report,
+                                })
+                            );
+                            router.push(`/resume/generate?data=${data}`);
+                        }}>
+                        Fix Resume
+                    </button>
+                </>
+            )}
+        </div>
+    );
+};
+
+export default ReportPage;

@@ -5,6 +5,7 @@ import interview from "/public/home.png";
 import Image from "next/image";
 import axios from "axios";
 import InterviewCard from "@/components/InterviewCard";
+import { toast } from "react-toastify";
 const HomePage = () => {
     const router = useRouter();
     const [interviews, setInterviews] = useState([]);
@@ -29,7 +30,9 @@ const HomePage = () => {
                 );
                 setInterviews(res.data.data.interviews);
                 setTotalPages(res.data.data.totalPages);
+                toast.success("Interviews fetched successfully.");
             } catch (e) {
+                toast.error("Failed to fetch interviews.");
             } finally {
                 setLoading(false);
             }

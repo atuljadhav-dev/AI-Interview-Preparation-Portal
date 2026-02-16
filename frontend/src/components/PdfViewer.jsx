@@ -5,6 +5,7 @@ import axios from "axios";
 import { Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 const PdfViewer = ({ id }) => {
     const { resumes, setResumes } = useUser();
@@ -33,7 +34,10 @@ const PdfViewer = ({ id }) => {
                 setResumes((prev) => prev.filter((cur) => cur._id !== id));
                 router.back();
             }
-        } catch (e) {}
+            toast.success("Resume deleted successfully.");
+        } catch (e) {
+            toast.error("Failed to delete resume.");
+        }
     };
     return (
         <div className="w-full h-full border border-gray-300 rounded-md ">

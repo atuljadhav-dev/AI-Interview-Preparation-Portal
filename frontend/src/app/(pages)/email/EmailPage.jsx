@@ -25,6 +25,7 @@ const EmailPage = () => {
                 }
             );
             setEmail(data?.data);
+            toast.success("Email generated successfully.");
         } catch (e) {
             toast.error("Failed to generate email.");
         }
