@@ -35,7 +35,10 @@ API Integration: Connecting the frontend to the backend via RESTful services or 
 Maintenance and Testing: Debugging, writing unit tests (using Jest or Mocha), and optimizing performance across the entire stack.`);
     const [selectedResume, setSelectedResume] = useState(null);
     const router = useRouter();
+    const [title, setTitle] = useState("");
     const { resumes } = useUser();
+    const [jobs, setJobs] = useState(null);
+    const [jobId, setJobId] = useState(null);
     useEffect(() => {
         const fetchReports = async () => {
             try {
@@ -52,6 +55,23 @@ Maintenance and Testing: Debugging, writing unit tests (using Jest or Mocha), an
         };
         fetchReports();
     }, []);
+    useEffect(() => {
+        const fetchJobs = async () => {
+            try {
+                const { data } = await axios.get(
+                    `${process.env.NEXT_PUBLIC_BASE_URL}/jobs`,
+                    {
+                        withCredentials: true,
+                    }
+                );
+                setJobs(data?.data.jobs);
+                console.log(data?.data);
+            } catch (e) {
+                toast.error("Failed to fetch jobs.");
+            }
+        };
+        fetchJobs();
+    }, []);
 
     const handleSubmit = async () => {
         try {
@@ -60,6 +80,8 @@ Maintenance and Testing: Debugging, writing unit tests (using Jest or Mocha), an
                 {
                     jobDescription,
                     resume: selectedResume,
+                    title,
+                    jobId,
                 },
                 {
                     withCredentials: true,
@@ -69,18 +91,45 @@ Maintenance and Testing: Debugging, writing unit tests (using Jest or Mocha), an
             toast.success("Resume analyzed successfully.");
         } catch (e) {
             toast.error("Failed to analyze resume.");
+            console.error(e.response?.data || e.message);
         }
     };
 
     return (
         <div>
+            <h1>ATS Report</h1>
+            <input
+                type="text"
+                placeholder="Report Title"
+                value={title}
+                onChange={(e) => {
+                    setTitle(e.target.value);
+                }}
+            />
             <input
                 type="text"
                 value={jobDescription}
+                placeholder="Job Description"
                 onChange={(e) => {
                     setJobDescription(e.target.value);
                 }}
             />
+            {jobs && jobs.length > 0 ? (
+                <select
+                    value={jobId || ""}
+                    onChange={(e) => {
+                        setJobId(e.target.value);
+                    }}>
+                    <option value="">Select Job</option>
+                    {jobs.map((job) => (
+                        <option key={job._id} value={job._id}>
+                            {job.title}
+                        </option>
+                    ))}
+                </select>
+            ) : (
+                <div>No Jobs Found</div>
+            )}
             {resumes && resumes.length > 0 ? (
                 <select
                     value={selectedResume ? selectedResume._id : ""}

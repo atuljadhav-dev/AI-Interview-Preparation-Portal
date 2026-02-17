@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 
 const ReportPage = ({ id }) => {
     const [report, setReport] = useState(null);
-    const router=useRouter();
+    const router = useRouter();
     useEffect(() => {
         const fetchReport = async () => {
             try {
@@ -23,7 +23,7 @@ const ReportPage = ({ id }) => {
             }
         };
         fetchReport();
-    });
+    }, [id]);
     return (
         <div>
             {" "}

@@ -9,6 +9,7 @@ from service.atsDb import (
     getATSReportById,
     getATSReportByResumeId,
 )
+from service.job import getSpecificJob, saveJob, getJobByHash
 
 ats_bp = Blueprint("ats", __name__)
 
@@ -20,17 +21,43 @@ def generateATSReportRoute():
     if not userId:
         return jsonify({"success": False, "error": "Unauthorized"}), 401
     data = request.get_json()
-    if not data or "resume" not in data or "jobDescription" not in data:
+    if not data or "resume" not in data or data["resume"] is None:
         return (
-            jsonify(
-                {"success": False, "error": "Resume and job description are required"}
-            ),
+            jsonify({"success": False, "error": "Resume is required"}),
             400,
         )
     resume = data["resume"]
+    title = data["title"]
     jobDescription = data["jobDescription"]
+    jobId = data["jobId"] if "jobId" in data else None
+    if jobId:
+        job = getSpecificJob(jobId)
+        if not job:
+            return jsonify({"success": False, "error": "Job not found"}), 404
+        jobDescription = job["jobDescription"]
+    else:
+        job = getJobByHash(jobDescription)
+        if not job:
+            if not jobDescription or not title:
+                return (
+                    jsonify(
+                        {
+                            "success": False,
+                            "error": "Job description and title are required for new job",
+                        }
+                    ),
+                    400,
+                )
+            try:
+                job = saveJob(userId, title, jobDescription)
+            except Exception as e:
+                return jsonify({"success": False, "error": "Error saving job"}), 500
+        jobId = str(job["_id"])
+
+    if not jobId:
+        return jsonify({"success": False, "error": "Job ID is required"}), 400
     try:
-        report = getATSReport(userId, resume["_id"], jobDescription)
+        report = getATSReport(userId, resume["_id"], jobId)
         if report:
             return (
                 jsonify(
@@ -43,7 +70,7 @@ def generateATSReportRoute():
                 200,
             )
         report = calculateAtsReport(jobDescription, resume["url"])
-        report = saveATSReport(userId, resume["_id"], jobDescription, report)
+        report = saveATSReport(userId, resume["_id"], jobId, report)
         return (
             jsonify(
                 {
@@ -55,7 +82,7 @@ def generateATSReportRoute():
             200,
         )
     except Exception as e:
-        return jsonify({"success": False, "error": str(e)}), 500
+        return jsonify({"success": False, "error": "Error in generating ATS report"}), 500
 
 
 @ats_bp.route("/reports", methods=["GET"])
@@ -77,7 +104,7 @@ def getATSReportsRoute():
             200,
         )
     except Exception as e:
-        return jsonify({"success": False, "error": str(e)}), 500
+        return jsonify({"success": False, "error": "Error in fetching ATS report"}), 500
 
 
 @ats_bp.route("/report/<reportId>", methods=["GET"])
@@ -101,7 +128,7 @@ def getATSReportByIdRoute(reportId):
             200,
         )
     except Exception as e:
-        return jsonify({"success": False, "error": str(e)}), 500
+        return jsonify({"success": False, "error": "Error in fetching ATS report"}), 500
 
 
 @ats_bp.route("/report/resume/<resumeId>", methods=["GET"])
@@ -125,4 +152,4 @@ def getATSReportByResumeIdRoute(resumeId):
             200,
         )
     except Exception as e:
-        return jsonify({"success": False, "error": str(e)}), 500
+        return jsonify({"success": False, "error": "Error in fetching ATS report"}), 500

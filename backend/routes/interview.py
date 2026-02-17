@@ -4,6 +4,7 @@ from service.ai import generateQuestions
 import json
 from routes.auth import verifyJWT
 from utils.limiter import limiter
+from service.job import saveJob, getJobByHash, getSpecificJob
 
 interview_bp = Blueprint("interview", __name__)
 
@@ -21,11 +22,36 @@ def createInterviewRoute():
         jobDescription = data["jobDescription"]
         roundName = data["roundName"]
         resume = data["resume"]
-        title = data["jobRole"]
+        title = data["title"]
         resumeId = data["resumeId"]
-        if not all([jobDescription, roundName, resume, title, resumeId]):
+        jobId = data["jobId"] if "jobId" in data else None
+        job = None
+        if not all([roundName, resume, resumeId]):
             return jsonify({"success": False, "error": "Invalid input data"}), 400
-        response = generateQuestions(jobDescription, roundName, resume)
+        if jobId:
+            job = getSpecificJob(jobId)
+            if not job:
+                return jsonify({"success": False, "error": "Job not found"}), 404
+        else:
+            job = getJobByHash(jobDescription)
+            if not job:
+                if not jobDescription or not title:
+                    return (
+                        jsonify(
+                            {
+                                "success": False,
+                                "error": "Job description and title are required for new job",
+                            }
+                        ),
+                        400,
+                    )
+                job = saveJob(userId, title, jobDescription)
+        jobId = str(job["_id"])
+        del job["_id"]  # Remove _id from job before sending to AI
+        del job["userId"]  # Remove userId from job before sending to AI
+        del job["dateCreated"]  # Remove dateCreated from job before sending to AI
+        del job["jobHash"]  # Remove jobHash from job before sending to AI
+        response = generateQuestions(job, roundName, resume)
         if response is None:
             return jsonify({"success": False, "error": "AI response error"}), 500
         response = json.loads(response.text)
@@ -42,9 +68,8 @@ def createInterviewRoute():
     try:
         interview = createInterview(
             userId,
-            title,
+            jobId,
             roundName,
-            jobDescription,
             resumeId,
             questionAnswer=response["questionAnswer"],
             skills=response["skills"],

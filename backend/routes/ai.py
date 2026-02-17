@@ -152,7 +152,7 @@ def applicationEmail():
         )
 
     except Exception as e:
-        return jsonify({"success": False, "error": str(e)}), 500
+        return jsonify({"success": False, "error": "Error in generating application email"}), 500
 
 
 @ai_bp.route("/resume", methods=["POST"])

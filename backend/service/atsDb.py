@@ -1,21 +1,16 @@
 from utils.db import db
-import hashlib
 from datetime import datetime
 import pytz
-import re
 from bson import ObjectId
 
 
-def saveATSReport(userId, resumeId, jobDescription, atsReport):
-    jobDescription = normalize_jd(jobDescription)
-    jobhash = hashlib.sha256(jobDescription.strip().encode("utf-8")).hexdigest()
+def saveATSReport(userId, resumeId, jobId, atsReport):
     tz_india = pytz.timezone("Asia/Kolkata")
     atsReportData = {
         "userId": userId,
         "resumeId": resumeId,
-        "jobDescription": jobDescription,
         "atsReport": atsReport,
-        "jobHash": jobhash,
+        "jobId": jobId,
         "dateCreated": datetime.now(tz_india),  # store date in IST timezone
     }
     res = db.atsReports.insert_one(atsReportData)
@@ -23,18 +18,16 @@ def saveATSReport(userId, resumeId, jobDescription, atsReport):
     return atsReportData
 
 
-def getATSReport(userId, resumeId, jobDescription):
-    jobDescription = normalize_jd(jobDescription)
-    jobhash = hashlib.sha256(jobDescription.strip().encode("utf-8")).hexdigest()
+def getATSReport(userId, resumeId, jobId):
     atsReport = db.atsReports.find_one(
-        {"userId": userId, "resumeId": resumeId, "jobHash": jobhash}
+        {"userId": userId, "resumeId": resumeId, "jobId": jobId}
     )
     if atsReport:
         atsReport["_id"] = str(atsReport["_id"])
     return atsReport
 
 
-def getATSReportById(userId,reportId):
+def getATSReportById(userId, reportId):
     reportId = ObjectId(reportId)
     atsReport = db.atsReports.find_one({"_id": reportId, "userId": userId})
     if atsReport:
@@ -69,10 +62,3 @@ def getATSReportByResumeId(userId, resumeId):
         report["_id"] = str(report["_id"])
         reports_list.append(report)
     return reports_list
-
-
-def normalize_jd(jd: str):
-    jd = jd.lower()
-    jd = jd.strip()
-    jd = re.sub(r"\s+", " ", jd)  # collapse multiple spaces
-    return jd

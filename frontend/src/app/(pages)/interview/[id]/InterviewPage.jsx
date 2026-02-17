@@ -43,6 +43,7 @@ const InterviewPage = ({ id }) => {
                     `${process.env.NEXT_PUBLIC_BASE_URL}/interview/${id}`,
                     { withCredentials: true }
                 );
+                console.log(res.data.data);
                 setInterview(res.data.data);
                 if (res.data.data.status === "Done") {
                     router.push(`/feedback/${id}`);
