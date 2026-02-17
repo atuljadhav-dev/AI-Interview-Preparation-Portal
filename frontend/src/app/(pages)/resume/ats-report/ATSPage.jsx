@@ -1,54 +1,34 @@
 "use client";
+import ATSCard from "@/components/ATSCard";
 import { useUser } from "@/hooks/useUser";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 const ResumePage = () => {
     const [reports, setReports] = useState(null);
-    const [jobDescription, setJobDescription] =
-        useState(`A MERN Developer specializes in building full-stack web applications using a unified JavaScript ecosystem. The term is an acronym for the four core technologies used: MongoDB, Express.js, React.js, and Node.js.
-
-Core Stack Components
-The MERN stack is designed to handle the entire development lifecycle, from the user interface to the database.
-
-MongoDB (Database): A NoSQL, document-oriented database that stores data in flexible, JSON-like formats (BSON).
-
-Express.js (Backend Framework): A minimalist web framework for Node.js used to build robust server-side logic and RESTful APIs.
-
-React.js (Frontend Library): A library developed by Meta for building dynamic, component-based user interfaces with an efficient Virtual DOM for fast rendering.
-
-Node.js (Runtime Environment): A JavaScript runtime that allows code to run on the server side, utilizing an event-driven, non-blocking I/O model for high performance.
-
-Key Responsibilities
-A MERN developer manages both client-side and server-side development.
-
-Frontend Development: Building responsive and interactive user interfaces using React components, state management (e.g., Redux or Context API), and modern CSS.
-
-Backend Development: Creating scalable server-side applications and managing API endpoints with Node.js and Express.
-
-Database Management: Designing schemas, handling data storage, and optimizing queries in MongoDB.
-
-API Integration: Connecting the frontend to the backend via RESTful services or GraphQL, often using tools like Axios or the Fetch API.
-
-Maintenance and Testing: Debugging, writing unit tests (using Jest or Mocha), and optimizing performance across the entire stack.`);
+    const [jobDescription, setJobDescription] = useState("");
     const [selectedResume, setSelectedResume] = useState(null);
     const router = useRouter();
     const [title, setTitle] = useState("");
     const { resumes } = useUser();
     const [jobs, setJobs] = useState(null);
     const [jobId, setJobId] = useState(null);
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const limit = 5;
     useEffect(() => {
         const fetchReports = async () => {
             try {
                 const { data } = await axios.get(
-                    `${process.env.NEXT_PUBLIC_BASE_URL}/ats/reports`,
+                    `${process.env.NEXT_PUBLIC_BASE_URL}/ats/reports?page=${page}&limit=${limit}`,
                     {
                         withCredentials: true,
                     }
                 );
-                setReports(data?.data);
+                setReports(data?.data.reports);
+                setTotalPages(data?.data.totalPages);
             } catch (e) {
                 toast.error("Failed to fetch reports.");
             }
@@ -65,7 +45,6 @@ Maintenance and Testing: Debugging, writing unit tests (using Jest or Mocha), an
                     }
                 );
                 setJobs(data?.data.jobs);
-                console.log(data?.data);
             } catch (e) {
                 toast.error("Failed to fetch jobs.");
             }
@@ -150,6 +129,35 @@ Maintenance and Testing: Debugging, writing unit tests (using Jest or Mocha), an
                 <div>No Resumes Found</div>
             )}
             <button onClick={handleSubmit}>submit</button>
+            {reports && reports.length > 0 ? (
+                <div>
+                    <h2>Previous Reports</h2>
+
+                    {reports.map((report) => (
+                        <ATSCard data={report} key={report._id} />
+                    ))}
+
+                    <button
+                        disabled={page <= 1}
+                        onClick={() => {
+                            setPage((prev) => prev - 1);
+                        }}>
+                        Previous
+                    </button>
+                    <span>
+                        Page {page} of {totalPages}
+                    </span>
+                    <button
+                        disabled={page >= totalPages}
+                        onClick={() => {
+                            setPage((prev) => prev + 1);
+                        }}>
+                        Next
+                    </button>
+                </div>
+            ) : (
+                <div>No Previous Reports</div>
+            )}
         </div>
     );
 };

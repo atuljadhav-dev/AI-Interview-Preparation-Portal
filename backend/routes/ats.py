@@ -82,11 +82,14 @@ def generateATSReportRoute():
             200,
         )
     except Exception as e:
-        return jsonify({"success": False, "error": "Error in generating ATS report"}), 500
+        return (
+            jsonify({"success": False, "error": "Error in generating ATS report"}),
+            500,
+        )
 
 
 @ats_bp.route("/reports", methods=["GET"])
-@limiter.limit("5 per minute")  # Limit to 5 requests per minute
+@limiter.limit("50 per minute")  # Limit to 5 requests per minute
 def getATSReportsRoute():
     userId = verifyJWT(request)
     if not userId:
@@ -104,11 +107,12 @@ def getATSReportsRoute():
             200,
         )
     except Exception as e:
+        print(e)
         return jsonify({"success": False, "error": "Error in fetching ATS report"}), 500
 
 
 @ats_bp.route("/report/<reportId>", methods=["GET"])
-@limiter.limit("5 per minute")  # Limit to 5 requests per minute
+@limiter.limit("50 per minute")  # Limit to 5 requests per minute
 def getATSReportByIdRoute(reportId):
     userId = verifyJWT(request)
     if not userId:

@@ -64,7 +64,7 @@ def getJobRoute(jobId):
         del job["userId"]  # Remove userId before sending response
         del job["dateCreated"]  # Remove dateCreated before sending response
         del job["jobHash"]  # Remove jobHash before sending response
-        return jsonify({"success": True, "job": job})
+        return jsonify({"success": True, "data": job})
     except Exception as e:
         return (
             jsonify(

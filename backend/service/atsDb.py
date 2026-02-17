@@ -2,6 +2,7 @@ from utils.db import db
 from datetime import datetime
 import pytz
 from bson import ObjectId
+from service.job import getSpecificJob
 
 
 def saveATSReport(userId, resumeId, jobId, atsReport):
@@ -49,6 +50,11 @@ def getAllATSReports(userId, page=1, limit=9):
     reports_list = []
     for report in atsReports:
         report["_id"] = str(report["_id"])
+        if "jobId" in report and report["jobId"]:
+            job = getSpecificJob(report["jobId"])
+            if job:
+                report["title"] = job["title"]
+                report["jobDescription"] = job["jobDescription"]
         reports_list.append(report)
     return {"reports": reports_list, "totalPages": total_pages}
 

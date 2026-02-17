@@ -31,14 +31,9 @@ const ReportPage = ({ id }) => {
                 <>
                     <button
                         onClick={() => {
-                            const data = encodeURIComponent(
-                                JSON.stringify({
-                                    jobDescription,
-                                    resume: selectedResume._id,
-                                    atsReport: report,
-                                })
+                            router.push(
+                                `/resume/generate?atsId=${report?._id}`
                             );
-                            router.push(`/resume/generate?data=${data}`);
                         }}>
                         Fix Resume
                     </button>

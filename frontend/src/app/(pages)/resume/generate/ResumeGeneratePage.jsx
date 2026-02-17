@@ -14,20 +14,54 @@ const ResumePage = () => {
     const [additionalResumes, setAdditionalResumes] = useState([]);
     const { resumes } = useUser();
     useEffect(() => {
-        const dataParam = searchParams.get("data");
-        if (dataParam && resumes) {
+        const atsId = searchParams.get("atsId");
+        if (!atsId) return;
+
+        const loadData = async () => {
             try {
-                const data = JSON.parse(decodeURIComponent(dataParam));
-                setJobDescription(data.jobDescription || "");
-                setReport(data.atsReport || "");
-                const selected = resumes.find((cur) => cur._id === data.resume);
-                setSelectedResume(selected || null);
-                toast.success("Data loaded from URL successfully.");
-            } catch (err) {
-                toast.error("Failed to parse data from URL.");
+                // 1️⃣ Fetch ATS Report
+                const { data } = await axios.get(
+                    `${process.env.NEXT_PUBLIC_BASE_URL}/ats/report/${atsId}`,
+                    { withCredentials: true }
+                );
+
+                const atsReport = data?.data;
+                if (!atsReport) return;
+
+                setReport(atsReport.atsReport);
+
+                // 2️⃣ Set Resume (if resumes already available)
+                if (resumes && resumes.length > 0) {
+                    const foundResume = resumes.find(
+                        (cur) =>
+                            cur._id?.toString() ===
+                            atsReport.resumeId?.toString()
+                    );
+
+                    if (foundResume) {
+                        setSelectedResume(foundResume);
+                    }
+                }
+
+                // 3️⃣ Fetch Job
+                if (atsReport.jobId) {
+                    const jobRes = await axios.get(
+                        `${process.env.NEXT_PUBLIC_BASE_URL}/job/${atsReport.jobId}`,
+                        { withCredentials: true }
+                    );
+                    setJobDescription(jobRes?.data?.data?.jobDescription || "");
+                }
+
+                toast.success("Report loaded successfully.");
+            } catch (error) {
+                console.error(error);
+                toast.error("Failed to load ATS report.");
             }
-        }
+        };
+
+        loadData();
     }, [searchParams, resumes]);
+
     const handleSubmit = async () => {
         // Filter out the selected resume and get the resume data for the additional resumes
         const tmp = resumes
@@ -61,6 +95,7 @@ const ResumePage = () => {
             <input
                 type="text"
                 value={jobDescription}
+                placeholder="job"
                 onChange={(e) => {
                     setJobDescription(e.target.value);
                 }}
