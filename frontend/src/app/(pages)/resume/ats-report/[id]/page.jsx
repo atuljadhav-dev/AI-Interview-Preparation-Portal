@@ -1,8 +1,8 @@
 import React from "react";
 import ReportPage from "./ReportPage";
 
-const page = ({ params }) => {
-    const { id } = params;
+const page = async ({ params }) => {
+    const { id } = await params;
     return (
         <div>
             <ReportPage id={id} />

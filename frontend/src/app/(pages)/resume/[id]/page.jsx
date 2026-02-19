@@ -4,7 +4,7 @@ const page = async ({ params }) => {
     const { id } = await params;
 
     return (
-        <div className="h-[calc(100vh-64px)] bg-red-500">
+        <div className="h-[calc(100vh-64px)]">
             <PdfViewer id={id} />
         </div>
     );

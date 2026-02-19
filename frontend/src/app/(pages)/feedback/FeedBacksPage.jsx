@@ -9,7 +9,7 @@ const FeedBacksPage = () => {
     const [feedbacks, setFeedbacks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1)
+    const [totalPages, setTotalPages] = useState(1);
     const limit = 10;
     useEffect(() => {
         const fetchFeedbacks = async () => {
@@ -41,29 +41,31 @@ const FeedBacksPage = () => {
                             <FeedBackCard data={feedback} key={feedback._id} />
                         ))}
                     </div>
-                    <div className="flex justify-center mt-4">
-                        <button
-                            onClick={() =>
-                                setPage((prev) => Math.max(prev - 1, 1))
-                            }
-                            disabled={page === 1}
-                            className="px-4 py-2 mx-1 rounded disabled:opacity-50 text-gray-700 bg-gray-300 hover:bg-gray-400">
-                            Previous
-                        </button>
-                        <span className="px-4 py-2 mx-1">
-                            Page {page} of {totalPages}
-                        </span>
-                        <button
-                            onClick={() =>
-                                setPage((prev) =>
-                                    Math.min(prev + 1, totalPages)
-                                )
-                            }
-                            disabled={page === totalPages}
-                            className="px-4 py-2 mx-1 rounded disabled:opacity-50 text-gray-700 bg-gray-300 hover:bg-gray-400">
-                            Next
-                        </button>
-                    </div>
+                    {totalPages > 1 && (
+                        <div className="flex justify-center mt-4">
+                            <button
+                                onClick={() =>
+                                    setPage((prev) => Math.max(prev - 1, 1))
+                                }
+                                disabled={page === 1}
+                                className="px-4 py-2 mx-1 rounded disabled:opacity-50 text-gray-700 bg-gray-300 hover:bg-gray-400">
+                                Previous
+                            </button>
+                            <span className="px-4 py-2 mx-1">
+                                Page {page} of {totalPages}
+                            </span>
+                            <button
+                                onClick={() =>
+                                    setPage((prev) =>
+                                        Math.min(prev + 1, totalPages)
+                                    )
+                                }
+                                disabled={page === totalPages}
+                                className="px-4 py-2 mx-1 rounded disabled:opacity-50 text-gray-700 bg-gray-300 hover:bg-gray-400">
+                                Next
+                            </button>
+                        </div>
+                    )}
                 </>
             ) : (
                 <p>No feedbacks found.</p>

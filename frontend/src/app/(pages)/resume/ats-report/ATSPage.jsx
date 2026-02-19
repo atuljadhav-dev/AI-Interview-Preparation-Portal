@@ -137,23 +137,27 @@ const ResumePage = () => {
                         <ATSCard data={report} key={report._id} />
                     ))}
 
-                    <button
-                        disabled={page <= 1}
-                        onClick={() => {
-                            setPage((prev) => prev - 1);
-                        }}>
-                        Previous
-                    </button>
-                    <span>
-                        Page {page} of {totalPages}
-                    </span>
-                    <button
-                        disabled={page >= totalPages}
-                        onClick={() => {
-                            setPage((prev) => prev + 1);
-                        }}>
-                        Next
-                    </button>
+                    {totalPages > 1 && (
+                        <>
+                            <button
+                                disabled={page <= 1}
+                                onClick={() => {
+                                    setPage((prev) => prev - 1);
+                                }}>
+                                Previous
+                            </button>
+                            <span>
+                                Page {page} of {totalPages}
+                            </span>
+                            <button
+                                disabled={page >= totalPages}
+                                onClick={() => {
+                                    setPage((prev) => prev + 1);
+                                }}>
+                                Next
+                            </button>
+                        </>
+                    )}
                 </div>
             ) : (
                 <div>No Previous Reports</div>

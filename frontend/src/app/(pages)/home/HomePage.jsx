@@ -124,27 +124,30 @@ const HomePage = () => {
                                 );
                             })}
                         </div>
-                        <div className="flex justify-center mt-8">
-                            <button
-                                onClick={() => {
-                                    if (page > 1) setPage(page - 1);
-                                }}
-                                disabled={page === 1}
-                                className="px-4 py-2 mx-1 rounded-md bg-gray-300 text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
-                                Previous
-                            </button>
-                            <span className="px-4 py-2 mx-1">
-                                Page {page} of {totalPages}
-                            </span>
-                            <button
-                                onClick={() => {
-                                    if (page < totalPages) setPage(page + 1);
-                                }}
-                                disabled={page === totalPages}
-                                className="px-4 py-2 mx-1 rounded-md bg-gray-300 text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
-                                Next
-                            </button>
-                        </div>
+                        {totalPages > 1 && (
+                            <div className="flex justify-center mt-8">
+                                <button
+                                    onClick={() => {
+                                        if (page > 1) setPage(page - 1);
+                                    }}
+                                    disabled={page === 1}
+                                    className="px-4 py-2 mx-1 rounded-md bg-gray-300 text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                                    Previous
+                                </button>
+                                <span className="px-4 py-2 mx-1">
+                                    Page {page} of {totalPages}
+                                </span>
+                                <button
+                                    onClick={() => {
+                                        if (page < totalPages)
+                                            setPage(page + 1);
+                                    }}
+                                    disabled={page === totalPages}
+                                    className="px-4 py-2 mx-1 rounded-md bg-gray-300 text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                                    Next
+                                </button>
+                            </div>
+                        )}
                     </>
                 )}
             </div>
