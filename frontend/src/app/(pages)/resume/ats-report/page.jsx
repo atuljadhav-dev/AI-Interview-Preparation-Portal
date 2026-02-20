@@ -1,10 +1,10 @@
-import ResumePage from "./ResumePage";
+import ATSPage from "./ATSPage";
 
 const page = () => {
     //Analyze the resume with job description ats score, keywords, skills etc.
     return (
         <>
-            <ResumePage />
+            <ATSPage />
         </>
     );
 };

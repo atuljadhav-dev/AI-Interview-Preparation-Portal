@@ -5,15 +5,16 @@ import axios from "axios";
 import { Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 const PdfViewer = ({ id }) => {
-    const { resume, setResume } = useUser();
+    const { resumes, setResumes } = useUser();
     const [data, setData] = useState(null);
     const [url, setUrl] = useState("");
     const router = useRouter();
     useEffect(() => {
-        if (!data && resume) {
-            const filter = resume.filter((cur) => cur._id == id);
+        if (!data && resumes) {
+            const filter = resumes.filter((cur) => cur._id == id);
             if (!filter || filter.length == 0 || !filter[0].url) {
                 router.back();
                 return;
@@ -21,7 +22,7 @@ const PdfViewer = ({ id }) => {
             setData(filter[0]);
             setUrl(filter[0]?.url ? filter[0].url : "");
         }
-    }, [id, resume]);
+    }, [id, resumes]);
     const handleDelete = async () => {
         try {
             const res = await axios.delete(
@@ -30,10 +31,13 @@ const PdfViewer = ({ id }) => {
             );
             if (res.data.success) {
                 setUrl("");
-                setResume((prev) => prev.filter((cur) => cur._id !== id));
+                setResumes((prev) => prev.filter((cur) => cur._id !== id));
                 router.back();
             }
-        } catch (e) {}
+            toast.success("Resume deleted successfully.");
+        } catch (e) {
+            toast.error("Failed to delete resume.");
+        }
     };
     return (
         <div className="w-full h-full border border-gray-300 rounded-md ">

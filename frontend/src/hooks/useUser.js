@@ -6,7 +6,7 @@ const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const [resume, setResume] = useState(null);
+    const [resumes, setResumes] = useState(null);
     const [loading, setLoading] = useState(true);
     const refreshUser = async () => {
         setLoading(true);
@@ -17,7 +17,7 @@ export const UserProvider = ({ children }) => {
             process.env.NEXT_PUBLIC_ENVIRONMENT != "development"
         ) {
             setUser(null);
-            setResume(null);
+            setResumes(null);
             setLoading(false);
             return;
         }
@@ -48,16 +48,16 @@ export const UserProvider = ({ children }) => {
                 `${process.env.NEXT_PUBLIC_BASE_URL}/resumes`,
                 { withCredentials: true } //to send cookies with the request
             );
-            setResume(response.data?.data || null);
+            setResumes(response.data?.data || null);
         } catch (resumeErr) {
-            setResume(null);
+            setResumes(null);
         } finally {
             setLoading(false);
         }
     };
     const signOut = () => {
         setUser(null);
-        setResume(null);
+        setResumes(null);
         Cookies.remove("authToken");
     };
     useEffect(() => {
@@ -68,7 +68,7 @@ export const UserProvider = ({ children }) => {
         <UserContext.Provider
             value={{
                 user,
-                resume,
+                resumes,
                 loading,
                 refreshUser,
                 refreshResume,

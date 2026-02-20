@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 const InterviewPage = ({ id }) => {
     const router = useRouter();
     const videoRef = useRef(null);
-    const { resume } = useUser();
+    const { resumes } = useUser();
 
     // Context / Global States
     const [interview, setInterview] = useState({});
@@ -43,6 +43,7 @@ const InterviewPage = ({ id }) => {
                     `${process.env.NEXT_PUBLIC_BASE_URL}/interview/${id}`,
                     { withCredentials: true }
                 );
+                console.log(res.data.data);
                 setInterview(res.data.data);
                 if (res.data.data.status === "Done") {
                     router.push(`/feedback/${id}`);
@@ -57,10 +58,10 @@ const InterviewPage = ({ id }) => {
 
     // 2. Resume Selection Sync
     useEffect(() => {
-        if (!resume || !interview.resumeId) return;
-        const filtered = resume.find((cur) => cur._id === interview.resumeId);
+        if (!resumes || !interview.resumeId) return;
+        const filtered = resumes.find((cur) => cur._id === interview.resumeId);
         if (filtered) setCurrentResume(filtered.resume);
-    }, [resume, interview]);
+    }, [resumes, interview]);
 
     // 3. Centralized AI Speech Trigger
     useEffect(() => {
@@ -185,6 +186,7 @@ const InterviewPage = ({ id }) => {
                 );
 
                 router.push(`/feedback/${interview._id}`);
+                toast.success("Feedback generated. Redirecting to results...");
             } else {
                 setLastAIResponse(aiText);
             }

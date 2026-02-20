@@ -15,13 +15,13 @@ export default function ProfileUpload() {
     const [available, setAvailable] = useState(true);
     const debouncedName = useDebounce(name, 500);
     const router = useRouter();
-    const { refreshResume, resume } = useUser();
+    const { refreshResume, resumes } = useUser();
     const handleFileChange = (e) => {
         setFile(e.target.files[0]);
     };
     useEffect(() => {
         const checkAvialability = () => {
-            if (resume && resume.some((res) => res.name === debouncedName)) {
+            if (resumes && resumes.some((res) => res.name === debouncedName)) {
                 setAvailable(false);
             } else {
                 setAvailable(true);
@@ -116,7 +116,7 @@ export default function ProfileUpload() {
                     </button>
                 </form>
             </div>
-            {resume?.map((res) => (
+            {resumes?.map((res) => (
                 <div
                     key={res._id}
                     className="p-4 m-4 border border-gray-600 rounded-lg">

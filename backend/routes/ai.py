@@ -2,8 +2,7 @@ from flask import Blueprint, request, jsonify
 import json
 from service.ai import (
     generateFeedback,
-    AIInterviewStimulation,
-    generateATSReport,
+    AIInterviewSimulation,
     generateApplicationEmail,
     generateATSfriendlyResume,
 )
@@ -81,7 +80,7 @@ def feedbackGeneration():
 
 @ai_bp.route("/simulation", methods=["POST"])
 @limiter.limit("10 per minute")  # Limit to 10 requests per minute
-def interviewStimulation():
+def interviewSimulation():
     """Generate interview simulation based on questions, resume, jobDescription, roundName, content"""
     if not verifyJWT(request):
         return jsonify({"success": False, "error": "Unauthorized"}), 401
@@ -96,7 +95,7 @@ def interviewStimulation():
         content = data["content"]
         if not all([questions, resume, jobDescription, roundName, content]):
             return jsonify({"success": False, "error": "Invalid input data"}), 400
-        response = AIInterviewStimulation(
+        response = AIInterviewSimulation(
             questions, resume, jobDescription, roundName, content
         )
         if response is None:
@@ -121,36 +120,6 @@ def interviewStimulation():
             ),
             500,
         )
-
-
-@ai_bp.route("/ats-report", methods=["POST"])
-@limiter.limit("5 per minute")  # Limit to 5 requests per minute
-def atsReport():
-    userId = verifyJWT(request)
-    if not userId:
-        return jsonify({"success": False, "error": "Unauthorized"}), 401
-
-    data = request.get_json()
-    if not data or "resume" not in data:
-        return jsonify({"success": False, "error": "No resume text provided"}), 400
-
-    resume = data["resume"]
-    jobDescription = data["jobDescription"]
-    try:
-        report = generateATSReport(jobDescription, resume)
-        return (
-            jsonify(
-                {
-                    "success": True,
-                    "message": "ATS report generated successfully",
-                    "data": json.loads(report.text),
-                }
-            ),
-            200,
-        )
-
-    except Exception as e:
-        return jsonify({"success": False, "error": str(e)}), 500
 
 
 @ai_bp.route("/email", methods=["POST"])
@@ -183,7 +152,7 @@ def applicationEmail():
         )
 
     except Exception as e:
-        return jsonify({"success": False, "error": str(e)}), 500
+        return jsonify({"success": False, "error": "Error in generating application email"}), 500
 
 
 @ai_bp.route("/resume", methods=["POST"])

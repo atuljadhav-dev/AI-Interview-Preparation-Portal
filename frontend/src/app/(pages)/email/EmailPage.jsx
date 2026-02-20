@@ -10,7 +10,7 @@ const EmailPage = () => {
     const [jobDescription, setJobDescription] = useState("");
     const [selectedResume, setSelectedResume] = useState(null);
     const [additionalDetails, setAdditionalDetails] = useState("");
-    const { resume } = useUser();
+    const { resumes } = useUser();
     const handleSubmit = async () => {
         try {
             const { data } = await axios.post(
@@ -25,6 +25,7 @@ const EmailPage = () => {
                 }
             );
             setEmail(data?.data);
+            toast.success("Email generated successfully.");
         } catch (e) {
             toast.error("Failed to generate email.");
         }
@@ -46,17 +47,17 @@ const EmailPage = () => {
                     setAdditionalDetails(e.target.value);
                 }}
             />
-            {resume && resume.length > 0 ? (
+            {resumes && resumes.length > 0 ? (
                 <select
                     value={selectedResume ? selectedResume._id : ""}
                     onChange={(e) => {
-                        const res = resume.find(
+                        const res = resumes.find(
                             (cur) => cur._id === e.target.value
                         );
                         setSelectedResume(res.resume);
                     }}>
                     <option value="">Select Resume</option>
-                    {resume.map((res) => (
+                    {resumes.map((res) => (
                         <option key={res._id} value={res._id}>
                             {res.name}
                         </option>

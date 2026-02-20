@@ -38,4 +38,4 @@ def processResumePdf(file):
             
         return extractedText, None, 200
     except Exception as e:
-        return None, f"Failed to read PDF file: {str(e)}", 500
+        return None, f"Failed to read PDF file", 500

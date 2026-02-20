@@ -1,11 +1,11 @@
-import PdfViewer from "@/components/PdfViewer";
+import React from "react";
+import ReportPage from "./ReportPage";
 
 const page = async ({ params }) => {
     const { id } = await params;
-
     return (
-        <div className="h-[calc(100vh-64px)]">
-            <PdfViewer id={id} />
+        <div>
+            <ReportPage id={id} />
         </div>
     );
 };

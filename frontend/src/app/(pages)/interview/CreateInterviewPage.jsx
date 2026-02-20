@@ -6,25 +6,44 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 
 const CreateInterviewPage = () => {
-    const { resume, user, loading } = useUser();
+    const { resumes, user, loading } = useUser();
     const router = useRouter();
     const textareaRef = useRef(null);
     const [sending, setSending] = useState(false);
     const [formData, setFormData] = useState({
-        jobRole: "",
+        title: "",
         jobDescription: "",
         roundName: "",
         resumeId: "",
         resume: {},
+        jobId: "",
     });
+    const [jobs, setJobs] = useState(null);
     useEffect(() => {
         if (!user) return;
 
-        if (!resume && !loading) {
+        if (!resumes && !loading) {
             toast.info("Please upload or attach your resume");
             router.push("/resume");
         }
-    }, [resume, user]);
+    }, [resumes, user]);
+    useEffect(() => {
+        const fetchJobs = async () => {
+            try {
+                const { data } = await axios.get(
+                    `${process.env.NEXT_PUBLIC_BASE_URL}/jobs`,
+                    {
+                        withCredentials: true,
+                    }
+                );
+                setJobs(data?.data.jobs);
+            } catch (e) {
+                toast.error("Failed to fetch jobs.");
+            }
+        };
+        fetchJobs();
+    }, []);
+
     useEffect(() => {
         const el = textareaRef.current;
         if (!el) return;
@@ -39,13 +58,15 @@ const CreateInterviewPage = () => {
     };
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!formData.jobRole.trim()) {
-            toast.error("Please enter a job role");
-            return;
-        }
-        if (!formData.jobDescription.trim()) {
-            toast.error("Please enter a job description");
-            return;
+        if (!formData.jobId.trim()) {
+            if (!formData.title.trim()) {
+                toast.error("Please enter a job role");
+                return;
+            }
+            if (!formData.jobDescription.trim()) {
+                toast.error("Please enter a job description");
+                return;
+            }
         }
         if (!formData.resumeId) {
             toast.error(
@@ -56,7 +77,7 @@ const CreateInterviewPage = () => {
         if (sending) return;
         try {
             setSending(true);
-            const filterResume = resume.filter(
+            const filterResume = resumes.filter(
                 (cur) => cur._id == formData.resumeId
             );
             formData.resume = filterResume[0]?.resume;
@@ -81,12 +102,15 @@ const CreateInterviewPage = () => {
                     onSubmit={handleSubmit}
                     className="w-full max-w-4xl border-2 border-purple-900  shadow-md shadow-purple-500 rounded-xl  p-8 space-y-8">
                     <div className="p-6 rounded-lg border-2 border-gray-700 hover:border-purple-600 transition-colors">
-                        <h2 className="text-xl font-bold mb-2">Job Role</h2>
+                        <h2 className="text-xl font-bold mb-2">
+                            Job Role <span> (Give the unique role)</span>
+                        </h2>
                         <input
                             type="text"
-                            name="jobRole"
+                            name="title"
                             autoFocus
-                            value={formData.jobRole}
+                            placeholder="e.g. Software Engineer fresher-google"
+                            value={formData.title}
                             onChange={handleFormChange}
                             className="block w-full pl-3 rounded-lg border border-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-600"
                         />
@@ -102,6 +126,30 @@ const CreateInterviewPage = () => {
                             style={{ height: "auto", overflow: "hidden" }}
                             className="resize-none overflow-hidden px-3 w-full rounded-lg border border-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-600"></textarea>
                     </div>
+                    <div className="p-6 rounded-lg border-2 border-gray-700 hover:border-purple-600 transition-colors">
+                        <h2 className="text-xl font-bold mb-2">Select Job</h2>
+                        <select
+                            name="jobId"
+                            value={formData.jobId}
+                            onChange={handleFormChange}
+                            className="w-full p-3 rounded-lg border border-gray-600 focus:ring-2 focus:ring-purple-600">
+                            <option value="" disabled>
+                                Select Job
+                            </option>
+                            {jobs &&
+                                jobs?.map((cur) => {
+                                    return (
+                                        <option
+                                            value={cur._id}
+                                            className="dark:bg-[#0a0a0a]"
+                                            key={cur._id}>
+                                            {cur.title}
+                                        </option>
+                                    );
+                                })}
+                        </select>
+                    </div>
+
                     <div className="p-6 rounded-lg border-2 border-gray-700 hover:border-purple-600 transition-colors">
                         <h2 className="text-xl font-bold mb-2">
                             Select the resume
@@ -123,8 +171,8 @@ const CreateInterviewPage = () => {
                             <option value="" disabled>
                                 Select Resume
                             </option>
-                            {resume &&
-                                resume.map((cur) => {
+                            {resumes &&
+                                resumes.map((cur) => {
                                     return (
                                         <option
                                             value={cur._id}

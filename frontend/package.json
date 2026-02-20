@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@monaco-editor/react": "^4.7.0",
     "axios": "^1.11.0",
     "html2pdf.js": "^0.14.0",
     "jose": "^6.1.0",

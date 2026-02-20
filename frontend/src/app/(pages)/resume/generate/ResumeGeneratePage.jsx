@@ -1,54 +1,162 @@
 "use client";
 import { useUser } from "@/hooks/useUser";
 import axios from "axios";
-import React, { useState } from "react";
+import { useSearchParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 const ResumePage = () => {
-    const [Resume, setResume] = useState(null);
+    const searchParams = useSearchParams();
+    const [resume, setResume] = useState(null);
     const [jobDescription, setJobDescription] = useState("");
     const [selectedResume, setSelectedResume] = useState(null);
-    const { resume } = useUser();
+    const [report, setReport] = useState({});
+    const [additionalResumes, setAdditionalResumes] = useState([]);
+    const { resumes } = useUser();
+    useEffect(() => {
+        const atsId = searchParams.get("atsId");
+        if (!atsId) return;
+
+        const loadData = async () => {
+            try {
+                // 1️⃣ Fetch ATS Report
+                const { data } = await axios.get(
+                    `${process.env.NEXT_PUBLIC_BASE_URL}/ats/report/${atsId}`,
+                    { withCredentials: true }
+                );
+
+                const atsReport = data?.data;
+                if (!atsReport) return;
+
+                setReport(atsReport.atsReport);
+
+                // 2️⃣ Set Resume (if resumes already available)
+                if (resumes && resumes.length > 0) {
+                    const foundResume = resumes.find(
+                        (cur) =>
+                            cur._id?.toString() ===
+                            atsReport.resumeId?.toString()
+                    );
+
+                    if (foundResume) {
+                        setSelectedResume(foundResume);
+                    }
+                }
+
+                // 3️⃣ Fetch Job
+                if (atsReport.jobId) {
+                    const jobRes = await axios.get(
+                        `${process.env.NEXT_PUBLIC_BASE_URL}/job/${atsReport.jobId}`,
+                        { withCredentials: true }
+                    );
+                    setJobDescription(jobRes?.data?.data?.jobDescription || "");
+                }
+
+                toast.success("Report loaded successfully.");
+            } catch (error) {
+                console.error(error);
+                toast.error("Failed to load ATS report.");
+            }
+        };
+
+        loadData();
+    }, [searchParams, resumes]);
+
     const handleSubmit = async () => {
+        // Filter out the selected resume and get the resume data for the additional resumes
+        const tmp = resumes
+            .filter(
+                (cur) =>
+                    cur._id !== selectedResume._id &&
+                    additionalResumes.includes(cur._id)
+            )
+            .map((cur) => cur.resume);
         try {
             const { data } = await axios.post(
                 `${process.env.NEXT_PUBLIC_BASE_URL}/ai/resume`,
                 {
                     jobDescription,
-                    resume: selectedResume,
-                    atsReport: {},
-                    additionalResumes: [],
+                    resume: selectedResume.resume,
+                    atsReport: report,
+                    additionalResumes: tmp,
                 },
                 {
                     withCredentials: true,
                 }
             );
             setResume(data?.data);
+            toast.success("Resume generated successfully.");
         } catch (e) {
             toast.error("Failed to generate Resume.");
         }
     };
-
     return (
         <div>
             <input
                 type="text"
                 value={jobDescription}
+                placeholder="job"
                 onChange={(e) => {
                     setJobDescription(e.target.value);
                 }}
             />
-            {resume && resume.length > 0 ? (
+            <input
+                type="text"
+                value={report ? JSON.stringify(report) : ""}
+                onChange={(e) => {
+                    setReport(e.target.value);
+                }}
+            />
+            {/* show additional resume to select */}
+            {resumes?.map(
+                (r) =>
+                    selectedResume &&
+                    r._id !== selectedResume._id && (
+                        <div key={r._id}>
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    value={r._id}
+                                    checked={additionalResumes.includes(r._id)}
+                                    onChange={(e) => {
+                                        if (e.target.checked) {
+                                            if (additionalResumes.length >= 4) {
+                                                alert(
+                                                    "You can select maximum 4 additional resumes."
+                                                );
+                                                return;
+                                            }
+                                            setAdditionalResumes([
+                                                ...additionalResumes,
+                                                r._id,
+                                            ]);
+                                        } else {
+                                            setAdditionalResumes(
+                                                additionalResumes.filter(
+                                                    (id) => id !== r._id
+                                                )
+                                            );
+                                        }
+                                    }}
+                                />
+                                {r.name}
+                            </label>
+                        </div>
+                    )
+            )}
+
+            {/* select primary resume */}
+            {resumes && resumes.length > 0 ? (
                 <select
                     value={selectedResume ? selectedResume._id : ""}
                     onChange={(e) => {
-                        const res = resume.find(
+                        const res = resumes.find(
                             (cur) => cur._id === e.target.value
                         );
-                        setSelectedResume(res.resume);
+                        setSelectedResume(res ? res : null);
                     }}>
                     <option value="">Select Resume</option>
-                    {resume.map((res) => (
+                    {resumes.map((res) => (
                         <option key={res._id} value={res._id}>
                             {res.name}
                         </option>
