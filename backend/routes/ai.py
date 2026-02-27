@@ -8,6 +8,8 @@ from service.ai import (
 )
 from routes.auth import verifyJWT
 from utils.limiter import limiter
+import httpx
+import time
 
 ai_bp = Blueprint("ai", __name__)
 
@@ -152,7 +154,12 @@ def applicationEmail():
         )
 
     except Exception as e:
-        return jsonify({"success": False, "error": "Error in generating application email"}), 500
+        return (
+            jsonify(
+                {"success": False, "error": "Error in generating application email"}
+            ),
+            500,
+        )
 
 
 @ai_bp.route("/resume", methods=["POST"])
