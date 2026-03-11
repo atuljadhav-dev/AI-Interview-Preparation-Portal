@@ -43,7 +43,6 @@ const InterviewPage = ({ id }) => {
                     `${process.env.NEXT_PUBLIC_BASE_URL}/interview/${id}`,
                     { withCredentials: true }
                 );
-                console.log(res.data.data);
                 setInterview(res.data.data);
                 if (res.data.data.status === "Done") {
                     router.push(`/feedback/${id}`);
@@ -219,7 +218,7 @@ const InterviewPage = ({ id }) => {
                     </div>
 
                     <button
-                        className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-4 px-8 rounded-2xl shadow-lg transition-all active:scale-95"
+                        className="w-full bg-purple-600 cursor-pointer hover:bg-purple-700 text-white font-bold py-4 px-8 rounded-2xl shadow-lg transition-all active:scale-95"
                         onClick={handleSend}>
                         Begin Simulation
                     </button>
@@ -291,7 +290,7 @@ const InterviewPage = ({ id }) => {
                                     : "PROCESSING..."}
                             </p>
                             <button
-                                className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-8 rounded-xl transition-all disabled:bg-slate-300"
+                                className="bg-purple-600 hover:bg-purple-700 text-white font-bold cursor-pointer py-2 px-8 rounded-xl transition-all disabled:bg-slate-300"
                                 onClick={handleSend}
                                 disabled={sending || !input.trim()}>
                                 {sending ? "Analyzing..." : "Manual Send"}

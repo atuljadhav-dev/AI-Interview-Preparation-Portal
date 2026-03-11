@@ -21,6 +21,22 @@ const CodeEditor = () => {
             name: "python",
             placeholder: "# Write code here",
         },
+        {
+            name: "cpp",
+            placeholder: "// Write code here",
+        },
+        {
+            name: "java",
+            placeholder: "// Write code here",
+        },
+        {
+            name: "c",
+            placeholder: "// Write code here",
+        },
+        {
+            name: "ruby",
+            placeholder: "# Write code here",
+        },
     ];
 
     const handleRunCode = async () => {

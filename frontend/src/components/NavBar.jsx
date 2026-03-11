@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useUser } from "@/hooks/useUser";
 import { toast } from "react-toastify";
 import Link from "next/link";
-import { MenuIcon, UserCircle2Icon } from "lucide-react";
+import { MenuIcon, UserCircle2Icon, X } from "lucide-react";
 import { useState } from "react";
 import ThemeToggle from "./ThemeToggle";
 import Image from "next/image";
@@ -21,7 +21,7 @@ const NavBar = () => {
                 { withCredentials: true }
             );
             toast.success("Sign out successfully");
-            signOut();//clear user data from context
+            signOut(); //clear user data from context
             router.push("/sign-in");
         } catch (e) {
             toast.error("Logout failed");
@@ -29,9 +29,7 @@ const NavBar = () => {
     };
 
     return (
-        <nav
-            className="w-full h-16 flex z-50 items-center sticky top-0 justify-between 
-                          px-4 sm:px-6 md:px-8 bg-white dark:bg-black shadow-lg shadow-gray-300 dark:shadow-gray-800">
+        <nav className="w-full h-16 flex z-50 items-center sticky top-0 justify-between px-4 sm:px-6 md:px-8 bg-white dark:bg-black shadow-lg shadow-gray-300 dark:shadow-gray-800">
             <Link
                 className="font-bold text-base sm:text-xl text-purple-400 tracking-wide"
                 href={"/home"}>
@@ -55,10 +53,21 @@ const NavBar = () => {
                             ATS Resume Parser
                         </Link>
                         <MenuIcon
-                            className="md:hidden cursor-pointer"
+                            className={`md:hidden cursor-pointer ${
+                                showMenu ? "hidden" : ""
+                            }`}
                             onClick={() => {
                                 setShowLogout(false);
-                                setShowMenu(!showMenu);
+                                setShowMenu(true);
+                            }}
+                        />
+                        <X
+                            className={`md:hidden cursor-pointer ${
+                                showMenu ? "" : "hidden"
+                            }`}
+                            onClick={() => {
+                                setShowMenu(false);
+                                setShowLogout(false);
                             }}
                         />
                         <UserCircle2Icon
@@ -67,7 +76,43 @@ const NavBar = () => {
                                 setShowMenu(false);
                                 setShowLogout(!showLogout);
                             }}
-                        />{" "}
+                        />
+                        {!showLogout && showMenu && (
+                            <div className="flex flex-col md:hidden fixed right-18 bg-white dark:bg-black border-2 border-gray-400 p-3 rounded-xl gap-2 top-10">
+                                <Link
+                                    className="px-3 py-1 sm:px-4 sm:py-2 rounded-lg cursor-pointer
+                                    font-medium text-xs sm:text-sm 
+                                    transition
+                            hover:shadow-md dark:shadow-white"
+                                    href={"/dashboard"}>
+                                    Dashboard
+                                </Link>
+                                <Link
+                                    className="px-3 py-1 sm:px-4 sm:py-2 rounded-lg cursor-pointer
+                                    font-medium text-xs sm:text-sm 
+                                    transition
+                                    hover:shadow-md dark:shadow-white"
+                                    href={"/feedback"}>
+                                    Feedbacks
+                                </Link>
+                                <Link
+                                    className="px-3 py-1 sm:px-4 sm:py-2 rounded-lg cursor-pointer
+                                    font-medium text-xs sm:text-sm 
+                                    transition
+                                    hover:shadow-md dark:shadow-white"
+                                    href={"/resume"}>
+                                    Resume
+                                </Link>
+                                <Link
+                                    className="px-3 py-1 sm:px-4 sm:py-2 rounded-lg cursor-pointer
+                                    font-medium text-xs sm:text-sm 
+                                    transition
+                                    hover:shadow-md dark:shadow-white"
+                                    href={"/resume/ats-report"}>
+                                    ATS Resume Parser
+                                </Link>
+                            </div>
+                        )}
                         {!showMenu && showLogout && (
                             <div className="flex flex-col fixed right-10 border-2 bg-white dark:bg-black border-gray-400 p-3 rounded-xl gap-2 top-10">
                                 <span className="text-xs sm:text-base ">
@@ -76,48 +121,9 @@ const NavBar = () => {
                                 <ThemeToggle />
                                 <button
                                     onClick={handleLogout}
-                                    className="px-3 py-1 sm:px-4 sm:py-2 rounded-lg cursor-pointer
-                                    bg-red-600 font-medium text-xs sm:text-sm 
-                                    transition
-                                    hover:bg-red-700 hover:shadow-md">
+                                    className="px-3 py-1 sm:px-4 sm:py-2 rounded-lg cursor-pointer bg-red-600 font-medium text-xs sm:text-sm text-white transition hover:bg-red-700 hover:shadow-md">
                                     Logout
                                 </button>
-                            </div>
-                        )}
-                        {!showLogout && showMenu && (
-                            <div className="flex flex-col md:hidden fixed right-20 bg-white dark:bg-black border-2 border-gray-400 p-3 rounded-xl gap-2 top-10">
-                                <Link
-                                    className="px-3 py-1 sm:px-4 sm:py-2 rounded-lg cursor-pointer
-                                 font-medium text-xs sm:text-sm 
-                                    transition
-                            hover:shadow-md"
-                                    href={"/dashboard"}>
-                                    Dashboard
-                                </Link>
-                                <Link
-                                    className="px-3 py-1 sm:px-4 sm:py-2 rounded-lg cursor-pointer
-                                 font-medium text-xs sm:text-sm 
-                                    transition
-                                    hover:hover:shadow-md"
-                                    href={"/feedback"}>
-                                    Feedbacks
-                                </Link>
-                                <Link
-                                    className="px-3 py-1 sm:px-4 sm:py-2 rounded-lg cursor-pointer
-                                 font-medium text-xs sm:text-sm 
-                                    transition
-                                    hover:hover:shadow-md"
-                                    href={"/resume"}>
-                                    Resume
-                                </Link>
-                                <Link
-                                    className="px-3 py-1 sm:px-4 sm:py-2 rounded-lg cursor-pointer
-                                 font-medium text-xs sm:text-sm 
-                                    transition
-                                    hover:shadow-md"
-                                    href={"/resume/ats-report"}>
-                                    ATS Resume Parser
-                                </Link>
                             </div>
                         )}
                     </>

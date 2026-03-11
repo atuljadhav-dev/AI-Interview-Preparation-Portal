@@ -20,15 +20,9 @@ const ThemeToggle = () => {
     return (
         <button
             onClick={() => toggleTheme()}
-            className="p-2 w-10  h-10  rounded-full mx-auto bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
+            className="p-2 w-10  h-10 cursor-pointer  rounded-full mx-auto bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
             aria-label="Toggle Theme">
-            {resolvedTheme === "dark" ? (
-                // Sun Icon
-                <Sun />
-            ) : (
-                // Moon Icon
-                <Moon />
-            )}
+            {resolvedTheme === "dark" ? <Sun /> : <Moon />}
         </button>
     );
 };
