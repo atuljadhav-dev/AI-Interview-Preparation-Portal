@@ -1,8 +1,8 @@
 "use client";
 import { useUser } from "@/hooks/useUser";
 import axios from "axios";
-import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
 const SignInPage = () => {
@@ -10,6 +10,12 @@ const SignInPage = () => {
         password: "",
         email: "",
     });
+    const params = useSearchParams();
+    useEffect(() => {
+        if (params.get("notify")) {
+            toast.info("Please sign in to access this page.");
+        }
+    }, [params]);
     const passwordRef = useRef(null);
     const router = useRouter();
     const { refreshUser } = useUser();
@@ -34,7 +40,11 @@ const SignInPage = () => {
                 Cookies.set("authToken", res.data.token, { expires: 2 }); //cookies set by the server are not accessible in client side,nextjs app. Hence setting cookie in client side also.It helps to middleware to identify authenticated user.Server side cookies are set http only so that cookies will not be accessible in the middleware.
                 toast.success("Sign In Successfully");
                 refreshUser(); //to refetch the user data in the useUser hook
-                router.push("/home");
+                if (params.get("redirect")) {
+                    router.push(params.get("redirect"));
+                } else {
+                    router.push("/home");
+                }
             }
         } catch (err) {
             toast.error(err.response.data.error);

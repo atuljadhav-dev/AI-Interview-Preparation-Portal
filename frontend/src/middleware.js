@@ -29,7 +29,12 @@ export async function middleware(request) {
             (path) => request.nextUrl.pathname.startsWith(path)
         )
     ) {
-        return NextResponse.redirect(new URL("/sign-in", request.url));
+        return NextResponse.redirect(
+            new URL(
+                `/sign-in?notify=true&redirect=${request.nextUrl.pathname}`,
+                request.url
+            )
+        );
     }
 
     return NextResponse.next();
