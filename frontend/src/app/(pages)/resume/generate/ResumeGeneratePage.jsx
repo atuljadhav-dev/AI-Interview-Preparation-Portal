@@ -19,7 +19,6 @@ const ResumePage = () => {
 
         const loadData = async () => {
             try {
-                // 1️⃣ Fetch ATS Report
                 const { data } = await axios.get(
                     `${process.env.NEXT_PUBLIC_BASE_URL}/ats/report/${atsId}`,
                     { withCredentials: true }
@@ -30,7 +29,6 @@ const ResumePage = () => {
 
                 setReport(atsReport.atsReport);
 
-                // 2️⃣ Set Resume (if resumes already available)
                 if (resumes && resumes.length > 0) {
                     const foundResume = resumes.find(
                         (cur) =>
@@ -43,7 +41,6 @@ const ResumePage = () => {
                     }
                 }
 
-                // 3️⃣ Fetch Job
                 if (atsReport.jobId) {
                     const jobRes = await axios.get(
                         `${process.env.NEXT_PUBLIC_BASE_URL}/job/${atsReport.jobId}`,

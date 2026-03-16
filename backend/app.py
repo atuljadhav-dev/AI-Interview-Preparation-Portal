@@ -10,6 +10,7 @@ from utils.limiter import limiter
 from routes.dashboard import dashboard_bp
 from routes.ats import ats_bp
 from routes.job import job_bp
+from routes.code import code_bp
 import os
 
 app = Flask(__name__)
@@ -27,6 +28,7 @@ app.register_blueprint(feedback_bp, url_prefix="/api")
 app.register_blueprint(dashboard_bp, url_prefix="/api/dashboard")
 app.register_blueprint(ats_bp, url_prefix="/api/ats")
 app.register_blueprint(job_bp, url_prefix="/api")
+app.register_blueprint(code_bp, url_prefix="/api/code")
 
 
 @app.route("/")

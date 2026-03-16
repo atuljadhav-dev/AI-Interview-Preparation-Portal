@@ -42,7 +42,7 @@ const PdfViewer = ({ id }) => {
     return (
         <div className="w-full h-full border border-gray-300 rounded-md ">
             <button
-                className="fixed top-16 right-2 p-2 bg-red-500 rounded-md hover:bg-red-600"
+                className="fixed top-16 cursor-pointer right-2 p-2 bg-red-500 rounded-md hover:bg-red-600"
                 onClick={handleDelete}>
                 <Trash />
             </button>
