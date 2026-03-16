@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import SignInPage from "./SignInPage";
 
 export const metadata = {
@@ -7,9 +8,14 @@ export const metadata = {
 
 const page = () => {
     return (
-        <>
+        <Suspense
+            fallback={
+                <div className="w-full h-screen flex items-center justify-center">
+                    Loading...
+                </div>
+            }>
             <SignInPage />
-        </>
+        </Suspense>
     );
 };
 
