@@ -2,7 +2,6 @@
 
 // File overview: Implements logic for frontend/src/app/(pages)/feedback/[id]/FeedBackPage.jsx.
 
-
 // File overview: Implements logic for frontend/src/app/(pages)/feedback/[id]/FeedBackPage.jsx.
 
 import { useUser } from "@/hooks/useUser";
@@ -124,7 +123,9 @@ const FeedBackPage = ({ id }) => {
                     <div className=" mx-auto p-6 rounded-xl shadow-md border border-slate-100">
                         <div className="flex justify-between gap-2 flex-wrap">
                             {feedback.skillsRating.map((skill, index) => (
-                                <div className="flex flex-col gap-1">
+                                <div
+                                    className="flex flex-col gap-1"
+                                    key={index}>
                                     <span className="text-sm font-medium text-slate-500">
                                         {skill.skillName}
                                     </span>

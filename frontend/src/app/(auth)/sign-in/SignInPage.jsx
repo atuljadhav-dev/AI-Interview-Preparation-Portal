@@ -96,7 +96,7 @@ const SignInPage = () => {
                                 ? "opacity-50 cursor-not-allowed animate-pulse"
                                 : ""
                         }`}>
-                        {sending ? "Logging in..." : "Login"}
+                        {sending ? "Signing in..." : "Sign In"}
                     </button>
                     <p className="">
                         Don't have an account?{" "}

@@ -9,7 +9,7 @@ from service.atsMain import detectAllSkills
 def saveJob(userId, title, jobDescription):
     tz_india = pytz.timezone("Asia/Kolkata")
     normalizedDescription = normalizeText(jobDescription)
-    jobHash = makeHash(normalizedDescription)
+    jobHash = makeHash(normalizedDescription) # Generate hash for the normalized job description
     skills = detectAllSkills(jobDescription)
     job = {
         "userId": userId,

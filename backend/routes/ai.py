@@ -8,14 +8,12 @@ from service.ai import (
 )
 from routes.auth import verifyJWT
 from utils.limiter import limiter
-import httpx
-import time
 
 ai_bp = Blueprint("ai", __name__)
 
 
 @ai_bp.route("/feedback", methods=["POST"])
-@limiter.limit("5 per minute")  # Limit to 5 requests per minute
+@limiter.limit("10 per minute")  # Limit to 5 requests per minute
 def feedbackGeneration():
     """Generate feedback based on resume, questionAnswer, userAnswer, jobTitle, jobDescription, roundName"""
     if not verifyJWT(request):  # prevent unauthorized access

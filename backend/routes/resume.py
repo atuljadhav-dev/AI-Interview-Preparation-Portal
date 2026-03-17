@@ -39,7 +39,7 @@ def getResumeRoute():
 
 
 @resume_bp.route("/resume", methods=["POST"])
-@limiter.limit("5 per minute")  # Limit resume uploads to 5 per minute
+@limiter.limit("10 per minute")  # Limit resume uploads to 10 per minute
 def createResumeRoute():
     userId = verifyJWT(request)
     if not userId:
@@ -112,7 +112,7 @@ def createResumeRoute():
 
 
 @resume_bp.route("/resume", methods=["DELETE"])
-@limiter.limit("5 per minute")  # Limit resume deletions to 5 per minute
+@limiter.limit("10 per minute")  # Limit resume deletions to 10 per minute
 def deleteUser():
     userId = verifyJWT(request)
     if not userId:
@@ -162,4 +162,3 @@ def deleteUser():
             ),
             500,
         )
-

@@ -10,7 +10,7 @@ interview_bp = Blueprint("interview", __name__)
 
 
 @interview_bp.route("/interview", methods=["POST"])
-@limiter.limit("5 per minute")  # Limit to 5 requests per minute
+@limiter.limit("10 per minute")  # Limit to 5 requests per minute
 def createInterviewRoute():
     userId = verifyJWT(request)
     if not userId:

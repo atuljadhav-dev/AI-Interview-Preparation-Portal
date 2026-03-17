@@ -15,7 +15,7 @@ ats_bp = Blueprint("ats", __name__)
 
 
 @ats_bp.route("/generate", methods=["POST"])
-@limiter.limit("5 per minute")  # Limit to 5 requests per minute
+@limiter.limit("10 per minute")  # Limit to 5 requests per minute
 def generateATSReportRoute():
     userId = verifyJWT(request)
     if not userId:
@@ -136,7 +136,7 @@ def getATSReportByIdRoute(reportId):
 
 
 @ats_bp.route("/report/resume/<resumeId>", methods=["GET"])
-@limiter.limit("5 per minute")  # Limit to 5 requests per minute
+@limiter.limit("10 per minute")  # Limit to 5 requests per minute
 def getATSReportByResumeIdRoute(resumeId):
     userId = verifyJWT(request)
     if not userId:
