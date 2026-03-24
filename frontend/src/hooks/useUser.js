@@ -1,7 +1,7 @@
 "use client";
 import { createContext, useContext, useState, useEffect } from "react";
-import axios from "axios";
 import Cookies from "js-cookie";
+import api from "@/utils/api";
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
@@ -22,10 +22,7 @@ export const UserProvider = ({ children }) => {
             return;
         }
         try {
-            const res = await axios.get(
-                `${process.env.NEXT_PUBLIC_BASE_URL}/auth/verify`,
-                { withCredentials: true } //to send cookies with the request
-            );
+            const res = await api.get("/auth/verify");
             if (res.data.success) {
                 setUser(res.data.data);
                 await refreshResume();
@@ -44,10 +41,7 @@ export const UserProvider = ({ children }) => {
     const refreshResume = async () => {
         setLoading(true);
         try {
-            const response = await axios.get(
-                `${process.env.NEXT_PUBLIC_BASE_URL}/resumes`,
-                { withCredentials: true } //to send cookies with the request
-            );
+            const response = await api.get("/resumes");
             setResumes(response.data?.data || null);
         } catch (resumeErr) {
             setResumes(null);

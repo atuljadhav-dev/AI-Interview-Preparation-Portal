@@ -1,23 +1,12 @@
 import Interview from "@/app/(pages)/interview/[id]/InterviewPage";
-import axios from "axios";
 import React, { Suspense } from "react";
-import { cookies } from "next/headers";
+import api from "@/utils/api";
 
 export const generateMetadata = async ({ params }) => {
     const { id } = await params;
-    const cookieStore = await cookies(); // Access cookies
-    const token = cookieStore.get("authToken")?.value; // Get the authToken cookie value
-
+   
     try {
-        const res = await axios.get(
-            `${process.env.BASE_URL}/interview/${id}`,
-            {
-                headers: {
-                    Cookie: `authToken=${token}`, // Include the authToken cookie in the request
-                },
-                withCredentials: true,
-            }
-        );
+        const res = await api.get(`${process.env.BASE_URL}/interview/${id}`);
 
         const interview = res.data.data;
         return {

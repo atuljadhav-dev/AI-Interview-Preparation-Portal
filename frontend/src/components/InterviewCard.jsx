@@ -15,8 +15,7 @@ const InterviewCard = ({ interview }) => {
         skills,
     } = interview;
     return (
-        <div className=" border border-gray-700 rounded-2xl p-6 shadow-md hover:shadow-purple-600 transition">
-            {/* Header */}
+        <div className="bg-white dark:bg-black border border-gray-700 rounded-2xl p-6 shadow-md hover:shadow-purple-600 transition">
             <div className="flex justify-between items-start mb-3">
                 <h2 className="text-xl font-bold text-indigo-700 dark:text-indigo-400 capitalize">
                     {title}
@@ -42,7 +41,6 @@ const InterviewCard = ({ interview }) => {
                         );
                     })}
             </div>
-            {/* Meta */}
             <p className=" text-sm mb-1">
                 <span className="font-semibold text-indigo-800 dark:text-indigo-300">
                     Round:
@@ -57,21 +55,19 @@ const InterviewCard = ({ interview }) => {
                 {questions?.length || 0}
             </p>
 
-            {/* Description */}
             <p className="text-sm line-clamp-3 mb-4">{jobDescription}</p>
 
-            {/* Action */}
             <div className="flex justify-end">
                 {status === "Done" && feedbackId ? (
                     <button
                         onClick={() => router.push(`/feedback/${_id}`)}
-                        className="bg-indigo-600 cursor-pointer hover:bg-indigo-700 px-5 py-2 rounded-lg text-white font-semibold transition">
+                        className="bg-gradient-to-r from-purple-600 to-indigo-600 cursor-pointer hover:bg-indigo-700 px-5 py-2 rounded-lg text-white font-semibold transition">
                         View Feedback
                     </button>
                 ) : (
                     <button
                         onClick={() => router.push(`/interview/${_id}`)}
-                        className="bg-purple-600 cursor-pointer hover:bg-purple-700 px-5 py-2 rounded-lg text-white font-semibold transition">
+                        className="bg-gradient-to-r from-purple-600 to-blue-600 cursor-pointer hover:bg-purple-700 px-5 py-2 rounded-lg text-white font-semibold transition">
                         Start Interview
                     </button>
                 )}

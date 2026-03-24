@@ -1,5 +1,4 @@
 import Image from "next/image";
-
 import logo from "/public/logo1.png";
 import Link from "next/link";
 export const metadata = {
@@ -9,7 +8,7 @@ export const metadata = {
 };
 const page = () => {
     return (
-        <>
+        <div className="bg-purple-100 dark:bg-gray-950">
             <div
                 className="absolute inset-0  bg-cover bg-center"
                 style={{
@@ -39,31 +38,31 @@ const page = () => {
                 </div>
 
                 <div className="flex flex-col justify-center flex-1  px-4 sm:px-6 md:px-20 text-center sm:text-left absolute top-[15%]">
-                    <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold text-black-900 leading-tight mb-4 sm:mb-6">
+                    <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold text-white leading-tight mb-4 sm:mb-6">
                         Let's Start Your
                     </h1>
-                    <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold text-purple-900 leading-tight mb-4 sm:mb-6">
+                    <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold text-white leading-tight mb-4 sm:mb-6">
                         Journey!!
                     </h1>
 
-                    <p className="text-base sm:text-lg md:text-xl max-w-2xl mx-auto sm:mx-0 mb-8 sm:mb-10">
+                    <p className="text-base sm:text-lg md:text-xl max-w-2xl text-white mx-auto sm:mx-0 mb-8 sm:mb-10">
                         Unlock Your Potential, Empower Your Career.
                     </p>
                 </div>
                 <div className="absolute bottom-[10%] left-[6%]">
                     <Link
                         href="/sign-up"
-                        className="inline-block bg-purple-600 text-white font-bold text-lg px-25 py-3   rounded-xl animate-bounce shadow-xl hover:bg-purple-700 transition-all transform hover:scale-105">
+                        className="inline-block bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold text-lg px-25 py-3   rounded-xl animate-bounce shadow-xl hover:bg-purple-700 transition-all transform hover:scale-105">
                         Start Now
                     </Link>
                 </div>
             </div>
             <div className=" py-16 md:py-20 ">
                 <div className="container mx-auto px-6">
-                    <div className=" p-8 mb-16 border-2 border-gray-950 dark:border-gray-100 rounded-2xl">
-                        <h3 className="text-3xl font-bold  mb-6 text-center">
-                            Our Commitment
-                        </h3>
+                    <h3 className="text-3xl font-bold  mb-6 text-center">
+                        Our Commitment
+                    </h3>
+                    <div className=" p-8 mb-16 bg-white dark:bg-black border-2 border-gray-950 dark:border-gray-100 rounded-2xl">
                         <p className="text-lg md:text-xl  max-w-4xl mx-auto mb-8 leading-relaxed">
                             At{" "}
                             <span className="font-bold text-purple-400">
@@ -91,8 +90,8 @@ const page = () => {
                         <h2 className="text-3xl md:text-4xl font-bold text-center  mb-12">
                             Your Toolkit for Success
                         </h2>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-                            <div className=" p-6 hover:scale-105 md:p-8 rounded-xl shadow-lg border border-purple-500/30  transition-colors">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center ">
+                            <div className=" p-6 bg-white dark:bg-black hover:scale-105 md:p-8 border-2 border-gray-950 dark:border-gray-100 rounded-xl shadow-lg  transition-colors">
                                 <h3 className="font-bold text-xl mb-2 text-purple-400">
                                     Comprehensive Preparation
                                 </h3>
@@ -103,7 +102,7 @@ const page = () => {
                                 </p>
                             </div>
 
-                            <div className=" p-6 hover:scale-105 md:p-8 rounded-xl shadow-lg border border-purple-500/30  transition-colors">
+                            <div className=" p-6 bg-white dark:bg-black hover:scale-105 md:p-8 border-2 border-gray-950 dark:border-gray-100 rounded-xl shadow-lg transition-colors">
                                 <h3 className="font-bold text-xl mb-2 text-purple-400">
                                     Professional Branding
                                 </h3>
@@ -113,7 +112,7 @@ const page = () => {
                                 </p>
                             </div>
 
-                            <div className=" p-6 hover:scale-105 md:p-8 rounded-xl shadow-lg border border-purple-500/30  transition-colors">
+                            <div className=" p-6 bg-white dark:bg-black hover:scale-105 md:p-8 border-2 border-gray-950 dark:border-gray-100 rounded-xl shadow-lg  transition-colors">
                                 <h3 className="font-bold text-xl mb-2 text-purple-400">
                                     Data-Driven Insights
                                 </h3>
@@ -136,12 +135,12 @@ const page = () => {
                     </h3>
                     <Link
                         href="/sign-up"
-                        className="inline-block bg-purple-600 text-white font-bold text-lg px-8 py-4 rounded-full shadow-lg hover:bg-purple-700 transition-colors transform hover:scale-105">
+                        className="inline-block bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold text-lg px-8 py-4 rounded-full shadow-lg hover:bg-purple-700 transition-colors transform hover:scale-105">
                         Get Started
                     </Link>
                 </div>
             </section>
-        </>
+        </div>
     );
 };
 

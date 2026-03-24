@@ -13,7 +13,7 @@ resume_bp = Blueprint("resume", __name__)
 
 
 @resume_bp.route("/resumes", methods=["GET"])
-@limiter.limit("10 per minute")  # Limit to 10 requests per minute
+@limiter.limit("100 per minute")  # Limit to 10 requests per minute
 def getResumeRoute():
     userId = verifyJWT(request)
     if not userId:
@@ -39,7 +39,7 @@ def getResumeRoute():
 
 
 @resume_bp.route("/resume", methods=["POST"])
-@limiter.limit("10 per minute")  # Limit resume uploads to 10 per minute
+@limiter.limit("100 per minute")  # Limit resume uploads to 100 per minute
 def createResumeRoute():
     userId = verifyJWT(request)
     if not userId:
@@ -91,6 +91,7 @@ def createResumeRoute():
         if "_id" in resume:
             resume["_id"] = str(resume["_id"])
     except Exception as e:
+        print(f"Error creating resume: {e}")
         deleteResumeFromCloudinary(publicId)
         if resume:
             deleteResume(userId, resume.get("_id"))
@@ -112,7 +113,7 @@ def createResumeRoute():
 
 
 @resume_bp.route("/resume", methods=["DELETE"])
-@limiter.limit("10 per minute")  # Limit resume deletions to 10 per minute
+@limiter.limit("100 per minute")  # Limit resume deletions to 100 per minute
 def deleteUser():
     userId = verifyJWT(request)
     if not userId:
@@ -137,6 +138,7 @@ def deleteUser():
             try:
                 deleteResumeFromCloudinary(res["publicId"])
             except Exception as e:
+                print(f"Error deleting resume from cloud storage: {e}")
                 return (
                     jsonify(
                         {
@@ -153,6 +155,7 @@ def deleteUser():
             200,
         )
     except Exception as e:
+        print(f"Error deleting resume: {e}")
         return (
             jsonify(
                 {

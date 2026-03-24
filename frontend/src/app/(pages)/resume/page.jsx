@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useUser } from "@/hooks/useUser";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import useDebounce from "@/hooks/useDebounce";
+import api from "@/utils/api";
 
 export default function ProfileUpload() {
     const [file, setFile] = useState(null);
@@ -51,14 +51,13 @@ export default function ProfileUpload() {
         data.append("name", name);
         setUploading(true);
         try {
-            const res = await axios.post(
-                `${process.env.NEXT_PUBLIC_BASE_URL}/resume`,
+            const res = await api.post(
+                "/resume",
                 data,
                 {
                     headers: {
                         "Content-Type": "multipart/form-data",
                     },
-                    withCredentials: true,
                 }
             );
             refreshResume();//refresh the resume list after successful upload
@@ -72,62 +71,105 @@ export default function ProfileUpload() {
     };
 
     return (
-        <>
-            {" "}
-            <div className="min-h-screen flex flex-col items-center justify-start p-6">
-                <h1 className="text-2xl font-bold mt-6">Upload Resume</h1>
-                <form
-                    onSubmit={handleSubmit}
-                    className="p-6 rounded-lg border-2  border-purple-600 transition-colors flex items-center justify-center flex-col">
-                    <input
-                        type="text"
-                        autoFocus
-                        placeholder="Enter name to resume Eg.Software Engineer Resume"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        className="mb-4 p-2 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-600 w-full"
-                    />
-                    {name &&
-                        (available ? (
-                            <p className="pb-2 text-green-600">
-                                ✅ {name} is available.
-                            </p>
-                        ) : (
-                            <p className="pb-2 text-red-600">
-                                {" "}
-                                ❌ {name} is not available.
-                            </p>
-                        ))}
-                    <input
-                        type="file"
-                        accept=".pdf"
-                        onChange={handleFileChange}
-                        className="block w-full h-10  rounded-lg border border-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-600 "
-                    />
-                    <button
-                        type="submit"
-                        disabled={uploading}
-                        className={`bg-purple-500 text-white cursor-pointer px-4 py-2 rounded-md m-3 ${
-                            uploading
-                                ? "cursor-not-allowed animate-pulse"
-                                : "hover:bg-purple-600"
-                        }`}>
-                        {uploading ? "Uploading..." : "Upload Resume"}
-                    </button>
-                </form>
-            </div>
-            {resumes?.map((res) => (
-                <div
-                    key={res._id}
-                    className="p-4 m-4 border border-gray-600 rounded-lg">
-                    <h2 className="text-xl font-semibold ">{res.name}</h2>
-                    <Link
-                        href={`/resume/${res._id}`}
-                        className="text-purple-800 dark:text-purple-400 hover:underline">
-                        View Resume
-                    </Link>
-                </div>
-            ))}
-        </>
-    );
+  <>
+    <div className="flex flex-col items-center justify-start 
+      px-4 py-8 
+      bg-gradient-to-br from-blue-100 via-purple-100 to-indigo-100 
+      dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
+
+      <h1 className="text-3xl sm:text-4xl font-bold mb-6 text-center text-lack dark:text-white">
+        Upload Resume
+      </h1>
+
+      <form
+        onSubmit={handleSubmit}
+        className="w-full max-w-md p-6 rounded-2xl 
+        bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg 
+        border border-purple-200 dark:border-gray-700 
+        shadow-lg flex flex-col gap-4 transition"
+      >
+
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+            Resume Name
+          </label>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="p-2 rounded-lg border border-purple-300 
+            focus:ring-2 focus:ring-purple-400 outline-none"
+          />
+        </div>
+
+        {name &&
+          (available ? (
+            <p className="text-green-600 text-sm font-medium">
+              ✅ {name} is available
+            </p>
+          ) : (
+            <p className="text-red-600 text-sm font-medium">
+              ❌ {name} is not available
+            </p>
+          ))}
+
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+            Upload PDF
+          </label>
+          <input
+            type="file"
+            accept=".pdf"
+            onChange={handleFileChange}
+            className="block w-full p-2 rounded-lg border border-purple-300 
+            cursor-pointer focus:ring-2 focus:ring-purple-400"
+          />
+        </div>
+
+        {/* Button */}
+        <button
+          type="submit"
+          disabled={uploading}
+          className={`w-full py-2 rounded-lg text-white font-semibold 
+          bg-gradient-to-r from-purple-600 to-blue-600
+          transition duration-300 
+          ${
+            uploading
+              ? "opacity-50 cursor-not-allowed animate-pulse"
+              : "hover:scale-[1.03] hover:shadow-lg"
+          }`}
+        >
+          {uploading ? "Uploading..." : "Upload Resume"}
+        </button>
+      </form>
+    </div>
+
+    <div className="max-w-4xl mx-auto px-4 py-6 grid gap-4">
+<div className="text-2xl">Past Resumes</div>
+      {resumes?.map((res) => (
+        <div
+          key={res._id}
+          className="p-5 rounded-xl 
+          bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg 
+          border border-purple-200 dark:border-gray-700 
+          shadow-md hover:shadow-xl hover:scale-[1.02] 
+          transition duration-300 flex justify-between items-center"
+        >
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
+            {res.name}
+          </h2>
+
+          <Link
+            href={`/resume/${res._id}`}
+            className="text-purple-600 dark:text-purple-400 
+            font-medium hover:underline"
+          >
+            View →
+          </Link>
+        </div>
+      ))}
+
+    </div>
+  </>
+);
 }

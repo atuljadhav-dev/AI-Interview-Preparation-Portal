@@ -13,7 +13,7 @@ ai_bp = Blueprint("ai", __name__)
 
 
 @ai_bp.route("/feedback", methods=["POST"])
-@limiter.limit("10 per minute")  # Limit to 5 requests per minute
+@limiter.limit("100 per minute")  # Limit to 5 requests per minute
 def feedbackGeneration():
     """Generate feedback based on resume, questionAnswer, userAnswer, jobTitle, jobDescription, roundName"""
     if not verifyJWT(request):  # prevent unauthorized access
@@ -53,8 +53,10 @@ def feedbackGeneration():
                 skills,
             )
         except Exception as e:
+            print(f"Error in AI feedback generation: {e}")
             response = None
         if response is None:
+            print("AI feedback generation returned None")
             return jsonify({"success": False, "error": "AI response error"}), 500
         return (
             jsonify(
@@ -67,6 +69,7 @@ def feedbackGeneration():
             201,
         )
     except Exception as e:
+        print(f"Server error in feedback generation: {e}")
         return (
             jsonify(
                 {
@@ -79,7 +82,7 @@ def feedbackGeneration():
 
 
 @ai_bp.route("/simulation", methods=["POST"])
-@limiter.limit("10 per minute")  # Limit to 10 requests per minute
+@limiter.limit("100 per minute")  # Limit to 10 requests per minute
 def interviewSimulation():
     """Generate interview simulation based on questions, resume, jobDescription, roundName, content"""
     if not verifyJWT(request):
@@ -95,9 +98,14 @@ def interviewSimulation():
         content = data["content"]
         if not all([questions, resume, jobDescription, roundName, content]):
             return jsonify({"success": False, "error": "Invalid input data"}), 400
-        response = AIInterviewSimulation(
-            questions, resume, jobDescription, roundName, content
-        )
+        response = None
+        try:
+            response = AIInterviewSimulation(
+                questions, resume, jobDescription, roundName, content
+            )
+        except Exception as e:
+            print(f"Error in AI interview simulation: {e}")
+            response = None
         if response is None:
             return jsonify({"success": False, "error": "AI response error"}), 500
         return (
@@ -111,6 +119,7 @@ def interviewSimulation():
             201,
         )
     except Exception as e:
+        print(f"Server error in interview simulation: {e}")
         return (
             jsonify(
                 {
@@ -123,7 +132,7 @@ def interviewSimulation():
 
 
 @ai_bp.route("/email", methods=["POST"])
-@limiter.limit("10 per minute")  # Limit to 10 requests per minute
+@limiter.limit("100 per minute")  # Limit to 10 requests per minute
 def applicationEmail():
     userId = verifyJWT(request)
     if not userId:
@@ -140,6 +149,9 @@ def applicationEmail():
         emailContent = generateApplicationEmail(
             resume, jobDescription, additionalDetails
         )
+        if emailContent is None:
+            print("AI application email generation returned None")
+            return jsonify({"success": False, "error": "AI response error"}), 500
         return (
             jsonify(
                 {
@@ -152,6 +164,7 @@ def applicationEmail():
         )
 
     except Exception as e:
+        print(f"Server error in generating application email: {e}")
         return (
             jsonify(
                 {"success": False, "error": "Error in generating application email"}
@@ -161,7 +174,7 @@ def applicationEmail():
 
 
 @ai_bp.route("/resume", methods=["POST"])
-@limiter.limit("10 per minute")
+@limiter.limit("100 per minute")
 def buildATSfriendlyResume():
     """Generate ATS friendly resume based on resumeContent, jobDescription"""
     if not verifyJWT(request):
@@ -183,6 +196,7 @@ def buildATSfriendlyResume():
             additionalResumes=additionalResumes,
         )
         if response is None:
+            print("AI resume generation returned None")
             return jsonify({"success": False, "error": "AI response error"}), 500
         return (
             jsonify(
@@ -195,6 +209,7 @@ def buildATSfriendlyResume():
             201,
         )
     except Exception as e:
+        print(f"Server error in generating ATS friendly resume: {e}")
         return (
             jsonify(
                 {

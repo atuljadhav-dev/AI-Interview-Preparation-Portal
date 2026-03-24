@@ -12,7 +12,7 @@ code_bp = Blueprint("code", __name__)
 
 
 @code_bp.route("/execute", methods=["POST"])
-@limiter.limit("10 per minute")  # Limit to 10 requests per minute
+@limiter.limit("100 per minute")  # Limit to 10 requests per minute
 def executeCode():
     userId = verifyJWT(request)
     if not userId:
@@ -60,6 +60,7 @@ def executeCode():
             200,
         )
     except Exception as e:
+        print(f"Error executing code: {e}")
         return (
             jsonify(
                 {

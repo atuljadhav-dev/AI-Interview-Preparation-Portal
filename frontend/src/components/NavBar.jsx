@@ -1,5 +1,4 @@
 "use client";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/hooks/useUser";
 import { toast } from "react-toastify";
@@ -8,18 +7,19 @@ import { MenuIcon, UserCircle2Icon, X } from "lucide-react";
 import { useState } from "react";
 import ThemeToggle from "./ThemeToggle";
 import Image from "next/image";
+import dark from "/public/Black.png";
+import light from "/public/White.png";
+import { useTheme } from "next-themes";
+import api from "@/utils/api";
 const NavBar = () => {
     const router = useRouter();
     const { user, signOut } = useUser();
     const [showLogout, setShowLogout] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
+    const { theme } = useTheme();
     const handleLogout = async () => {
         try {
-            await axios.post(
-                `${process.env.NEXT_PUBLIC_BASE_URL}/auth/signout`,
-                {},
-                { withCredentials: true }
-            );
+            await api.post("/auth/signout", {});
             toast.success("Sign out successfully");
             signOut(); //clear user data from context
             router.push("/sign-in");
@@ -29,11 +29,16 @@ const NavBar = () => {
     };
 
     return (
-        <nav className="w-full h-16 flex z-50 items-center sticky top-0 justify-between px-4 sm:px-6 md:px-8 bg-white dark:bg-black shadow-lg shadow-gray-300 dark:shadow-gray-800">
+        <nav className="w-full h-16 flex z-50 items-center sticky top-0 justify-between px-4 sm:px-6 md:px-8 bg-white dark:bg-black">
             <Link
-                className="font-bold text-base sm:text-xl text-purple-400 tracking-wide"
+                className="font-bold text-base bg-red-500 sm:text-xl text-purple-400 tracking-wide"
                 href={"/home"}>
-                <Image src={"/logo.png"} alt="Logo" width={120} height={40} />
+                <Image
+                    src={theme == "light" ? dark : light}
+                    alt="Logo"
+                    width={50}
+                    height={10}
+                />
             </Link>
             <div className="flex items-center gap-3 sm:gap-4">
                 {user && (
@@ -50,7 +55,7 @@ const NavBar = () => {
                         <Link
                             className="hidden md:flex"
                             href={"/resume/ats-report"}>
-                            ATS Resume Parser
+                            ATS Report
                         </Link>
                         <MenuIcon
                             className={`md:hidden cursor-pointer ${
@@ -109,7 +114,7 @@ const NavBar = () => {
                                     transition
                                     hover:shadow-md dark:shadow-white"
                                     href={"/resume/ats-report"}>
-                                    ATS Resume Parser
+                                    ATS Report
                                 </Link>
                             </div>
                         )}

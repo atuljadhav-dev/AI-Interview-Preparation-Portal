@@ -1,13 +1,13 @@
 from flask import Blueprint, request, jsonify
 from service.conversation import createConversation, getConversation
-from routes.auth import verifyJWT  
+from routes.auth import verifyJWT
 from utils.limiter import limiter
 
 con_bp = Blueprint("conversation", __name__)
 
 
 @con_bp.route("/conversation", methods=["POST"])
-@limiter.limit("10 per minute")  # Limit to 10 requests per minute
+@limiter.limit("100 per minute")  # Limit to 10 requests per minute
 def createConversationRoute():
     userId = verifyJWT(request)
     if not userId:
@@ -35,6 +35,7 @@ def createConversationRoute():
             201,
         )
     except Exception as e:
+        print(f"Error creating conversation: {e}")
         return (
             jsonify(
                 {
@@ -47,7 +48,7 @@ def createConversationRoute():
 
 
 @con_bp.route("/conversation", methods=["GET"])
-@limiter.limit("10 per minute")  # Limit to 10 requests per minute
+@limiter.limit("100 per minute")  # Limit to 10 requests per minute
 def getConversationRoute():
     userId = verifyJWT(request)
     if not userId:
@@ -68,6 +69,7 @@ def getConversationRoute():
             200,
         )
     except Exception as e:
+        print(f"Error fetching conversation: {e}")
         return (
             jsonify(
                 {

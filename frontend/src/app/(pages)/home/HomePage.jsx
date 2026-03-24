@@ -3,9 +3,9 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import interview from "/public/home.png";
 import Image from "next/image";
-import axios from "axios";
 import InterviewCard from "@/components/InterviewCard";
 import { toast } from "react-toastify";
+import api from "@/utils/api";
 const HomePage = () => {
     const router = useRouter();
     const [interviews, setInterviews] = useState([]);
@@ -13,20 +13,12 @@ const HomePage = () => {
     const [filter, setFilter] = useState("all");
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const limit = 10;
+    const limit = 9;
     useEffect(() => {
         const fetchInterviews = async () => {
             try {
-                const res = await axios.get(
-                    `${process.env.NEXT_PUBLIC_BASE_URL}/interview`,
-                    {
-                        params: {
-                            page,
-                            limit,
-                            filter,
-                        },
-                        withCredentials: true,
-                    }
+                const res = await api.get(
+                    `/interview?page=${page}&limit=${limit}&status=${filter}`
                 );
                 setInterviews(res.data.data.interviews);
                 setTotalPages(res.data.data.totalPages);
@@ -85,7 +77,7 @@ const HomePage = () => {
                                 onClick={() => {
                                     router.push("/interview");
                                 }}
-                                className="bg-purple-500 cursor-pointer text-white mt-12 justify-start items-start rounded-xl sm:font-semibold font-sansmy-15 transition hover:-translate-y-1 hover:scale-110 hover:bg-purple-400 ease-in w-[150px] sm:h-10 sm:w-[250px] mx-15 ">
+                                className="bg-gradient-to-r from-purple-600 to-blue-600 cursor-pointer text-white mt-12 justify-start items-start rounded-xl sm:font-semibold font-sansmy-15 transition hover:-translate-y-1 hover:scale-110 hover:bg-purple-400 ease-in w-[150px] sm:h-10 sm:w-[250px] mx-15 ">
                                 Start Interview
                             </button>
                         </div>
@@ -125,7 +117,7 @@ const HomePage = () => {
                             })}
                         </div>
                         {totalPages > 1 && (
-                            <div className="flex justify-center mt-8">
+                            <div className="flex justify-center mt-8 p-4">
                                 <button
                                     onClick={() => {
                                         if (page > 1) setPage(page - 1);
@@ -143,7 +135,7 @@ const HomePage = () => {
                                             setPage(page + 1);
                                     }}
                                     disabled={page === totalPages}
-                                    className="px-4 py-2 mx-1 rounded-md bg-gray-300 text-gray-700 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                                    className="px-4 py-2 mx-1 rounded-md bg-gray-300  text-gray-700 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
                                     Next
                                 </button>
                             </div>

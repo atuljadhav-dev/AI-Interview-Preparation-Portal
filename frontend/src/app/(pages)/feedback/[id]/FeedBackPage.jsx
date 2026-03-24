@@ -1,11 +1,7 @@
 "use client";
 
-// File overview: Implements logic for frontend/src/app/(pages)/feedback/[id]/FeedBackPage.jsx.
-
-// File overview: Implements logic for frontend/src/app/(pages)/feedback/[id]/FeedBackPage.jsx.
-
 import { useUser } from "@/hooks/useUser";
-import axios from "axios";
+import api from "@/utils/api";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -21,34 +17,20 @@ const FeedBackPage = ({ id }) => {
         if (loading || !user?._id) return;
         const fetchData = async () => {
             try {
-                const res = await axios.get(
-                    `${process.env.NEXT_PUBLIC_BASE_URL}/feedback/${id}`,
-                    { withCredentials: true }
-                );
+                const res = await api.get(`/feedback/${id}`);
                 setFeedback(res.data.data.feedback);
             } catch (e) {
                 toast.error("Failed to fetch feedback data.");
                 router.back();
             }
             try {
-                const int = await axios.get(
-                    `${process.env.NEXT_PUBLIC_BASE_URL}/interview/${id}`,
-                    { withCredentials: true }
-                );
+                const int = await api.get(`/interview/${id}`);
                 setInterview(int.data.data);
             } catch (e) {
                 toast.error("Failed to fetch interview data.");
             }
             try {
-                const con = await axios.get(
-                    `${process.env.NEXT_PUBLIC_BASE_URL}/conversation`,
-                    {
-                        params: {
-                            interviewId: id,
-                        },
-                        withCredentials: true,
-                    }
-                );
+                const con = await api.get(`/conversation?interviewId=${id}`);
                 setConversation(con.data.data.conversations);
                 toast.success("Data fetched successfully.");
             } catch (e) {
@@ -65,7 +47,7 @@ const FeedBackPage = ({ id }) => {
             <div className="h-screen w-full flex flex-col justify-center items-center">
                 <svg
                     aria-hidden="true"
-                    className="w-16 h-16  animate-spin fill-indigo-500"
+                    className="w-16 h-16  animate-spin fill-purple-500"
                     viewBox="0 0 100 101"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg">
@@ -78,15 +60,17 @@ const FeedBackPage = ({ id }) => {
                         fill="currentFill"
                     />
                 </svg>
-                <p className="mt-4 text-indigo-400 font-medium animate-pulse">
+                <p className="mt-4 text-purple-500 font-medium animate-pulse">
                     Generating your report...
                 </p>
             </div>
         );
     }
     return (
-        <div className="min-h-screen py-10 px-5">
-            <h1 className="text-4xl md:text-5xl font-bold text-center mb-10 text-indigo-400">
+        <div className="min-h-screen p-4 sm:p-6 bg-gradient-to-br 
+    from-purple-100 via-blue-100 to-pink-100 
+    dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 transition">
+            <h1 className="text-3xl sm:text-4xl font-bold text-center mb-10 text--400">
                 Interview Feedback
             </h1>
 
@@ -97,19 +81,19 @@ const FeedBackPage = ({ id }) => {
                     </h2>
                     <div className="space-y-2 ">
                         <p>
-                            <span className="font-semibold text-indigo-400">
+                            <span className="font-semibold text-purple-500">
                                 Job Title:
                             </span>{" "}
                             {feedback?.jobTitle || "N/A"}
                         </p>
                         <p>
-                            <span className="font-semibold text-indigo-400">
+                            <span className="font-semibold text-purple-500">
                                 Round Name:
                             </span>{" "}
                             {feedback?.roundName || "N/A"}
                         </p>
                         <p>
-                            <span className="font-semibold text-indigo-400">
+                            <span className="font-semibold text-purple-500">
                                 Job Description:
                             </span>{" "}
                             {interview?.jobDescription || "N/A"}
@@ -117,7 +101,7 @@ const FeedBackPage = ({ id }) => {
                     </div>
                 </section>
                 <section>
-                    <h2 className="text-2xl font-semibold border-b text-indigo-400 border-gray-700 pb-2 mb-4">
+                    <h2 className="text-2xl font-semibold border-b text-purple-500 border-gray-700 pb-2 mb-4">
                         Skill Rating
                     </h2>
                     <div className=" mx-auto p-6 rounded-xl shadow-md border border-slate-100">
@@ -126,7 +110,7 @@ const FeedBackPage = ({ id }) => {
                                 <div
                                     className="flex flex-col gap-1"
                                     key={index}>
-                                    <span className="text-sm font-medium text-slate-500">
+                                    <span className="text-sm font-medium text-black dark:text-white">
                                         {skill.skillName}
                                     </span>
                                     <div className="flex gap-1">
@@ -135,8 +119,8 @@ const FeedBackPage = ({ id }) => {
                                                 key={i}
                                                 className={`h-2 w-8 rounded-sm ${
                                                     i < skill.rating
-                                                        ? "bg-sky-500"
-                                                        : "bg-slate-200"
+                                                        ? "bg-purple-500"
+                                                        : "bg-slate-400"
                                                 }`}
                                             />
                                         ))}
@@ -152,13 +136,13 @@ const FeedBackPage = ({ id }) => {
                     </h2>
                     <div className="space-y-4 ">
                         <p>
-                            <span className="font-semibold text-indigo-400">
+                            <span className="font-semibold text-purple-500">
                                 Interview Score:
                             </span>{" "}
                             {feedback?.evaluation?.score ?? "N/A"}/10
                         </p>
                         <div>
-                            <h4 className="font-semibold text-indigo-400">
+                            <h4 className="font-semibold text-purple-500">
                                 Justification:
                             </h4>
                             <p className="mt-1 ">
@@ -207,11 +191,11 @@ const FeedBackPage = ({ id }) => {
                                 <div
                                     key={idx}
                                     className="p-4 rounded-xl border border-gray-700">
-                                    <h4 className="text-indigo-400 font-semibold">
+                                    <h4 className="text-purple-500 font-semibold">
                                         Question {idx + 1}:
                                     </h4>
                                     <p className=" mt-1">{cur.question}</p>
-                                    <h5 className="text-indigo-400 font-semibold mt-3">
+                                    <h5 className="text-purple-500 font-semibold mt-3">
                                         Expected Answer:
                                     </h5>
                                     <p className=" mt-1">{cur.answer}</p>
@@ -241,7 +225,7 @@ const FeedBackPage = ({ id }) => {
                                         key={i}
                                         className={`p-3 rounded-md ${
                                             role === "model"
-                                                ? "bg-indigo-300 dark:bg-indigo-800"
+                                                ? "bg-purple-300 dark:bg-purple-800"
                                                 : ""
                                         }`}>
                                         <div className="text-sm font-medium mb-1">

@@ -15,7 +15,7 @@ ats_bp = Blueprint("ats", __name__)
 
 
 @ats_bp.route("/generate", methods=["POST"])
-@limiter.limit("10 per minute")  # Limit to 5 requests per minute
+@limiter.limit("100 per minute")  # Limit to 5 requests per minute
 def generateATSReportRoute():
     userId = verifyJWT(request)
     if not userId:
@@ -51,6 +51,7 @@ def generateATSReportRoute():
             try:
                 job = saveJob(userId, title, jobDescription)
             except Exception as e:
+                print(f"Error saving job: {e}")
                 return jsonify({"success": False, "error": "Error saving job"}), 500
         jobId = str(job["_id"])
 
@@ -82,6 +83,7 @@ def generateATSReportRoute():
             200,
         )
     except Exception as e:
+        print(f"Error in generating ATS report: {e}")
         return (
             jsonify({"success": False, "error": "Error in generating ATS report"}),
             500,
@@ -107,7 +109,7 @@ def getATSReportsRoute():
             200,
         )
     except Exception as e:
-        print(e)
+        print(f"Error in fetching ATS reports: {e}")
         return jsonify({"success": False, "error": "Error in fetching ATS report"}), 500
 
 
@@ -132,11 +134,12 @@ def getATSReportByIdRoute(reportId):
             200,
         )
     except Exception as e:
+        print(f"Error in fetching ATS report: {e}")
         return jsonify({"success": False, "error": "Error in fetching ATS report"}), 500
 
 
 @ats_bp.route("/report/resume/<resumeId>", methods=["GET"])
-@limiter.limit("10 per minute")  # Limit to 5 requests per minute
+@limiter.limit("100 per minute")  # Limit to 5 requests per minute
 def getATSReportByResumeIdRoute(resumeId):
     userId = verifyJWT(request)
     if not userId:
@@ -156,4 +159,5 @@ def getATSReportByResumeIdRoute(resumeId):
             200,
         )
     except Exception as e:
+        print(f"Error in fetching ATS report: {e}")
         return jsonify({"success": False, "error": "Error in fetching ATS report"}), 500

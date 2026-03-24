@@ -8,7 +8,7 @@ feedback_bp = Blueprint("feedback", __name__)
 
 
 @feedback_bp.route("/feedback", methods=["POST", "GET"])
-@limiter.limit("10 per minute")  # Limit to 10 requests per minute
+@limiter.limit("100 per minute")  # Limit to 10 requests per minute
 def feedback():
     if request.method == "POST":
         userId = verifyJWT(request)
@@ -44,6 +44,7 @@ def feedback():
                 201,
             )
         except Exception as e:
+            print(f"Error creating feedback: {e}")
             return (
                 jsonify(
                     {
@@ -81,7 +82,7 @@ def feedback():
 
 
 @feedback_bp.route("/feedback/<interviewId>", methods=["GET"])
-@limiter.limit("10 per minute")  # Limit to 10 requests per minute
+@limiter.limit("100 per minute")  # Limit to 10 requests per minute
 def getFeedbackRoute(interviewId):
     userId = verifyJWT(request)
     if not userId:
@@ -101,6 +102,7 @@ def getFeedbackRoute(interviewId):
             200,
         )
     except Exception as e:
+        print(f"Error fetching feedback: {e}")
         return (
             jsonify(
                 {

@@ -1,6 +1,6 @@
 "use client";
 import { useUser } from "@/hooks/useUser";
-import axios from "axios";
+import api from "@/utils/api";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
@@ -30,12 +30,7 @@ const CreateInterviewPage = () => {
     useEffect(() => {
         const fetchJobs = async () => {
             try {
-                const { data } = await axios.get(
-                    `${process.env.NEXT_PUBLIC_BASE_URL}/jobs`,
-                    {
-                        withCredentials: true,
-                    }
-                );
+                const { data } = await api.get("/jobs");
                 setJobs(data?.data.jobs);
             } catch (e) {
                 toast.error("Failed to fetch jobs.");
@@ -81,11 +76,7 @@ const CreateInterviewPage = () => {
                 (cur) => cur._id == formData.resumeId
             );
             formData.resume = filterResume[0]?.resume;
-            const res = await axios.post(
-                `${process.env.NEXT_PUBLIC_BASE_URL}/interview`,
-                formData,
-                { withCredentials: true }
-            );
+            const res = await api.post("/interview", formData);
             toast.success("Interview Created successfully");
             router.push(`/interview/${res.data.data._id}`);
         } catch (e) {
