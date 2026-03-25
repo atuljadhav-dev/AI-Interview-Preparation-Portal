@@ -1,7 +1,7 @@
 "use client";
 
 import { useUser } from "@/hooks/useUser";
-import axios from "axios";
+import api from "@/utils/api";
 import { Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -25,10 +25,9 @@ const PdfViewer = ({ id }) => {
     }, [id, resumes]);
     const handleDelete = async () => {
         try {
-            const res = await axios.delete(
-                `${process.env.NEXT_PUBLIC_BASE_URL}/profile`,
-                { params: { profileId: id }, withCredentials: true }
-            );
+            const res = await api.delete("/profile", {
+                params: { profileId: id },
+            });
             if (res.data.success) {
                 setUrl("");
                 setResumes((prev) => prev.filter((cur) => cur._id !== id));
@@ -42,7 +41,7 @@ const PdfViewer = ({ id }) => {
     return (
         <div className="w-full h-full border border-gray-300 rounded-md ">
             <button
-                className="fixed top-16 cursor-pointer right-2 p-2 bg-red-500 rounded-md hover:bg-red-600"
+                className="fixed top-16 cursor-pointer right-2 p-2 rounded-md "
                 onClick={handleDelete}>
                 <Trash />
             </button>

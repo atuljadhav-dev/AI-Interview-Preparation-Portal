@@ -10,11 +10,13 @@ def getDashboardData(userId):
         {"userId": userId, "status": "Scheduled"}
     )
     avgFeedbackRating = 0
-    feedbacks = db.feedbacks.find({"userId": userId})
+    feedbacks = db.feedbacks.find({"userId": userId}).sort("dateCreated", -1)
+    ratings=[]
     feedbackCount = 0
     for feedback in feedbacks:
         score = feedback["feedback"]["evaluation"]["score"]
         avgFeedbackRating += score
+        ratings.append(score)
         feedbackCount += 1
     if feedbackCount > 0:
         avgFeedbackRating /= feedbackCount
@@ -44,4 +46,5 @@ def getDashboardData(userId):
         "scheduledInterviews": scheduledInterviews,
         "avgFeedbackRating": avgFeedbackRating,
         "skillsRating": skillsRating,
+        "ratings": ratings
     }

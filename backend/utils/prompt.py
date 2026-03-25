@@ -475,6 +475,12 @@ OUTPUT FORMAT (STRICT JSON ONLY)
   "projects": [
     {{
       "name": "string",
+      "links": {{
+        "github": "string | null",
+        "live": "string | null",
+        "others": []
+      }}, optional
+      "technologies": [],optional
       "description": []
     }}
   ],

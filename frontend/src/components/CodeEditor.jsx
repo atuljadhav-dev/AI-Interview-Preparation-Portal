@@ -1,6 +1,6 @@
 "use client";
 
-import axios from "axios";
+import api from "@/utils/api";
 import { useState } from "react";
 
 const CodeEditor = () => {
@@ -48,17 +48,11 @@ const CodeEditor = () => {
         setOutput("");
 
         try {
-            const { data } = await axios.post(
-                `${process.env.NEXT_PUBLIC_BASE_URL}/code/execute`,
-                {
-                    language: language.name,
-                    stdin: stdin,
-                    code: code,
-                },
-                {
-                    withCredentials: true,
-                }
-            );
+            const { data } = await api.post("/code/execute", {
+                language: language.name,
+                stdin: stdin,
+                code: code,
+            });
             if (data.data.stderr) {
                 setError(data.data.stderr);
             } else {

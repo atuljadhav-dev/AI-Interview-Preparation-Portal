@@ -38,6 +38,7 @@ def createJobRoute():
         job = saveJob(userId, title, jobDescription)
         return jsonify({"success": True, "jobId": str(job["_id"])})
     except Exception as e:
+        print(f'Error saving job: {e}')
         return (
             jsonify(
                 {
@@ -66,6 +67,7 @@ def getJobRoute(jobId):
         del job["jobHash"]  # Remove jobHash before sending response
         return jsonify({"success": True, "data": job})
     except Exception as e:
+        print(f'Error fetching job: {e}')
         return (
             jsonify(
                 {
@@ -106,6 +108,7 @@ def getJobsRoute():
             200,
         )
     except Exception as e:
+        print(f'Error fetching jobs: {e}')
         return (
             jsonify(
                 {

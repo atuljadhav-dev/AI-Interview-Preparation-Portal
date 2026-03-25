@@ -1,7 +1,7 @@
 "use client";
 import EmailPreview from "@/components/EmailPreview";
 import { useUser } from "@/hooks/useUser";
-import axios from "axios";
+import api from "@/utils/api";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 
@@ -13,17 +13,11 @@ const EmailPage = () => {
     const { resumes } = useUser();
     const handleSubmit = async () => {
         try {
-            const { data } = await axios.post(
-                `${process.env.NEXT_PUBLIC_BASE_URL}/ai/email`,
-                {
-                    jobDescription,
-                    resume: selectedResume,
-                    additionalDetails,
-                },
-                {
-                    withCredentials: true,
-                }
-            );
+            const { data } = await api.post("/email/generate", {
+                jobDescription,
+                resume: selectedResume,
+                additionalDetails,
+            });
             setEmail(data?.data);
             toast.success("Email generated successfully.");
         } catch (e) {

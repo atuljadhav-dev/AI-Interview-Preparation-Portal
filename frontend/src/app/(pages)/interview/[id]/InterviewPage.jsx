@@ -2,7 +2,7 @@
 import { useSpeechToText } from "@/hooks/useSpeechToText";
 import { useTextToSpeech } from "@/hooks/useTextToSpeech";
 import { useUser } from "@/hooks/useUser";
-import axios from "axios";
+import api from "@/utils/api";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
@@ -39,10 +39,7 @@ const InterviewPage = ({ id }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await axios.get(
-                    `${process.env.NEXT_PUBLIC_BASE_URL}/interview/${id}`,
-                    { withCredentials: true }
-                );
+                const res = await api.get(`/interviews/${id}`);
                 setInterview(res.data.data);
                 if (res.data.data.status === "Done") {
                     router.push(`/feedback/${id}`);
@@ -124,17 +121,13 @@ const InterviewPage = ({ id }) => {
         setInput(""); // Reset input area
 
         try {
-            const res = await axios.post(
-                `${process.env.NEXT_PUBLIC_BASE_URL}/ai/simulation`,
-                {
-                    jobDescription: interview.jobDescription,
-                    roundName: interview.roundName,
-                    questions: interview.questions,
-                    content: updatedConversation,
-                    resume: currentResume,
-                },
-                { withCredentials: true }
-            );
+            const res = await api.post("/ai/simulation", {
+                content: updatedConversation,
+                resume: currentResume,
+                questions: interview.questions,
+                jobDescription: interview.jobDescription,
+                roundName: interview.roundName,
+            });
 
             const aiText = res.data.data.trim();
             const aiResponseObj = { role: "model", parts: [{ text: aiText }] };
@@ -152,8 +145,8 @@ const InterviewPage = ({ id }) => {
                 toast.info("Session complete. Analyzing performance...");
 
                 // Process Feedback & Save (Async)
-                const feedbackRes = await axios.post(
-                    `${process.env.NEXT_PUBLIC_BASE_URL}/ai/feedback`,
+                const feedbackRes = await api.post(
+                    "/ai/feedback",
                     {
                         resume: currentResume,
                         questionAnswer: interview.questions,
@@ -162,27 +155,18 @@ const InterviewPage = ({ id }) => {
                         roundName: interview.roundName,
                         jobTitle: interview.title,
                         skills: interview.skills,
-                    },
-                    { withCredentials: true }
+                    }
                 );
 
-                await axios.post(
-                    `${process.env.NEXT_PUBLIC_BASE_URL}/feedback`,
-                    {
-                        feedback: feedbackRes.data.data,
-                        interviewId: interview._id,
-                    },
-                    { withCredentials: true }
-                );
+                await api.post("/feedback", {
+                    feedback: feedbackRes.data.data,
+                    interviewId: interview._id,
+                });
 
-                await axios.post(
-                    `${process.env.NEXT_PUBLIC_BASE_URL}/conversation`,
-                    {
-                        interviewId: interview._id,
-                        conversations: finalConversation,
-                    },
-                    { withCredentials: true }
-                );
+                await api.post("/conversation", {
+                    interviewId: interview._id,
+                    conversations: finalConversation,
+                });
 
                 router.push(`/feedback/${interview._id}`);
                 toast.success("Feedback generated. Redirecting to results...");

@@ -10,7 +10,7 @@ interview_bp = Blueprint("interview", __name__)
 
 
 @interview_bp.route("/interview", methods=["POST"])
-@limiter.limit("5 per minute")  # Limit to 5 requests per minute
+@limiter.limit("100 per minute")  # Limit to 5 requests per minute
 def createInterviewRoute():
     userId = verifyJWT(request)
     if not userId:
@@ -56,6 +56,7 @@ def createInterviewRoute():
             return jsonify({"success": False, "error": "AI response error"}), 500
         response = json.loads(response.text)
     except Exception as e:
+        print(f"Error in createInterviewRoute: {e}")
         return (
             jsonify(
                 {
@@ -78,6 +79,7 @@ def createInterviewRoute():
         if "_id" in interview:
             interview["_id"] = str(interview["_id"])
     except Exception as e:
+        print(f"Error creating interview: {e}")
         return (
             jsonify(
                 {
@@ -125,6 +127,7 @@ def getAllInterview():
                 interview["_id"] = str(interview["_id"])
             interviewList.append(interview)
     except Exception as e:
+        print(f"Error fetching interviews: {e}")
         return (
             jsonify(
                 {
@@ -162,6 +165,7 @@ def getSpecificInterviewRoute(interviewId):
             return jsonify({"success": False, "error": "Interview not found"}), 404
         interview["_id"] = str(interview["_id"])
     except Exception as e:
+        print(f"Error fetching specific interview: {e}")
         return (
             jsonify(
                 {

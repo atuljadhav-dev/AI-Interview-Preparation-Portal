@@ -1,6 +1,6 @@
 "use client";
 import { useUser } from "@/hooks/useUser";
-import axios from "axios";
+import api from "@/utils/api";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -19,10 +19,7 @@ const ResumePage = () => {
 
         const loadData = async () => {
             try {
-                const { data } = await axios.get(
-                    `${process.env.NEXT_PUBLIC_BASE_URL}/ats/report/${atsId}`,
-                    { withCredentials: true }
-                );
+                const { data } = await api.get(`/ats/report/${atsId}`);
 
                 const atsReport = data?.data;
                 if (!atsReport) return;
@@ -42,10 +39,7 @@ const ResumePage = () => {
                 }
 
                 if (atsReport.jobId) {
-                    const jobRes = await axios.get(
-                        `${process.env.NEXT_PUBLIC_BASE_URL}/job/${atsReport.jobId}`,
-                        { withCredentials: true }
-                    );
+                    const jobRes = await api.get(`/job/${atsReport.jobId}`);
                     setJobDescription(jobRes?.data?.data?.jobDescription || "");
                 }
 
@@ -69,18 +63,12 @@ const ResumePage = () => {
             )
             .map((cur) => cur.resume);
         try {
-            const { data } = await axios.post(
-                `${process.env.NEXT_PUBLIC_BASE_URL}/ai/resume`,
-                {
-                    jobDescription,
-                    resume: selectedResume.resume,
-                    atsReport: report,
-                    additionalResumes: tmp,
-                },
-                {
-                    withCredentials: true,
-                }
-            );
+            const { data } = await api.post("/ai/resume", {
+                jobDescription,
+                resume: selectedResume.resume,
+                atsReport: report,
+                additionalResumes: tmp,
+            });
             setResume(data?.data);
             toast.success("Resume generated successfully.");
         } catch (e) {

@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify, make_response
 from pydantic import ValidationError
 from models.user import User
-from service.user import createUser, FindUserByEmail, Login, FindUserById
+from service.user import createUser, FindUserByEmail, SignIn, FindUserById
 import jwt, datetime, os
 from utils.limiter import limiter
 
@@ -36,7 +36,7 @@ def verifyJWT(request):
 
 
 @auth_bp.route("/signup", methods=["POST"])
-@limiter.limit("5 per minute")  # Limit signup attempts
+@limiter.limit("100 per minute")  # Limit signup attempts
 def signup():
     data = request.get_json()
     if not data:
@@ -57,6 +57,7 @@ def signup():
         user["_id"] = str(user["_id"])  # Convert ObjectId to string
         user.pop("password", None)  # Remove password from response
     except Exception as e:
+        print(f"Error creating user: {e}")
         return jsonify({"success": False, "error": "Could not create user"}), 500
 
     token = createJWT(user["_id"])  # Create JWT token
@@ -85,13 +86,13 @@ def signup():
 
 
 @auth_bp.route("/signin", methods=["POST"])
-@limiter.limit("10 per minute")  # Limit login attempts
+@limiter.limit("100 per minute")  # Limit SignIn attempts
 def signin():
     data = request.get_json()
     if not data:
         return jsonify({"success": False, "error": "No data provided"}), 400
 
-    user = Login(data["email"], data["password"])
+    user = SignIn(data["email"], data["password"])
     if not user:
         return jsonify({"success": False, "error": "Wrong Credentials"}), 403
 
@@ -124,7 +125,7 @@ def signin():
 
 
 @auth_bp.route("/signout", methods=["POST"])
-@limiter.limit("10 per minute")  # Limit signout attempts
+@limiter.limit("100 per minute")  # Limit signout attempts
 def signout():
     response = make_response(
         jsonify({"success": True, "message": "User signed out successfully!"}), 200
@@ -136,7 +137,7 @@ def signout():
 
 
 @auth_bp.route("/verify", methods=["GET"])
-@limiter.limit("15 per minute")  # Limit verification attempts
+@limiter.limit("1100 per minute")  # Limit verification attempts
 def verify():
     """Verify the user's authentication status using the JWT token."""
     authToken = request.cookies.get("authToken")

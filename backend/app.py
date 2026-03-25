@@ -16,6 +16,7 @@ import os
 app = Flask(__name__)
 limiter.init_app(app)
 orgins = os.getenv("CORS_ORIGINS", "").split(",")
+print(f"CORS_ORIGINS: {orgins}")
 CORS(
     app, supports_credentials=True, origins=orgins if orgins and orgins != [""] else "*"
 )  # Allow all origins for testing, change in production

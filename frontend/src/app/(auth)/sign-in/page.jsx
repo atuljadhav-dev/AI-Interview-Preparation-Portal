@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import SignInPage from "./SignInPage";
 
 export const metadata = {
-    title: "Login - PlacementReady",
+    title: "Sign-in - PlacementReady",
     description: " Access Your PlacementReady Account",
 };
 

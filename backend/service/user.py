@@ -21,13 +21,13 @@ def FindUserByEmail(email):
     res=db.users.find_one({"email":email})
     return res
 
-def Login(email,password):
+def SignIn(email,password):
     res=db.users.find_one({"email":email})
     if not res:
         return None
-    loginPasswordBytes = password.encode('utf-8')
+    signInPasswordBytes = password.encode('utf-8')
     storedPassword=res['password'].encode('utf-8')
-    isMatch = bcrypt.checkpw(loginPasswordBytes, storedPassword)
+    isMatch = bcrypt.checkpw(signInPasswordBytes, storedPassword)
     if isMatch:
         return res
     return None
