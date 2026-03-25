@@ -39,7 +39,7 @@ const InterviewPage = ({ id }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await api.get(`/interviews/${id}`);
+                const res = await api.get(`/interview/${id}`);
                 setInterview(res.data.data);
                 if (res.data.data.status === "Done") {
                     router.push(`/feedback/${id}`);
@@ -145,18 +145,15 @@ const InterviewPage = ({ id }) => {
                 toast.info("Session complete. Analyzing performance...");
 
                 // Process Feedback & Save (Async)
-                const feedbackRes = await api.post(
-                    "/ai/feedback",
-                    {
-                        resume: currentResume,
-                        questionAnswer: interview.questions,
-                        userAnswer: finalConversation,
-                        jobDescription: interview.jobDescription,
-                        roundName: interview.roundName,
-                        jobTitle: interview.title,
-                        skills: interview.skills,
-                    }
-                );
+                const feedbackRes = await api.post("/ai/feedback", {
+                    resume: currentResume,
+                    questionAnswer: interview.questions,
+                    userAnswer: finalConversation,
+                    jobDescription: interview.jobDescription,
+                    roundName: interview.roundName,
+                    jobTitle: interview.title,
+                    skills: interview.skills,
+                });
 
                 await api.post("/feedback", {
                     feedback: feedbackRes.data.data,
@@ -273,12 +270,20 @@ const InterviewPage = ({ id }) => {
                                     ? "AUTO-SUBMIT ENABLED (4s)"
                                     : "PROCESSING..."}
                             </p>
-                            <button
-                                className="bg-purple-600 hover:bg-purple-700 text-white font-bold cursor-pointer py-2 px-8 rounded-xl transition-all disabled:bg-slate-300"
-                                onClick={handleSend}
-                                disabled={sending || !input.trim()}>
-                                {sending ? "Analyzing..." : "Manual Send"}
-                            </button>
+
+                            <div>
+                                <button
+                                    className="bg-green-600 hover:bg-green-700 text-white font-bold cursor-pointer py-2 px-8 rounded-xl transition-all disabled:bg-slate-300 mr-4"
+                                    onClick={startListening}>
+                                    Listen
+                                </button>
+                                <button
+                                    className="bg-purple-600 hover:bg-purple-700 text-white font-bold cursor-pointer py-2 px-8 rounded-xl transition-all disabled:bg-slate-300"
+                                    onClick={handleSend}
+                                    disabled={sending || !input.trim()}>
+                                    {sending ? "Analyzing..." : "Manual Send"}
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

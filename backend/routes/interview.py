@@ -109,7 +109,7 @@ def getAllInterview():
         return jsonify({"success": False, "error": "Unauthorized"}), 401
     page = request.args.get("page", default=1, type=int)
     limit = request.args.get("limit", default=9, type=int)
-    status = request.args.get("filter", default="all", type=str)
+    status = request.args.get("status", default="all", type=str)
     # Ensure page and limit are positive integers
     if page < 1:
         page = 1

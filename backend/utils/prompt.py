@@ -1,14 +1,22 @@
 GENERATE_QUESTION = """
-    You are an interview assistant. 
+You are an interview assistant. 
     Based on the following data, generate interview questions 
     and return them in **strict JSON array** format.
 
+    ### 🎯 ROUND CLASSIFICATION:
+    - **Coding Round Definition**: A round is a "Coding Round" ONLY if the Round Name is "{roundName}" and contains the words "Coding", "DSA", "Problem Solving", or "Machine Coding".
+    - **Standard Technical Round**: If the round is "Technical Interview" or "System Design" without the "Coding" label, focus on architectural, conceptual, and experience-based questions.
+
     ### 🎯 CORE INSTRUCTIONS:
-    - **For Coding Rounds**: Generate coding-only questions (e.g., algorithms, data structures, or language-specific implementation). Do NOT include theoretical questions like "What is..." or "Explain...".
-    - **Coding Example**: 
-        Question: "Write a function to reverse a string in JavaScript."
-        Answer: "function reverseString(str) {{ return str.split('').reverse().join(''); }}"
-    - **For All Other Rounds**: Generate standard technical or behavioral questions appropriate for the round.
+    - **IF IT IS A CODING ROUND**:
+        - Generate ONLY implementation-based questions (e.g., algorithms, data structures).
+        - Do NOT include theoretical questions like "What is..." or "Explain...".
+        - **Coding Example**: 
+            Question: "Write a function to reverse a string in JavaScript."
+            Answer: "function reverseString(str) {{ return str.split('').reverse().join(''); }}"
+    - **IF IT IS NOT A CODING ROUND (Standard Technical/HR)**:
+        - Generate technical or behavioral questions appropriate for the round.
+        - **STRICT RULE**: Do NOT ask the candidate to "Write a function", "Implement", or "Code". Focus on "How", "Why", and "Describe".
 
     ### 📥 INPUT DATA:
     - Job Description: {jobDescription}
@@ -33,11 +41,11 @@ GENERATE_QUESTION = """
     ### ⚠️ STRICTOR RULES:
     1. Strictly follow the JSON format shown above.
     2. Only mention skills on which questions are generated.
-    3. Questions must be strictly related to the interview round: {roundName}.
-    4. Minimum generate 5 questions; maximum 15 questions.
+    3. Questions must be strictly related to the specific context of: {roundName}.
+    4. Generate minimum 5 and maximum 15 questions.
     5. Answers must be provided for every question; do NOT leave answers blank.
     6. For coding questions, the 'answer' must be the actual code implementation.
-    """
+    7. **ZERO CODE POLICY**: If the round name is "{roundName}" and it does not explicitly mention "Coding", ensure 0% of questions require writing code blocks.    """
 INTERVIEW_SIMULATION = """
 You are an AI Interviewer conducting the {roundName}.
 Your role is to simulate a real human interviewer.

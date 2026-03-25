@@ -3,7 +3,7 @@ import ATSCard from "@/components/ATSCard";
 import { useUser } from "@/hooks/useUser";
 import api from "@/utils/api";
 import { useRouter } from "next/navigation";
-import React, { use, useEffect, useState } from "react";
+import React, {  useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 const ResumePage = () => {
