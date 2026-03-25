@@ -93,6 +93,7 @@ const HomePage = () => {
                         value={filter}
                         className="px-4 py-2 rounded-md border dark:bg-black border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-600"
                         onChange={(e) => {
+                            setPage(1);
                             setFilter(e.target.value);
                         }}>
                         <option value="all">All</option>

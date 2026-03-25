@@ -26,7 +26,7 @@ class QAItem(BaseModel):
     answer: str
 
 
-def generateQuestions(jobDescription, resume, roundName="Technical Interview"):
+def generateQuestions(jobDescription, resume, roundName="Technical Round"):
     """
     Generates interview questions based on the provided role and skills.
     """

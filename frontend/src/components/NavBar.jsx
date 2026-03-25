@@ -31,13 +31,13 @@ const NavBar = () => {
     return (
         <nav className="w-full h-16 flex z-50 items-center sticky top-0 justify-between px-4 sm:px-6 md:px-8 bg-white dark:bg-black">
             <Link
-                className="font-bold text-base bg-red-500 sm:text-xl text-purple-400 tracking-wide"
+                className="font-bold overflow-hidden text-base sm:text-xl text-purple-400 tracking-wide"
                 href={"/home"}>
                 <Image
                     src={theme == "light" ? dark : light}
                     alt="Logo"
-                    width={50}
-                    height={10}
+                    width={150}
+                    height={60}
                 />
             </Link>
             <div className="flex items-center gap-3 sm:gap-4">
