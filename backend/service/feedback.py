@@ -1,7 +1,7 @@
 from utils.db import db
 from service.interview import getSpecificInterview
 import pytz
-import datetime
+from datetime import datetime
 
 
 def addFeedback(interviewId, feedback, userId):

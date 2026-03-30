@@ -193,7 +193,7 @@ const ReportPage = ({ id }) => {
                     </div>
 
                     {/* Button */}
-                    {/* <div className="text-center mt-6">
+                    <div className="text-center mt-6">
                         <button
                             onClick={() => {
                                 router.push(
@@ -205,7 +205,7 @@ const ReportPage = ({ id }) => {
             hover:scale-105 hover:shadow-lg transition duration-300">
                             Fix Resume
                         </button>
-                    </div> */}
+                    </div>
                 </div>
             ) : (
                 <p className="text-center text-gray-600 dark:text-w">

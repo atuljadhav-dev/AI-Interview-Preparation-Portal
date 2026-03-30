@@ -16,11 +16,7 @@ db.resumes.create_index("userId")
 
 db.jobs.create_index([("userId", 1), ("jobHash", 1)], unique=True)
 
-db.ATSReports.create_index([("resumeId", 1), ("jobId", 1)], unique=True)
-
-db.ATSReports.create_index([("userId", 1), ("createdAt", -1)])
-
 db.interviews.create_index([("userId", 1), ("status", 1), ("dateCreated", -1)])
 
-db.feedback.create_index("userId")
-db.feedback.create_index("interviewId")
+db.feedbacks.create_index("userId")
+db.feedbacks.create_index("interviewId")

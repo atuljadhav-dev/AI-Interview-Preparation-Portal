@@ -132,7 +132,7 @@ hover:scale-[1.02] hover:shadow-xl transition duration-300">
                                                     className="h-2 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 transition-all duration-500"
                                                     style={{
                                                         width: `${
-                                                            rating * 10
+                                                            rating * 20
                                                         }%`,
                                                     }}></div>
                                             </div>

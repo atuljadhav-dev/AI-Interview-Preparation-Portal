@@ -1,4 +1,5 @@
 "use client";
+import ResumePreview from "@/components/ResumePreview";
 import { useUser } from "@/hooks/useUser";
 import api from "@/utils/api";
 import { useSearchParams } from "next/navigation";
@@ -70,87 +71,124 @@ const ResumePage = () => {
                 additionalResumes: tmp,
             });
             setResume(data?.data);
+            console.log(data);
             toast.success("Resume generated successfully.");
         } catch (e) {
             toast.error("Failed to generate Resume.");
         }
     };
     return (
-        <div>
-            <input
-                type="text"
-                value={jobDescription}
-                placeholder="job"
-                onChange={(e) => {
-                    setJobDescription(e.target.value);
-                }}
-            />
-            <input
-                type="text"
-                value={report ? JSON.stringify(report) : ""}
-                onChange={(e) => {
-                    setReport(e.target.value);
-                }}
-            />
-            {/* show additional resume to select */}
-            {resumes?.map(
-                (r) =>
-                    selectedResume &&
-                    r._id !== selectedResume._id && (
-                        <div key={r._id}>
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    value={r._id}
-                                    checked={additionalResumes.includes(r._id)}
-                                    onChange={(e) => {
-                                        if (e.target.checked) {
-                                            if (additionalResumes.length >= 4) {
-                                                alert(
-                                                    "You can select maximum 4 additional resumes."
+        <div className="min-h-screen p-4 flex items-center justify-center">
+            <div
+                className="min-h-screen p-4 sm:p-6 bg-gradient-to-br from-purple-100 via-blue-100 to-pink-100 
+    dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 transition">
+                <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 dark:text-white mb-8 text-center">
+                    Resume Optimization
+                </h1>
+                <div className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl shadow-2xl rounded-3xl p-8 sm:p-10 w-[90vw] sm:w-[420px] border border-white/30 dark:border-gray-700 transition">
+                    <div className="flex flex-col gap-1">
+                        <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                            Job Description
+                        </label>
+                        <input
+                            type="text"
+                            value={jobDescription}
+                            placeholder="job"
+                            onChange={(e) => {
+                                setJobDescription(e.target.value);
+                            }}
+                            className=" px-4 py-2 rounded-lg border border-purple-300 
+            focus:ring-2 focus:ring-purple-400 outline-none"
+                        />
+                    </div>
+                    <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                        ATS Report
+                    </label>
+                    <input
+                        type="text"
+                        value={report ? JSON.stringify(report) : ""}
+                        onChange={(e) => {
+                            setReport(e.target.value);
+                        }}
+                        className=" px-4 py-2 rounded-lg border border-purple-300 
+            focus:ring-2 focus:ring-purple-400 outline-none"
+                    />
+                    {/* show additional resume to select */}
+                    {resumes?.map(
+                        (r) =>
+                            selectedResume &&
+                            r._id !== selectedResume._id && (
+                                <div key={r._id}>
+                                    <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                                        Additional Resume To Select{" "}
+                                    </label>
+                                    <input
+                                        type="checkbox"
+                                        value={r._id}
+                                        checked={additionalResumes.includes(
+                                            r._id
+                                        )}
+                                        className=" px-4 py-2 rounded-lg border border-purple-300 
+            focus:ring-2 focus:ring-purple-400 outline-none"
+                                        onChange={(e) => {
+                                            if (e.target.checked) {
+                                                if (
+                                                    additionalResumes.length >=
+                                                    4
+                                                ) {
+                                                    alert(
+                                                        "You can select maximum 4 additional resumes."
+                                                    );
+                                                    return;
+                                                }
+                                                setAdditionalResumes([
+                                                    ...additionalResumes,
+                                                    r._id,
+                                                ]);
+                                            } else {
+                                                setAdditionalResumes(
+                                                    additionalResumes.filter(
+                                                        (id) => id !== r._id
+                                                    )
                                                 );
-                                                return;
                                             }
-                                            setAdditionalResumes([
-                                                ...additionalResumes,
-                                                r._id,
-                                            ]);
-                                        } else {
-                                            setAdditionalResumes(
-                                                additionalResumes.filter(
-                                                    (id) => id !== r._id
-                                                )
-                                            );
-                                        }
-                                    }}
-                                />
-                                {r.name}
-                            </label>
-                        </div>
-                    )
-            )}
+                                        }}
+                                    />
+                                    {r.name}
+                                </div>
+                            )
+                    )}
 
-            {/* select primary resume */}
-            {resumes && resumes.length > 0 ? (
-                <select
-                    value={selectedResume ? selectedResume._id : ""}
-                    onChange={(e) => {
-                        const res = resumes.find(
-                            (cur) => cur._id === e.target.value
-                        );
-                        setSelectedResume(res ? res : null);
-                    }}>
-                    <option value="">Select Resume</option>
-                    {resumes.map((res) => (
-                        <option key={res._id} value={res._id}>
-                            {res.name}
-                        </option>
-                    ))}
-                </select>
-            ) : (
-                <div>No Resumes Found</div>
-            )}
-            <button onClick={handleSubmit}>submit</button>
+                    {/* select primary resume */}
+                    {resumes && resumes.length > 0 ? (
+                        <select
+                            value={selectedResume ? selectedResume._id : ""}
+                            onChange={(e) => {
+                                const res = resumes.find(
+                                    (cur) => cur._id === e.target.value
+                                );
+                                setSelectedResume(res ? res : null);
+                            }}>
+                            <option value="">Select Resume</option>
+                            {resumes.map((res) => (
+                                <option key={res._id} value={res._id}>
+                                    {res.name}
+                                </option>
+                            ))}
+                        </select>
+                    ) : (
+                        <div>No Resumes Found</div>
+                    )}
+                    <button
+                        onClick={handleSubmit}
+                        className="w-full py-3 rounded-lg font-semibold
+          bg-gradient-to-r from-purple-600 to-blue-600 text-white 
+          hover:scale-[1.02] hover:shadow-lg transition duration-300">
+                        submit
+                    </button>
+                </div>
+                {resume && <ResumePreview resume={resume} />}
+            </div>
         </div>
     );
 };
