@@ -133,7 +133,7 @@ const TestPage = ({ id }) => {
                     className="inline-block 
     bg-gradient-to-r from-purple-600 to-blue-600 
     text-white font-bold text-lg px-8 py-4 
-    rounded-full shadow-lg 
+    rounded-full shadow-lg cursor-pointer
     hover:scale-105 hover:shadow-xl 
     transition duration-300"
                     onClick={() => {
@@ -175,7 +175,7 @@ const TestPage = ({ id }) => {
                     <button onClick={toggleFullScreen}>Exit</button>
                     <button
                         onClick={submitAnswers}
-                        className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg font-medium transition">
+                        className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 cursor-pointer rounded-lg font-medium transition">
                         Submit <CheckCircle size={18} />
                     </button>
                 </div>
@@ -191,7 +191,7 @@ const TestPage = ({ id }) => {
                             Object.keys(category).map((key) => (
                                 <button
                                     key={key}
-                                    className="px-4 py-1.5 rounded-md text-sm font-medium border border-blue-500/20 bg-blue-500/10 text-blue-400 whitespace-nowrap">
+                                    className=" cursor-pointer px-4 py-1.5 rounded-md text-sm font-medium border border-blue-500/20 bg-blue-500/10 text-blue-400 whitespace-nowrap">
                                     {key.charAt(0).toUpperCase() + key.slice(1)}{" "}
                                     ({category[key]})
                                 </button>
@@ -202,7 +202,8 @@ const TestPage = ({ id }) => {
                     <div className="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-2xl p-8 shadow-sm">
                         <div className="mb-6">
                             <span className="px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-bold uppercase tracking-wider">
-                                Section : {questions[currentIdx].category} Ability
+                                Section : {questions[currentIdx].category}{" "}
+                                Ability
                             </span>
                         </div>
 
@@ -222,7 +223,7 @@ const TestPage = ({ id }) => {
                                     );
                                 }}
                                 disabled={currentIdx === 0}
-                                className="flex items-center gap-2 px-6 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-30 transition">
+                                className="flex cursor-pointer items-center gap-2 px-6 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-30 transition">
                                 <ChevronLeft size={20} /> Previous
                             </button>
                             <button
@@ -232,7 +233,7 @@ const TestPage = ({ id }) => {
                                     )
                                 }
                                 disabled={currentIdx === questions.length - 1}
-                                className="flex items-center gap-2 px-8 py-2 rounded-lg disabled:opacity-30 bg-slate-800 dark:bg-slate-700 text-white hover:opacity-90 transition">
+                                className="flex cursor-pointer items-center gap-2 px-8 py-2 rounded-lg disabled:opacity-30 bg-slate-800 dark:bg-slate-700 text-white hover:opacity-90 transition">
                                 Next <ChevronRight size={20} />
                             </button>
                         </div>
@@ -255,7 +256,7 @@ const TestPage = ({ id }) => {
                                     <button
                                         key={idx}
                                         onClick={() => setCurrentIdx(idx)}
-                                        className={`h-10 w-10 rounded-lg text-sm font-medium transition-all flex items-center justify-center border
+                                        className={`h-10 w-10 rounded-lg text-sm font-medium cursor-pointer transition-all flex items-center justify-center border
                                             ${
                                                 isCurrent
                                                     ? "bg-blue-600 text-white border-blue-600 scale-110 shadow-lg"

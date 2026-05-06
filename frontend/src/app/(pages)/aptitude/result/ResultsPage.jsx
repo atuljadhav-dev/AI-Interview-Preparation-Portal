@@ -71,7 +71,7 @@ const ResultsPage = () => {
                             onClick={() =>
                                 setPage((prev) => Math.max(prev - 1, 1))
                             }
-                            className="flex items-center gap-1 px-4 py-2 rounded-lg border border-slate-300 dark:border-zinc-700 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-zinc-800 transition">
+                            className="flex cursor-pointer items-center gap-1 px-4 py-2 rounded-lg border border-slate-300 dark:border-zinc-700 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-zinc-800 transition">
                             <ChevronLeft className="w-4 h-4" />
                             Previous
                         </button>
@@ -89,7 +89,7 @@ const ResultsPage = () => {
                         <button
                             disabled={page >= totalPages}
                             onClick={() => setPage((prev) => prev + 1)}
-                            className="flex items-center gap-1 px-4 py-2 rounded-lg border border-slate-300 dark:border-zinc-700 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-zinc-800 transition">
+                            className="flex cursor-pointer items-center gap-1 px-4 py-2 rounded-lg border border-slate-300 dark:border-zinc-700 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-zinc-800 transition">
                             Next
                             <ChevronRight className="w-4 h-4" />
                         </button>

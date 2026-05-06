@@ -60,7 +60,7 @@ const SetCard = ({ set, index }) => {
             {/* Button */}
             <button
                 onClick={startTest}
-                className="w-full py-2.5 rounded-lg font-semibold text-white bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 shadow-md shadow-blue-500/20 transition-all active:scale-[0.98]">
+                className="w-full cursor-pointer py-2.5 rounded-lg font-semibold text-white bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 shadow-md shadow-blue-500/20 transition-all active:scale-[0.98]">
                 Start Test →
             </button>
         </div>

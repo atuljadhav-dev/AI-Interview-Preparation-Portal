@@ -201,7 +201,7 @@ const ReportPage = ({ id }) => {
                                 );
                             }}
                             className="px-6 py-3 rounded-lg text-white font-semibold 
-            bg-gradient-to-r from-purple-600 to-blue-600
+            bg-gradient-to-r from-purple-600 to-blue-600 cursor-pointer
             hover:scale-105 hover:shadow-lg transition duration-300">
                             Fix Resume
                         </button>

@@ -55,7 +55,6 @@ def createInterviewRoute():
                 job = saveJob(userId, title, jobDescription)
         jobId = str(job["_id"])
         response = generateQuestions(jobDesc, roundName, resume)
-        print(f"AI response: {response}")
         if response is None:
             return jsonify({"success": False, "error": "AI response error"}), 500
         response = json.loads(response.text)

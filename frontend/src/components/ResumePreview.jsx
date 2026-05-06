@@ -27,7 +27,7 @@ const ResumePreview = ({ resume }) => {
             <div className="flex justify-center mb-6">
                 <button
                     onClick={handleDownloadPDF}
-                    className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors shadow-md font-semibold">
+                    className="bg-purple-600 text-white px-6 py-2 cursor-pointer rounded-lg hover:bg-purple-700 transition-colors shadow-md font-semibold">
                     Download PDF
                 </button>
             </div>

@@ -127,7 +127,7 @@ export default function ProfileUpload() {
                         type="submit"
                         disabled={uploading}
                         className={`w-full py-2 rounded-lg text-white font-semibold 
-          bg-gradient-to-r from-purple-600 to-blue-600
+          bg-gradient-to-r from-purple-600 to-blue-600 cursor-pointer
           transition duration-300 
           ${
               uploading

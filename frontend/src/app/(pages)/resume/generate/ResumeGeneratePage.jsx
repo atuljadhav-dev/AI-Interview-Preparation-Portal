@@ -312,7 +312,7 @@ const ResumePage = () => {
                     )}
                     <button
                         onClick={handleSubmit}
-                        className="w-full py-3 rounded-lg font-semibold
+                        className="w-full py-3 rounded-lg font-semibold cursor-pointer
           bg-gradient-to-r from-purple-600 to-blue-600 text-white 
           hover:scale-[1.02] hover:shadow-lg transition duration-300">
                         submit

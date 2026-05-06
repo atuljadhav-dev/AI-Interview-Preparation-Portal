@@ -13,7 +13,7 @@ const Question = ({
         options,
         answer = null,
         explanation = null,
-        
+
     } = question;
 
     const selectedOption = userAnswers[question.id];
@@ -43,7 +43,7 @@ const Question = ({
                                 }));
                             }}
                             /* Reduced padding (p-3) to save vertical space */
-                            className={`group flex items-center p-3 rounded-lg border-2 transition-all duration-200 text-left w-full
+                            className={`group flex items-center p-3 rounded-lg border-2 cursor-pointer transition-all duration-200 text-left w-full
                                 ${
                                     !isResult && isSelected
                                         ? "border-blue-500 bg-blue-50 dark:bg-blue-500/10" // Selection state before submitting
