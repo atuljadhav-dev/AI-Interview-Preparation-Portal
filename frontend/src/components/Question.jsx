@@ -29,12 +29,12 @@ const Question = ({
 
             {/* Options List - Using a gap that scales down on small screens */}
             <div className="grid grid-cols-1 gap-3">
-                {options.map((option, idx) => {
+                {options.map((option, optionIdx) => {
                     const isSelected = selectedOption === option;
 
                     return (
                         <button
-                            key={idx}
+                            key={optionIdx}
                             onClick={() => {
                                 if (isResult) return; // Disable changes on result page
                                 setUserAnswers((prev) => ({

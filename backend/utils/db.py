@@ -20,5 +20,5 @@ db.interviews.create_index([("userId", 1), ("status", 1), ("dateCreated", -1)])
 
 db.feedbacks.create_index("userId")
 db.feedbacks.create_index("interviewId")
-db.questions.create_index({ "questionId": 1 })
+db.questions.create_index({ "id": 1 })
 db.questions.create_index({ "category": 1, "difficulty": 1 })

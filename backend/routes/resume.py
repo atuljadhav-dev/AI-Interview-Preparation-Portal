@@ -83,6 +83,7 @@ def uploadResumeRoute():
         print(
             f"Text extraction failed or poor quality. Extraction error: {extractionError}, Extraction status: {extractionStatus}"
         )
+        deleteResumeFromCloudinary(publicId)  # Clean up the uploaded file since we won't use it
         return (
             jsonify(
                 {

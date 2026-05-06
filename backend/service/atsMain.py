@@ -198,8 +198,6 @@ def calculateAtsReport(jobDescription, url):
     # Skill alignment with stronger penalty for missing skills
     resumeSkills = detectAllSkills(resumeText)
     jdSkills = detectAllSkills(jobDescription)
-    print(f"Detected JD skills: {jdSkills}")
-    print(f"Detected resume skills: {resumeSkills}")
     matched = [s for s in jdSkills if s in resumeSkills]
     missing = [s for s in jdSkills if s not in resumeSkills]
 

@@ -60,8 +60,8 @@ export default function ProfileUpload() {
             toast.success("Resume uploded successfully");
             router.back();
         } catch (err) {
-            console.log(err.response.data.error);
-            toast.error(err.response.data.error || "Failed to upload resume");
+            console.log(err?.response?.data?.error);
+            toast.error(err?.response?.data?.error || "Failed to upload resume");
         } finally {
             setUploading(false);
         }

@@ -28,8 +28,10 @@ def createInterviewRoute():
         resume = (
             data["resume"]
             if "resume" in data
-            else getResumeById(userId, resumeId)["resume"]
+            else getResumeById(userId, resumeId)["resume"] if resumeId else None
         )
+        if not resume:
+            return jsonify({"success": False, "error": "Resume not found"}), 404
         jobId = data["jobId"] if "jobId" in data else None
         jobDesc = normalizeText(jobDescription)
         job = None
@@ -54,7 +56,7 @@ def createInterviewRoute():
                     )
                 job = saveJob(userId, title, jobDescription)
         jobId = str(job["_id"])
-        response = generateQuestions(jobDesc, roundName, resume)
+        response = generateQuestions(jobDesc, resume, roundName)
         if response is None:
             return jsonify({"success": False, "error": "AI response error"}), 500
         response = json.loads(response.text)
