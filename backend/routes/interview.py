@@ -1,10 +1,12 @@
 from flask import Blueprint, request, jsonify
 from service.interview import createInterview, getInterview, getSpecificInterview
 from service.ai import generateQuestions
+from service.resume import getResumeById
 import json
 from routes.auth import verifyJWT
 from utils.limiter import limiter
 from service.job import saveJob, getJobByHash, getSpecificJob
+from utils.normalizeText import normalizeText
 
 interview_bp = Blueprint("interview", __name__)
 
@@ -21,10 +23,15 @@ def createInterviewRoute():
     try:
         jobDescription = data["jobDescription"]
         roundName = data["roundName"]
-        resume = data["resume"]
         title = data["title"]
         resumeId = data["resumeId"]
+        resume = (
+            data["resume"]
+            if "resume" in data
+            else getResumeById(userId, resumeId)["resume"]
+        )
         jobId = data["jobId"] if "jobId" in data else None
+        jobDesc = normalizeText(jobDescription)
         job = None
         if not all([roundName, resume, resumeId]):
             return jsonify({"success": False, "error": "Invalid input data"}), 400
@@ -33,7 +40,7 @@ def createInterviewRoute():
             if not job:
                 return jsonify({"success": False, "error": "Job not found"}), 404
         else:
-            job = getJobByHash(jobDescription)
+            job = getJobByHash(jobDesc)
             if not job:
                 if not jobDescription or not title:
                     return (
@@ -47,11 +54,7 @@ def createInterviewRoute():
                     )
                 job = saveJob(userId, title, jobDescription)
         jobId = str(job["_id"])
-        del job["_id"]  # Remove _id from job before sending to AI
-        del job["userId"]  # Remove userId from job before sending to AI
-        del job["dateCreated"]  # Remove dateCreated from job before sending to AI
-        del job["jobHash"]  # Remove jobHash from job before sending to AI
-        response = generateQuestions(job, roundName, resume)
+        response = generateQuestions(jobDesc, roundName, resume)
         if response is None:
             return jsonify({"success": False, "error": "AI response error"}), 500
         response = json.loads(response.text)
@@ -118,7 +121,7 @@ def getAllInterview():
     if status not in ["all", "done", "scheduled"]:
         status = "all"
     try:
-        interviews, total_pages, total_interviews = getInterview(
+        interviews, totalPages, totalInterviews = getInterview(
             userId, page, limit, status
         )
         interviewList = []
@@ -144,8 +147,8 @@ def getAllInterview():
                 "message": "Interviews fetched successfully",
                 "data": {
                     "interviews": interviewList,
-                    "totalPages": total_pages,
-                    "totalInterviews": total_interviews,
+                    "totalPages": totalPages,
+                    "totalInterviews": totalInterviews,
                 },
             }
         ),

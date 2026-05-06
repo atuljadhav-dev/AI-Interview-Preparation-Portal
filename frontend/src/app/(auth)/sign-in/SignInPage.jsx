@@ -116,7 +116,7 @@ const SignInPage = () => {
                             type="submit"
                             disabled={sending}
                             className={`bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-lg font-semibold 
-            hover:scale-[1.03] hover:shadow-lg transition duration-300 
+            hover:scale-[1.03] hover:shadow-lg transition duration-300 cursor-pointer
             ${sending ? "opacity-50 cursor-not-allowed animate-pulse" : ""}`}>
                             {sending ? "Signing in..." : "Sign In"}
                         </button>

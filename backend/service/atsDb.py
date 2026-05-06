@@ -6,13 +6,13 @@ from service.job import getSpecificJob
 
 
 def saveATSReport(userId, resumeId, jobId, atsReport):
-    tz_india = pytz.timezone("Asia/Kolkata")
+    tzIndia = pytz.timezone("Asia/Kolkata")
     atsReportData = {
         "userId": userId,
         "resumeId": resumeId,
         "atsReport": atsReport,
         "jobId": jobId,
-        "dateCreated": datetime.now(tz_india),  # store date in IST timezone
+        "dateCreated": datetime.now(tzIndia),  # store date in IST timezone
     }
     res = db.atsReports.insert_one(atsReportData)
     atsReportData["_id"] = str(res.inserted_id)
@@ -45,9 +45,9 @@ def getAllATSReports(userId, page=1, limit=9):
         .skip((page - 1) * limit)
         .limit(limit)
     )
-    total_reports = db.atsReports.count_documents({"userId": userId})
-    total_pages = (total_reports + limit - 1) // limit  # Calculate total pages
-    reports_list = []
+    totalReports = db.atsReports.count_documents({"userId": userId})
+    totalPages = (totalReports + limit - 1) // limit  # Calculate total pages
+    reportsList = []
     for report in atsReports:
         report["_id"] = str(report["_id"])
         if "jobId" in report and report["jobId"]:
@@ -55,16 +55,16 @@ def getAllATSReports(userId, page=1, limit=9):
             if job:
                 report["title"] = job["title"]
                 report["jobDescription"] = job["jobDescription"]
-        reports_list.append(report)
-    return {"reports": reports_list, "totalPages": total_pages}
+        reportsList.append(report)
+    return {"reports": reportsList, "totalPages": totalPages}
 
 
 def getATSReportByResumeId(userId, resumeId):
     atsReports = db.atsReports.find({"userId": userId, "resumeId": resumeId}).sort(
         "dateCreated", -1
     )
-    reports_list = []
+    reportsList = []
     for report in atsReports:
         report["_id"] = str(report["_id"])
-        reports_list.append(report)
-    return reports_list
+        reportsList.append(report)
+    return reportsList

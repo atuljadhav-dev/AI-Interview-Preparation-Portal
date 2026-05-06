@@ -134,7 +134,7 @@ const SignUpPage = () => {
                     <button
                         type="submit"
                         disabled={sending}
-                        className="bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-lg font-semibold hover:scale-[1.03] hover:shadow-lg transition duration-300 disabled:opacity-50">
+                        className="bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-lg font-semibold hover:scale-[1.03] hover:shadow-lg transition cursor-pointer duration-300 disabled:opacity-50">
                         {sending ? "Creating..." : "Register"}
                     </button>
 

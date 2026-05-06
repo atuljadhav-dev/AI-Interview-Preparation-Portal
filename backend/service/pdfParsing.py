@@ -1,4 +1,8 @@
-from pypdf import PdfReader
+import re
+import pdfplumber
+import fitz  # PyMuPDF
+
+
 def isPoorExtraction(text: str) -> bool:
     lines = [l.strip() for l in text.splitlines() if l.strip()]
 
@@ -13,29 +17,63 @@ def isPoorExtraction(text: str) -> bool:
 
     # Missing key sections
     keywords = ["experience", "education", "skills", "project"]
-    if not any(k.lower() in text.lower() for k in keywords):
+    if not any(k in text.lower() for k in keywords):
         return True
 
     return False
 
+
+def extract_with_pdfplumber(file):
+    text = ""
+    with pdfplumber.open(file) as pdf:
+        if len(pdf.pages) > 3:
+            return None, "PDF too long (Max 3 pages)", 400
+
+        for page in pdf.pages:
+            page_text = page.extract_text()
+            if page_text:
+                text += page_text + "\n"
+
+    return text.strip(), None, 200
+
+
+def extract_with_pymupdf(file):
+    text = ""
+    doc = fitz.open(stream=file.read(), filetype="pdf")
+
+    if len(doc) > 3:
+        return None, "PDF too long (Max 3 pages)", 400
+
+    for page in doc:
+        text += page.get_text() + "\n"
+
+    return text.strip(), None, 200
+
+
 def processResumePdf(file):
     """
-    Handles file size validation, page count limits, and text extraction.
-    Returns (extractedText, errormessage, statusCode)
+    Primary: pdfplumber
+    Fallback: PyMuPDF
     """
+
     try:
-        reader = PdfReader(file)
-        # Limit page count to prevent resource exhaustion
-        if len(reader.pages) > 3:
-            return None, "PDF too long (Max 3 pages)", 400
-            
-        extractedText = ""
-        for page in reader.pages:
-            extractedText += page.extract_text() or ""
-        
-        if not extractedText.strip():
-            return None, "Could not extract text from PDF", 400
-            
-        return extractedText, None, 200
+        # ---------- 1️⃣ Try pdfplumber ----------
+        file.seek(0)
+        text, error, status = extract_with_pdfplumber(file)
+
+        if text and len(text) > 200:
+            cleaned = re.sub(r"\s+", " ", text)
+            return cleaned, None, 200
+
+        # ---------- 2️⃣ Fallback to PyMuPDF ----------
+        file.seek(0)
+        text, error, status = extract_with_pymupdf(file)
+
+        if text and len(text) > 200:
+            cleaned = re.sub(r"\s+", " ", text)
+            return cleaned, None, 200
+
+        return None, "Could not extract meaningful text from PDF", 400
+
     except Exception as e:
-        return None, f"Failed to read PDF file", 500
+        return None, "Failed to read PDF file", 500

@@ -6,7 +6,7 @@ from service.job import getSpecificJob
 
 
 def createInterview(userId, jobId, roundName, resumeId, questionAnswer, skills):
-    tz_india = pytz.timezone("Asia/Kolkata")
+    tzIndia = pytz.timezone("Asia/Kolkata")
     interview = {
         "userId": userId,
         "roundName": roundName,
@@ -15,7 +15,7 @@ def createInterview(userId, jobId, roundName, resumeId, questionAnswer, skills):
         "skills": skills,
         "status": "Scheduled",
         "resumeId": resumeId,
-        "dateCreated": datetime.now(tz_india),  # store date in IST timezone
+        "dateCreated": datetime.now(tzIndia),  # store date in IST timezone
     }
     res = db.interviews.insert_one(interview)
     interview["_id"] = res.inserted_id
@@ -25,7 +25,7 @@ def createInterview(userId, jobId, roundName, resumeId, questionAnswer, skills):
 def getInterview(userId, page=1, limit=9, status="all"):
     page = int(page)
     limit = int(limit)
-    total_interviews = 0
+    totalInterviews = 0
     interview = []
     if status == "done":
         interview = (
@@ -34,7 +34,7 @@ def getInterview(userId, page=1, limit=9, status="all"):
             .skip((page - 1) * limit)
             .limit(limit)
         )
-        total_interviews = db.interviews.count_documents(
+        totalInterviews = db.interviews.count_documents(
             {"userId": userId, "status": "Done"}
         )
     elif status == "scheduled":
@@ -44,7 +44,7 @@ def getInterview(userId, page=1, limit=9, status="all"):
             .skip((page - 1) * limit)
             .limit(limit)
         )
-        total_interviews = db.interviews.count_documents(
+        totalInterviews = db.interviews.count_documents(
             {"userId": userId, "status": "Scheduled"}
         )
     else:
@@ -54,7 +54,7 @@ def getInterview(userId, page=1, limit=9, status="all"):
             .skip((page - 1) * limit)
             .limit(limit)
         )
-        total_interviews = db.interviews.count_documents({"userId": userId})
+        totalInterviews = db.interviews.count_documents({"userId": userId})
     interview=list(interview)  # Convert cursor to list for loop does not work on cursor after it has been iterated once.
     if interview:
         for i in interview:
@@ -66,8 +66,8 @@ def getInterview(userId, page=1, limit=9, status="all"):
                     job["jobDescription"] if job else "No description available"
                 )
 
-    total_pages = (total_interviews + limit - 1) // limit  # Calculate total pages
-    return interview, total_pages, total_interviews
+    totalPages = (totalInterviews + limit - 1) // limit  # Calculate total pages
+    return interview, totalPages, totalInterviews
 
 
 def getSpecificInterview(interviewId):

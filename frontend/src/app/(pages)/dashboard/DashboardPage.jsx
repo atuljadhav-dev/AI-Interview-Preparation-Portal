@@ -148,9 +148,9 @@ hover:scale-[1.02] hover:shadow-xl transition duration-300 flex flex-col ">
                             <h2 className=" text-xl text-gray-800 dark:text-white">
                                 Feedback Rating Trend
                             </h2>
-                            <p className="text-gray-600 grow dark:text-gray-300 mt-2">
+                            <div className="text-gray-600 grow dark:text-gray-300 mt-2">
                                 <RatingAnalytics ratings={stats.ratings} />
-                            </p>
+                            </div>
                         </div>
                     </div>
                 </>

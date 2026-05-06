@@ -4,19 +4,26 @@ import { useUser } from "@/hooks/useUser";
 import { toast } from "react-toastify";
 import Link from "next/link";
 import { MenuIcon, UserCircle2Icon, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ThemeToggle from "./ThemeToggle";
 import Image from "next/image";
 import dark from "/public/Black.png";
 import light from "/public/White.png";
 import { useTheme } from "next-themes";
 import api from "@/utils/api";
+import { useAssessmentMonitor } from "@/hooks/useAssessmentMonitor";
 const NavBar = () => {
     const router = useRouter();
     const { user, signOut } = useUser();
     const [showLogout, setShowLogout] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
     const { theme } = useTheme();
+    const { isFullScreen } = useAssessmentMonitor();
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+    const logoSrc = !mounted ? dark : theme === "dark" ? light : dark;
     const handleLogout = async () => {
         try {
             await api.post("/auth/signout", {});
@@ -29,16 +36,14 @@ const NavBar = () => {
     };
 
     return (
-        <nav className="w-full h-16 flex z-50 items-center sticky top-0 justify-between px-4 sm:px-6 md:px-8 bg-white dark:bg-black">
+        <nav
+            className={`w-full h-16 flex z-50 items-center sticky top-0 justify-between px-4 sm:px-6 md:px-8 bg-white dark:bg-black ${
+                isFullScreen ? "hidden" : ""
+            }`}>
             <Link
                 className="font-bold overflow-hidden text-base sm:text-xl text-purple-400 tracking-wide"
                 href={"/home"}>
-                <Image
-                    src={theme == "light" ? dark : light}
-                    alt="Logo"
-                    width={150}
-                    height={60}
-                />
+                <Image src={logoSrc} alt="Logo" width={150} height={60} />
             </Link>
             <div className="flex items-center gap-3 sm:gap-4">
                 {user && (
@@ -56,6 +61,14 @@ const NavBar = () => {
                             className="hidden md:flex"
                             href={"/resume/ats-report"}>
                             ATS Report
+                        </Link>
+                        <Link className="hidden md:flex" href={"/aptitude"}>
+                            Aptitude
+                        </Link>
+                        <Link
+                            className="hidden md:flex"
+                            href={"/aptitude/result"}>
+                            Aptitude Result
                         </Link>
                         <MenuIcon
                             className={`md:hidden cursor-pointer ${
@@ -115,6 +128,22 @@ const NavBar = () => {
                                     hover:shadow-md dark:shadow-white"
                                     href={"/resume/ats-report"}>
                                     ATS Report
+                                </Link>
+                                <Link
+                                    className="px-3 py-1 sm:px-4 sm:py-2 rounded-lg cursor-pointer
+                                    font-medium text-xs sm:text-sm 
+                                    transition
+                                    hover:shadow-md dark:shadow-white"
+                                    href={"/aptitude"}>
+                                    Aptitude
+                                </Link>
+                                <Link
+                                    className="px-3 py-1 sm:px-4 sm:py-2 rounded-lg cursor-pointer
+                                    font-medium text-xs sm:text-sm 
+                                    transition
+                                    hover:shadow-md dark:shadow-white"
+                                    href={"/aptitude/result"}>
+                                    Aptitude Results
                                 </Link>
                             </div>
                         )}

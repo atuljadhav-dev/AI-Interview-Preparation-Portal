@@ -1,6 +1,6 @@
 from google import genai
 import os
-from utils.gemini_keys import getNextKey, GEMINI_KEYS
+from utils.geminiKeys import getNextKey, GEMINI_KEYS
 
 MODEL = os.getenv("MODEL", "gemini-2.5-flash")
 
@@ -26,6 +26,7 @@ def AIClient(content, config):
             return response
 
         except Exception as e:
+            print(f"Error with API key {apiKey}: {e}")
             attempts += 1
 
     raise GeminiExhaustedError("All Gemini API keys exhausted")

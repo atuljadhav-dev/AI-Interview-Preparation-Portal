@@ -11,7 +11,7 @@ dashboard_bp = Blueprint(
 
 @dashboard_bp.route("/stats", methods=["GET"])
 @limiter.limit("100 per minute")  # Limit to 10 requests per minute
-def get_stats():
+def getStats():
     userId = verifyJWT(request)
     if not userId:
         return jsonify({"success": False, "error": "Unauthorized"}), 401

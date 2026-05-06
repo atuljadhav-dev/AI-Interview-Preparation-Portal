@@ -87,7 +87,7 @@ def getJobsRoute():
     try:
         page = request.args.get("page", 1)
         limit = request.args.get("limit", 9)
-        jobs, total_pages, total_jobs = getJobs(userId, page, limit)
+        jobs, totalPages, totalJobs = getJobs(userId, page, limit)
         for job in jobs:
             job["_id"] = str(job["_id"])
             del job["userId"]  # Remove userId before sending response
@@ -99,8 +99,8 @@ def getJobsRoute():
                     "success": True,
                     "data": {
                         "jobs": jobs,
-                        "totalPages": total_pages,
-                        "totalJobs": total_jobs,
+                        "totalPages": totalPages,
+                        "totalJobs": totalJobs,
                     },
                     "message": "Jobs fetched successfully",
                 }

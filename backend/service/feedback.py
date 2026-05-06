@@ -5,13 +5,13 @@ from datetime import datetime
 
 
 def addFeedback(interviewId, feedback, userId):
-    tz_india = pytz.timezone("Asia/Kolkata")
+    tzIndia = pytz.timezone("Asia/Kolkata")
     result = db.feedbacks.insert_one(
         {
             "feedback": feedback,
             "interviewId": interviewId,
             "userId": userId,
-            "dateCreated": datetime.now(tz_india),
+            "dateCreated": datetime.now(tzIndia),
         }
     )
     return {
@@ -41,10 +41,10 @@ def allFeedBack(userId, page=1, limit=9):
         .skip((page - 1) * limit)
         .limit(limit)
     )
-    total_feedbacks = db.feedbacks.count_documents({"userId": userId})
-    total_pages = (total_feedbacks + limit - 1) // limit
+    totalFeedbacks = db.feedbacks.count_documents({"userId": userId})
+    totalPages = (totalFeedbacks + limit - 1) // limit
     feedbackList = []
     for feedback in feedbacks:
         feedback["_id"] = str(feedback["_id"])
         feedbackList.append(feedback)
-    return feedbackList, total_pages, total_feedbacks
+    return feedbackList, totalPages, totalFeedbacks

@@ -13,6 +13,7 @@ from datetime import datetime
 import pytz
 import httpx
 from google.genai import types
+from utils.normalizeText import normalizeText
 
 
 tz_india = pytz.timezone("Asia/Kolkata")
@@ -30,6 +31,7 @@ def generateQuestions(jobDescription, resume, roundName="Technical Round"):
     """
     Generates interview questions based on the provided role and skills.
     """
+    jobDescription = normalizeText(jobDescription)
     prompt = GENERATE_QUESTION.format(
         jobDescription=jobDescription, resume=resume, roundName=roundName
     )
@@ -52,11 +54,13 @@ def generateQuestions(jobDescription, resume, roundName="Technical Round"):
         response = AIClient(prompt, config)
         return response
     except GeminiExhaustedError:
+        print("GeminiExhaustedError: All Gemini models are currently exhausted. Please try again later.")
         return None
 
 
 def AIInterviewSimulation(questions, resume, jobDescription, roundName, content):
     """Generate interview simulation based on questions, resume, jobDescription, roundName, content"""
+    jobDescription = normalizeText(jobDescription)
     prompt = INTERVIEW_SIMULATION.format(
         questions=questions,
         resume=resume,
@@ -72,6 +76,7 @@ def AIInterviewSimulation(questions, resume, jobDescription, roundName, content)
         response = AIClient(content, config)
         return response.text
     except GeminiExhaustedError:
+        print("GeminiExhaustedError: All Gemini models are currently exhausted. Please try again later.")
         return None
 
 
@@ -79,6 +84,7 @@ def generateFeedback(
     jobTitle, resume, questionAnswer, userAnswer, jobDescription, roundName, skills=None
 ):
     """Generate feedback based on resume, questionAnswer, userAnswer, jobTitle, jobDescription, roundName"""
+    jobDescription = normalizeText(jobDescription)
     try:
         prompt = GENERATE_FEEDBACK.format(
             jobTitle=jobTitle,
@@ -177,6 +183,7 @@ def generateATSfriendlyResume(
     Generates an ATS-optimized resume variant.
     Always returns STRUCTURED JSON.
     """
+    jobDescription = normalizeText(jobDescription) if jobDescription else None
     additional_section = (
         f"- Additional Resumes (REFERENCE ONLY):\n{additionalResumes}"
         if additionalResumes
@@ -208,6 +215,7 @@ def generateApplicationEmail(resume, jobDescription, additionalDetails=""):
     Generates a professional job application email.
     Returns JSON so UI can render / edit.
     """
+    jobDescription = normalizeText(jobDescription)
     prompt = GENERATE_APPLICATION_EMAIL.format(
         resume=resume,
         jobDescription=jobDescription,

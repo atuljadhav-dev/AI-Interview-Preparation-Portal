@@ -2,15 +2,13 @@ import Link from "next/link";
 
 const notFound = () => {
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center">
-            <h1 className="text-3xl font-bold text-center mt-20">
-                404 - Page Not Found
-            </h1>
-            <p className="text-center mt-4">
-                The page you are looking for does not exist.
-            </p>
-            <Link href="/" className="mt-6 text-blue-500 hover:underline">
-                Go back to Home
+        <div className="min-h-screen bg-slate-50 dark:bg-[#020617] text-slate-900 dark:text-white flex flex-col items-center justify-center">
+            <h1 className="text-6xl font-bold mb-4">404</h1>
+            <p className="text-xl mb-6">Page Not Found</p>
+            <Link
+                href="/"
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+                Go Home
             </Link>
         </div>
     );

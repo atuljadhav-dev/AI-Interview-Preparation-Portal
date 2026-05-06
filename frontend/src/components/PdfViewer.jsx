@@ -25,8 +25,8 @@ const PdfViewer = ({ id }) => {
     }, [id, resumes]);
     const handleDelete = async () => {
         try {
-            const res = await api.delete("/profile", {
-                params: { profileId: id },
+            const res = await api.delete("/resume", {
+                params: { resumeId: id },
             });
             if (res.data.success) {
                 setUrl("");

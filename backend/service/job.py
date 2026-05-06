@@ -7,9 +7,11 @@ from service.atsMain import detectAllSkills
 
 
 def saveJob(userId, title, jobDescription):
-    tz_india = pytz.timezone("Asia/Kolkata")
+    tzIndia = pytz.timezone("Asia/Kolkata")
     normalizedDescription = normalizeText(jobDescription)
-    jobHash = makeHash(normalizedDescription) # Generate hash for the normalized job description
+    jobHash = makeHash(
+        normalizedDescription
+    )  # Generate hash for the normalized job description
     skills = detectAllSkills(jobDescription)
     job = {
         "userId": userId,
@@ -17,7 +19,7 @@ def saveJob(userId, title, jobDescription):
         "jobDescription": jobDescription,
         "jobHash": jobHash,
         "skills": list(skills),
-        "dateCreated": datetime.now(tz_india),  # store date in IST timezone
+        "dateCreated": datetime.now(tzIndia),  # store date in IST timezone
     }
     res = db.jobs.insert_one(job)
     job["_id"] = res.inserted_id
@@ -27,15 +29,15 @@ def saveJob(userId, title, jobDescription):
 def getJobs(userId, page=1, limit=9):
     page = int(page)
     limit = int(limit)
-    total_jobs = db.jobs.count_documents({"userId": userId})
+    totalJobs = db.jobs.count_documents({"userId": userId})
     jobs = (
         db.jobs.find({"userId": userId})
         .sort("dateCreated", -1)
         .skip((page - 1) * limit)
         .limit(limit)
     )
-    total_pages = (total_jobs + limit - 1) // limit  # Calculate total pages
-    return list(jobs), total_pages, total_jobs
+    totalPages = (totalJobs + limit - 1) // limit  # Calculate total pages
+    return list(jobs), totalPages, totalJobs
 
 
 def getSpecificJob(jobId):
