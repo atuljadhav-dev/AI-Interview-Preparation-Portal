@@ -4,20 +4,21 @@ import React, { useRef } from "react";
 const ResumePreview = ({ resume }) => {
     const resumeRef = useRef(null);
     const handleDownloadPDF = async () => {
+        window.print();
         // console.log("Preparing to generate PDF for resume:", resume);
-        const element = resumeRef.current;
-        const html2pdf = (await import("html2pdf.js")).default;
-        const opt = {
-            margin: 5,
-            filename: `${resume.name || "Resume"}.pdf`,
-            image: { type: "jpeg", quality: 0.98 },
-            html2canvas: { scale: 1.5, useCORS: true, letterRendering: true },
-            jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-            pagebreak: { mode: ["css", "legacy"] },
-        };
-        console.log("Generating PDF with options:", opt);
+        // const element = resumeRef.current;
+        // const html2pdf = (await import("html2pdf.js")).default;
+        // const opt = {
+        //     margin: 5,
+        //     filename: `${resume.name || "Resume"}.pdf`,
+        //     image: { type: "jpeg", quality: 0.98 },
+        //     html2canvas: { scale: 1.5, useCORS: true, letterRendering: true },
+        //     jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+        //     pagebreak: { mode: ["css", "legacy"] },
+        // };
+        // console.log("Generating PDF with options:", opt);
 
-        html2pdf().set(opt).from(element).save();
+        // html2pdf().set(opt).from(element).save();
     };
     if (!resume) return null;
 
@@ -36,7 +37,7 @@ const ResumePreview = ({ resume }) => {
                     color: "#1a202c",
                     backgroundColor: "#fff",
                 }}
-                className="w-[200mm] min-h-[297mm] p-[5mm] mx-auto  shadow-lg font-poppins leading-normal transition-colors">
+                className="print-content w-[200mm] min-h-[297mm] p-[5mm] mx-auto  shadow-lg font-poppins leading-normal transition-colors">
                 <header className="mb-4">
                     <h1
                         style={{
@@ -138,7 +139,7 @@ const ResumePreview = ({ resume }) => {
                                       style={{
                                           color: "#4a5568",
                                       }}
-                                      className="text-[10pt  mb-1">
+                                      className="text-[10pt]  mb-1">
                                       <strong
                                           style={{
                                               color: "#1a202c",
@@ -246,8 +247,8 @@ const ResumePreview = ({ resume }) => {
                                 key={i}
                                 className="mb-2"
                                 style={{
-                                    pageBreakInside: "avoid",
-                                    breakInside: "avoid",
+                                    // pageBreakInside: "avoid",
+                                    // breakInside: "avoid",
                                     display: "block", // Ensures the property is respected
                                 }}>
                                 <div
@@ -391,6 +392,34 @@ const ResumePreview = ({ resume }) => {
                     </section>
                 )}
             </div>
+            <style jsx global>{`
+                @media print {
+                    /* 1. Hide everything by default */
+                    body * {
+                        visibility: hidden;
+                    }
+                    /* 2. Show only the resume container and its children */
+                    .print-content,
+                    .print-content * {
+                        visibility: visible;
+                    }
+                    /* 3. Position the resume at the very top-left of the page */
+                    .print-content {
+                        position: absolute;
+                        left: 0;
+                        top: 0;
+                        width: 100%;
+                        margin: 0;
+                        padding: 15mm;
+                        box-shadow: none;
+                    }
+                    /* 4. Setup page margins */
+                    @page {
+                        size: A4;
+                        margin: 0;
+                    }
+                }
+            `}</style>
         </div>
     );
 };

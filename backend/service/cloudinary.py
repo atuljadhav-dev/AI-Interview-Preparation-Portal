@@ -7,6 +7,7 @@ def uploadResumeToCloudinary(file):
             file,
             resource_type="auto",
             use_filename=True,
+            folder="resumes",
             unique_filename=True, 
             
         )

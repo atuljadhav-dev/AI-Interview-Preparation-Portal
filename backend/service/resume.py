@@ -1,6 +1,6 @@
 from utils.db import db
 from bson import ObjectId
-def getResume(userId):
+def getResumes(userId):
     user=db.resumes.find({"userId":userId})
     return user
 def createResume(userId, resume,name,url=None,publicId=None):
@@ -25,3 +25,8 @@ def checkExistResume(name):
     if res:
         return True
     return False
+
+def getResumeById(userId,resumeId):
+    id=ObjectId(resumeId)
+    res=db.resumes.find_one({"_id":id,"userId":userId})
+    return res

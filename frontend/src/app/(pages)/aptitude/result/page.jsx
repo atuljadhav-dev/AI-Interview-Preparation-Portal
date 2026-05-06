@@ -1,10 +1,10 @@
 import React from "react";
-import AptitudePage from "./AptitudePage";
+import ResultsPage from "./ResultsPage";
 
 const page = () => {
     return (
         <div>
-            <AptitudePage />
+            <ResultsPage />
         </div>
     );
 };

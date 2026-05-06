@@ -8,7 +8,138 @@ import { toast } from "react-toastify";
 
 const ResumePage = () => {
     const searchParams = useSearchParams();
-    const [resume, setResume] = useState(null);
+    const [resume, setResume] = useState({
+        certifications: [
+            "Python and Flask Framework Complete Course – Udemy",
+            "Data Structures and Algorithms using Java – NPTEL",
+        ],
+        contact: {
+            email: "atulj9537@gmail.com",
+            location: "Karad, Maharashtra",
+            phone: "+91-7887477957",
+        },
+        education: [
+            {
+                dates: "11/2022 – Present",
+                degree: "B. Tech in Computer Science and Engineering",
+                details: "CGPA- 7.9",
+                institution: "D. Y . Patil Technical Campus, Talsande",
+            },
+            {
+                dates: "06/2021 – 04/2022",
+                degree: "Higher Secondary Certificate (HSC)",
+                details: "Percentage-77",
+                institution: "Krishna Mahavidyalaya, Rethare Bk",
+            },
+            {
+                dates: "06/2019 – 04/2020",
+                degree: "Secondary School Certificate (SSC)",
+                details: "Percentage- 92",
+                institution:
+                    "Sou. Tarabai Madhavrao Mohite Vidyalaya, Rethare Bk",
+            },
+        ],
+        experience: [
+            {
+                company: "Plasmid Innovation LTD",
+                dates: "06/2025 – 08/2025",
+                location: "Bengaluru",
+                responsibilities: [
+                    "Developed user-friendly web interfaces utilizing HTML, CSS, JavaScript, and Bootstrap frameworks.",
+                    "Designed and implemented responsive web pages, prioritizing seamless user experiences and functionality.",
+                    "Integrated form validation and interactive features using JavaScript to enhance web application functionality.",
+                    "Deployed responsive websites and various mini-projects using Netlify, demonstrating practical application of development concepts.",
+                    "Applied debugging techniques and clean code practices to ensure robust and maintainable responsive designs.",
+                ],
+                title: "Web Developer Intern",
+            },
+        ],
+        links: {
+            github: "https://github.com/atuljadhav-dev",
+            linkedin: "https://linkedin.com/in/atulmjadhav",
+            others: [],
+            portfolio: "https://atuljadhav.vercel.app",
+        },
+        name: "Atul Mohan Jadhav",
+        optimization_notes: [
+            "Summary rewritten to avoid first-person language and incorporate keywords from the Job Description, emphasizing frontend development, responsiveness, modern frameworks, and collaboration.",
+            "Experience section rephrased with stronger action verbs and aligned with Job Description terminology (e.g., 'user-friendly web interfaces', 'responsive web pages', 'debugging').",
+            "Project descriptions optimized to highlight frontend skills, responsive design, and integration relevant to the Frontend Developer role, using stronger verbs and JD keywords.",
+            "Skill categories and items preserved; implicit prioritization within Frontend skills like JavaScript and React.js, which were matched by the ATS.",
+            "Factual accuracy of titles, dates, institutions, and companies maintained as per strict rules.",
+        ],
+        projects: [
+            {
+                description: [
+                    "Developed an AI-powered interview preparation platform simulating real interview experiences for students and job seekers.",
+                    "Implemented a Flask backend with MongoDB to manage user profiles, session data, and interview content.",
+                    "Integrated Gemini API for dynamic generation of technical and HR interview questions tailored to user profiles.",
+                    "Provided automatic performance reports with personalized feedback and improvement suggestions post-session.",
+                    "Designed and built an interactive frontend using Next.js and Tailwind CSS, ensuring a smooth and responsive user experience.",
+                ],
+                name: "PlacementReady- AI interview Portal",
+            },
+            {
+                description: [
+                    "Developed a personalized fitness and health tracking application, delivering tailored workout and diet plans based on user metrics.",
+                    "Integrated Google’s Gemini API to power an AI chatbot for interactive fitness and nutrition queries.",
+                    "Utilized Firebase for secure user management (Authentication) and scalable data storage (Realtime Database).",
+                    "Implemented data visualization using Recharts to effectively display key health metrics such as BMI.",
+                    "Designed a user-friendly and responsive interface, enhancing accessibility across various devices.",
+                ],
+                name: "FitBuddy",
+            },
+            {
+                description: [
+                    "Developed a GitHub repository analysis tool, generating a VS Code-style interactive file tree.",
+                    "Integrated an AI chatbot to provide explanations of repository files and functions, enhancing code comprehension.",
+                    "Leveraged the Octokit library for efficient interaction with the GitHub API.",
+                    "Enabled seamless, interactive navigation of the file tree and direct viewing of code snippets.",
+                ],
+                name: "GitHubExplain",
+            },
+        ],
+        skills: [
+            {
+                category: "Frontend",
+                items: [
+                    "JavaScript",
+                    "React.js",
+                    "HTML",
+                    "CSS",
+                    "Bootstrap",
+                    "Tailwind CSS",
+                    "Next.js",
+                ],
+            },
+            {
+                category: "Backend",
+                items: [
+                    "Python",
+                    "Express.js",
+                    "Flask",
+                    "Node.js",
+                    "Rest API",
+                    "SQL",
+                    "MongoDB",
+                    "Firebase",
+                ],
+            },
+            {
+                category: "Others",
+                items: [
+                    "Git",
+                    "GitHub",
+                    "Postman",
+                    "Netlify",
+                    "Vercel",
+                    "Visual Studio Code",
+                ],
+            },
+        ],
+        summary:
+            "Results-driven Web Developer with a strong foundation in designing, developing, and maintaining responsive web applications. Possessing expertise in modern front-end frameworks like React, coupled with proficiency in core web technologies and basic back-end concepts. Proven ability to build user-friendly interfaces, ensure responsiveness, and collaborate effectively within development teams. Committed to delivering high-quality web solutions and adept at debugging and problem-solving to tackle complex challenges.",
+    });
     const [jobDescription, setJobDescription] = useState("");
     const [selectedResume, setSelectedResume] = useState(null);
     const [report, setReport] = useState({});

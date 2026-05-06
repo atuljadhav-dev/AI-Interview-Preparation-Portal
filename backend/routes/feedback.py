@@ -64,14 +64,14 @@ def feedback():
             page = 1
         if limit < 1:
             limit = 9
-        feedbacks, total_pages, total_feedbacks = allFeedBack(userId, page, limit)
+        feedbacks, totalPages, totalFeedbacks = allFeedBack(userId, page, limit)
         return (
             jsonify(
                 {
                     "data": {
                         "feedbacks": feedbacks,
-                        "totalPages": total_pages,
-                        "totalFeedbacks": total_feedbacks,
+                        "totalPages": totalPages,
+                        "totalFeedbacks": totalFeedbacks,
                     },
                     "message": "All feedback fetched successfully",
                     "success": True,

@@ -17,6 +17,7 @@ try:
     nltk.data.find("corpora/stopwords")
 except LookupError:
     # Download stopwords to the specified directory if not already present
+    print("Downloading NLTK stopwords...")
     nltk.download("stopwords", download_dir=nltkDir)
 # Load stop words once at the module level for efficiency
 STOP_WORDS = set(stopwords.words("english"))
@@ -88,9 +89,9 @@ SECTION_MAP = {
         "employment",
     ],
     "education": ["education", "academic background"],
-    "projects": ["projects", "technical projects"],
+    "projects": ["projects", "technical projects", "key projects"],
     "skills": ["skills", "technical skills"],
-    "summary": ["summary", "objective", "profile"],
+    "summary": ["summary", "objective", "profile", "professional summary"],
 }
 # List of strong action verbs to detect impact signals
 IMPACT_VERBS = [
@@ -116,6 +117,8 @@ GRAMMAR_RULES = {
     r"\bgained experience\b": "Use specific achievements instead of vague phrases.",
     r"\bteam player\b": "Show collaboration through achievements instead of buzzwords.",
     r"\bgreat communication skills\b": "Demonstrate communication through examples rather than stating it.",
+    r"\bproblem solver\b": "Show problem-solving skills through specific accomplishments instead of using the phrase.",
+    r"\bresults driven\b": "Highlight results through quantifiable achievements instead of using the phrase.",
 }
 
 
@@ -195,11 +198,13 @@ def calculateAtsReport(jobDescription, url):
     # Skill alignment with stronger penalty for missing skills
     resumeSkills = detectAllSkills(resumeText)
     jdSkills = detectAllSkills(jobDescription)
+    print(f"Detected JD skills: {jdSkills}")
+    print(f"Detected resume skills: {resumeSkills}")
     matched = [s for s in jdSkills if s in resumeSkills]
     missing = [s for s in jdSkills if s not in resumeSkills]
 
-    # Use a baseline of 10 skills to prevent excessive penalization for shorter job descriptions
-    baseline = max(len(jdSkills), 10)
+    # Use a baseline of 3 skills to prevent excessive penalization for shorter job descriptions
+    baseline = max(len(jdSkills), 3)
 
     skillCoverage = (len(matched) / baseline) * 100
 
@@ -229,8 +234,8 @@ def calculateAtsReport(jobDescription, url):
 
     presence = {
         "email": bool(re.search(r"[\w\.-]+@[\w\.-]+", resumeText)),
-        "linkedin": "linkedin.com" in resumeLower,
-        "github": "github.com" in resumeLower,
+        "linkedin": "linkedin.com" in resumeLower or "linkedin" in resumeLower,
+        "github": "github.com" in resumeLower or "github" in resumeLower,
     }
     # Each missing element reduces the score by 33.3%, so all 3 present gives 100%, 2 gives ~66.7%, 1 gives ~33.3%, and 0 gives 0%.
     presenceScore = (sum(presence.values()) / 3) * 100

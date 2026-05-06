@@ -1,8 +1,8 @@
 from flask import Blueprint, request, jsonify
 import os
-from service.resume import getResume, createResume, deleteResume, checkExistResume
+from service.resume import getResumes, createResume, deleteResume, checkExistResume
 import json
-from service.ai import convertTextToJSON, convertPDFToJSON
+from service.ai import convertTextToJSON
 from routes.auth import verifyJWT
 from utils.limiter import limiter
 from service.cloudinary import uploadResumeToCloudinary, deleteResumeFromCloudinary
@@ -18,7 +18,7 @@ def getResumeRoute():
     userId = verifyJWT(request)
     if not userId:
         return jsonify({"success": False, "error": "Unauthorized"}), 401
-    resumes = getResume(userId)
+    resumes = getResumes(userId)
     if not resumes:
         return jsonify({"success": False, "error": "Resume not found"}), 404
     resumeList = []
@@ -40,7 +40,7 @@ def getResumeRoute():
 
 @resume_bp.route("/resume", methods=["POST"])
 @limiter.limit("100 per minute")  # Limit resume uploads to 100 per minute
-def createResumeRoute():
+def uploadResumeRoute():
     userId = verifyJWT(request)
     if not userId:
         return jsonify({"success": False, "error": "Unauthorized"}), 401
@@ -61,6 +61,7 @@ def createResumeRoute():
     if not data:
         return jsonify({"success": False, "error": "Resume data is required"}), 400
 
+    # 1. Upload to Cloudinary first to get a URL for potential AI PDF parsing
     url, publicId = uploadResumeToCloudinary(file)
     if not url:
         return (
@@ -69,52 +70,83 @@ def createResumeRoute():
             ),
             500,
         )
-    file.seek(0)
-    extractedText, error, status = processResumePdf(file)
 
-    if error:
-        deleteResumeFromCloudinary(publicId)
-        return jsonify({"success": False, "error": error}), status
-    isInValidText = isPoorExtraction(extractedText)
-    ai = None
-    if isInValidText:
-        ai = convertPDFToJSON(url)
-    else:
-        ai = convertTextToJSON(extractedText)
-    if ai is None:
-        deleteResumeFromCloudinary(publicId)
-        return jsonify({"success": False, "error": "AI response error"}), 500
-    resume = None
-    try:
-        resume = json.loads(ai.text)
-        resume = createResume(userId, resume, data.get("name", ""), url, publicId)
-        if "_id" in resume:
-            resume["_id"] = str(resume["_id"])
-    except Exception as e:
-        print(f"Error creating resume: {e}")
-        deleteResumeFromCloudinary(publicId)
-        if resume:
-            deleteResume(userId, resume.get("_id"))
+    file.seek(0)
+    aiResponse = None
+
+    # 2. Attempt Text Extraction
+    extractedText, extractionError, extractionStatus = processResumePdf(file)
+
+    # 3. Determine AI processing strategy based on extraction quality
+    # If extraction failed or was "poor" (scanned PDF/images), use the Cloudinary URL for Vision/PDF parsing
+    if extractionError or isPoorExtraction(extractedText):
+        print(
+            f"Text extraction failed or poor quality. Extraction error: {extractionError}, Extraction status: {extractionStatus}"
+        )
         return (
             jsonify(
                 {
                     "success": False,
-                    "error": "Server error: Could not create resume in database",
+                    "error": "Text extraction failed or poor quality. Please ensure your PDF is text-based and not a scanned image.",
+                }
+            ),
+            400,
+        )
+    else:
+        # If extraction was successful and high quality, use the extracted text
+        try:
+            aiResponse = convertTextToJSON(extractedText)
+        except Exception as e:
+            print(f"Error during text-to-JSON conversion: {e}")
+            aiResponse = None
+
+    # 4. Handle AI failure
+    if aiResponse is None:
+        deleteResumeFromCloudinary(publicId)
+        return (
+            jsonify(
+                {"success": False, "error": "AI failed to process resume structure"}
+            ),
+            500,
+        )
+
+    # 5. Save to Database
+    try:
+        resumeData = json.loads(aiResponse.text)
+        newResume = createResume(userId, resumeData, data.get("name"), url, publicId)
+
+        if "_id" in newResume:
+            newResume["_id"] = str(newResume["_id"])
+
+        return (
+            jsonify(
+                {
+                    "success": True,
+                    "message": "Resume created successfully!",
+                    "data": newResume,
+                }
+            ),
+            201,
+        )
+
+    except Exception as e:
+        print(f"Error saving resume: {e}")
+        # Clean up Cloudinary if DB save fails
+        deleteResumeFromCloudinary(publicId)
+        return (
+            jsonify(
+                {
+                    "success": False,
+                    "error": "Server error: Could not save resume to database",
                 }
             ),
             500,
         )
-    return (
-        jsonify(
-            {"success": True, "message": "Resume created successfully!", "data": resume}
-        ),
-        201,
-    )
 
 
 @resume_bp.route("/resume", methods=["DELETE"])
 @limiter.limit("100 per minute")  # Limit resume deletions to 100 per minute
-def deleteUser():
+def deleteUserResume():
     userId = verifyJWT(request)
     if not userId:
         return jsonify({"success": False, "error": "Unauthorized"}), 401
