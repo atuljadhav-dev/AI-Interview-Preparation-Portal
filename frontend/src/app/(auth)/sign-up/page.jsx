@@ -1,15 +1,24 @@
-import SignUpPage from "./SignUpPage";
+import SignUpPage from './SignUpPage';
 export const metadata = {
-    title: "Sign-Up - PlacementReady",
-    description: "Create Your PlacementReady Account",
+	title: 'Create Your Account',
+	description:
+		'Create your PlacementReady account and start practicing AI-powered mock interviews, analyzing your resume, and improving your interview skills.',
+
+	robots: {
+		index: false,
+		follow: false,
+		googleBot: { index: false, follow: false },
+	},
+
+	alternates: { canonical: '/signup' },
 };
 
 const page = () => {
-    return (
-        <>
-            <SignUpPage />
-        </>
-    );
+	return (
+		<>
+			<SignUpPage />
+		</>
+	);
 };
 
 export default page;
