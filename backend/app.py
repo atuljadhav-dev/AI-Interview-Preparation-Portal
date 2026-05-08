@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 from routes.auth import auth_bp
 from routes.resume import resume_bp
 from routes.interview import interview_bp
@@ -33,10 +33,16 @@ app.register_blueprint(code_bp, url_prefix="/api/code")
 app.register_blueprint(aptitude_bp, url_prefix="/api/aptitude")
 
 
-@app.route("/")
+@app.route("/", methods=["GET"])
 def hello_world():
-    return "Hello, World!"
+    return jsonify({"message": "Hello, World!"}), 200
+
+
+@app.route("/health", methods=["GET"])
+def health_check():
+    return jsonify({"status": "healthy"}), 200
 
 
 if __name__ == "__main__":
     app.run(debug="true")
+

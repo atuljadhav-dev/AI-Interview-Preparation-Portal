@@ -1,3 +1,5 @@
 Capture.PNG
 .vscode
 .env
+.vercel
+.env*
