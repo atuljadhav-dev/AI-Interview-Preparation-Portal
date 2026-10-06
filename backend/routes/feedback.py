@@ -1,19 +1,16 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request,g
 from service.feedback import addFeedback, getFeedBack, allFeedBack
 from service.interview import setFeedback
-from routes.auth import verifyJWT
 from utils.limiter import limiter
 
 feedback_bp = Blueprint("feedback", __name__)
 
 
 @feedback_bp.route("/feedback", methods=["POST", "GET"])
-@limiter.limit("100 per minute")  # Limit to 10 requests per minute
+@limiter.limit("10 per minute")  # Limit to 10 requests per minute
 def feedback():
     if request.method == "POST":
-        userId = verifyJWT(request)
-        if not userId:
-            return jsonify({"success": False, "error": "Unauthorized"}), 401
+        userId = g.userId
 
         data = request.get_json()
         if not data:
@@ -55,9 +52,7 @@ def feedback():
                 500,
             )
     if request.method == "GET":
-        userId = verifyJWT(request)
-        if not userId:
-            return jsonify({"success": False, "error": "Unauthorized Access"}), 401
+        userId = g.userId
         page = request.args.get("page", default=1, type=int)
         limit = request.args.get("limit", default=9, type=int)
         if page < 1:
@@ -82,11 +77,9 @@ def feedback():
 
 
 @feedback_bp.route("/feedback/<interviewId>", methods=["GET"])
-@limiter.limit("100 per minute")  # Limit to 10 requests per minute
+@limiter.limit("10 per minute")  # Limit to 10 requests per minute
 def getFeedbackRoute(interviewId):
-    userId = verifyJWT(request)
-    if not userId:
-        return jsonify({"success": False, "error": "Unauthorized"}), 401
+    userId = g.userId
     try:
         feedback = getFeedBack(interviewId, userId)
         if not feedback:

@@ -1,10 +1,8 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, g
 import requests
 import os
 from dotenv import load_dotenv
 from utils.limiter import limiter
-from routes.auth import verifyJWT
-
 
 load_dotenv()
 API_KEY = os.getenv("RAPIDAPI_KEY")
@@ -12,11 +10,9 @@ code_bp = Blueprint("code", __name__)
 
 
 @code_bp.route("/execute", methods=["POST"])
-@limiter.limit("100 per minute")  # Limit to 10 requests per minute
+@limiter.limit("10 per minute")  # Limit to 10 requests per minute
 def executeCode():
-    userId = verifyJWT(request)
-    if not userId:
-        return jsonify({"success": False, "error": "Unauthorized"}), 401
+    userId = g.userId
     data = request.get_json()
     if not data or "code" not in data or "language" not in data:
         return jsonify({"success": False, "error": "No code provided"}), 400

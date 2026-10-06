@@ -12,6 +12,7 @@ from routes.ats import ats_bp
 from routes.job import job_bp
 from routes.code import code_bp
 from routes.aptitude import aptitude_bp
+from utils.jwt import verifyJWT
 import os
 
 app = Flask(__name__)
@@ -20,6 +21,19 @@ orgins = os.getenv("CORS_ORIGINS", "").split(",")
 CORS(
     app, supports_credentials=True, origins=orgins if orgins and orgins != [""] else "*"
 )  # Allow all origins for testing, change in production
+
+resume_bp.before_request(verifyJWT)
+interview_bp.before_request(verifyJWT)
+con_bp.before_request(verifyJWT)
+feedback_bp.before_request(verifyJWT)
+dashboard_bp.before_request(verifyJWT)
+ats_bp.before_request(verifyJWT)
+job_bp.before_request(verifyJWT)
+code_bp.before_request(verifyJWT)
+aptitude_bp.before_request(verifyJWT)
+ai_bp.before_request(verifyJWT)
+auth_bp.before_request(verifyJWT)
+
 app.register_blueprint(auth_bp, url_prefix="/api/auth")
 app.register_blueprint(resume_bp, url_prefix="/api")
 app.register_blueprint(interview_bp, url_prefix="/api")

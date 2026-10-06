@@ -1,15 +1,13 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify,g
 from service.job import saveJob, getJobByHash, getSpecificJob, getJobs
-from routes.auth import verifyJWT
+
 
 job_bp = Blueprint("job", __name__)
 
 
 @job_bp.route("/job", methods=["POST"])
 def createJobRoute():
-    userId = verifyJWT(request)
-    if not userId:
-        return jsonify({"success": False, "error": "Unauthorized"}), 401
+    userId = g.userId
     data = request.get_json()
     if not data:
         return jsonify({"success": False, "error": "No data provided"}), 400
@@ -38,7 +36,7 @@ def createJobRoute():
         job = saveJob(userId, title, jobDescription)
         return jsonify({"success": True, "jobId": str(job["_id"])})
     except Exception as e:
-        print(f'Error saving job: {e}')
+        print(f"Error saving job: {e}")
         return (
             jsonify(
                 {
@@ -52,9 +50,7 @@ def createJobRoute():
 
 @job_bp.route("/job/<jobId>", methods=["GET"])
 def getJobRoute(jobId):
-    userId = verifyJWT(request)
-    if not userId:
-        return jsonify({"success": False, "error": "Unauthorized"}), 401
+    userId = g.userId
     try:
         job = getSpecificJob(jobId)
         if not job:
@@ -67,7 +63,7 @@ def getJobRoute(jobId):
         del job["jobHash"]  # Remove jobHash before sending response
         return jsonify({"success": True, "data": job})
     except Exception as e:
-        print(f'Error fetching job: {e}')
+        print(f"Error fetching job: {e}")
         return (
             jsonify(
                 {
@@ -81,9 +77,7 @@ def getJobRoute(jobId):
 
 @job_bp.route("/jobs", methods=["GET"])
 def getJobsRoute():
-    userId = verifyJWT(request)
-    if not userId:
-        return jsonify({"success": False, "error": "Unauthorized"}), 401
+    userId = g.userId
     try:
         page = request.args.get("page", 1)
         limit = request.args.get("limit", 9)
@@ -108,7 +102,7 @@ def getJobsRoute():
             200,
         )
     except Exception as e:
-        print(f'Error fetching jobs: {e}')
+        print(f"Error fetching jobs: {e}")
         return (
             jsonify(
                 {

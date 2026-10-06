@@ -1,6 +1,5 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify,g
 from service.atsMain import calculateAtsReport
-from routes.auth import verifyJWT
 from utils.limiter import limiter
 from service.atsDb import (
     saveATSReport,
@@ -15,11 +14,9 @@ ats_bp = Blueprint("ats", __name__)
 
 
 @ats_bp.route("/generate", methods=["POST"])
-@limiter.limit("100 per minute")  # Limit to 5 requests per minute
+@limiter.limit("10 per minute")  # Limit to 5 requests per minute
 def generateATSReportRoute():
-    userId = verifyJWT(request)
-    if not userId:
-        return jsonify({"success": False, "error": "Unauthorized"}), 401
+    userId = g.userId
     data = request.get_json()
     if not data or "resume" not in data or data["resume"] is None:
         return (
@@ -93,9 +90,7 @@ def generateATSReportRoute():
 @ats_bp.route("/reports", methods=["GET"])
 @limiter.limit("50 per minute")  # Limit to 5 requests per minute
 def getATSReportsRoute():
-    userId = verifyJWT(request)
-    if not userId:
-        return jsonify({"success": False, "error": "Unauthorized"}), 401
+    userId = g.userId
     try:
         reports = getAllATSReports(userId)
         return (
@@ -116,9 +111,7 @@ def getATSReportsRoute():
 @ats_bp.route("/report/<reportId>", methods=["GET"])
 @limiter.limit("50 per minute")  # Limit to 5 requests per minute
 def getATSReportByIdRoute(reportId):
-    userId = verifyJWT(request)
-    if not userId:
-        return jsonify({"success": False, "error": "Unauthorized"}), 401
+    userId = g.userId
     try:
         report = getATSReportById(userId, reportId)
         if not report:
@@ -139,11 +132,9 @@ def getATSReportByIdRoute(reportId):
 
 
 @ats_bp.route("/report/resume/<resumeId>", methods=["GET"])
-@limiter.limit("100 per minute")  # Limit to 5 requests per minute
+@limiter.limit("10 per minute")  # Limit to 5 requests per minute
 def getATSReportByResumeIdRoute(resumeId):
-    userId = verifyJWT(request)
-    if not userId:
-        return jsonify({"success": False, "error": "Unauthorized"}), 401
+    userId = g.userId
     try:
         report = getATSReportByResumeId(userId, resumeId)
         if not report:

@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify,g
 from service.aptitude import (
     getResult,
     get10AptitudeTests,
@@ -8,7 +8,6 @@ from service.aptitude import (
     getResults,
     getResultById,
 )
-from routes.auth import verifyJWT
 
 aptitude_bp = Blueprint("aptitude", __name__)
 
@@ -67,9 +66,7 @@ def fetchAptitudeQuestions():
 
 @aptitude_bp.route("/result", methods=["POST", "GET"])
 def checkAptitudeResult():
-    userId = verifyJWT(request)
-    if not userId:
-        return jsonify({"success": False, "error": "Unauthorized"}), 401
+    userId = g.userId
     if request.method == "GET":
         resultId = request.args.get("id")
         if not resultId:

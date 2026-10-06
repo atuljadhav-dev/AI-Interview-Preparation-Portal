@@ -1,23 +1,19 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify,g
 import os
 from service.resume import getResumes, createResume, deleteResume, checkExistResume
 import json
 from service.ai import convertTextToJSON
-from routes.auth import verifyJWT
 from utils.limiter import limiter
 from service.cloudinary import uploadResumeToCloudinary, deleteResumeFromCloudinary
 from service.pdfParsing import processResumePdf, isPoorExtraction
-
 
 resume_bp = Blueprint("resume", __name__)
 
 
 @resume_bp.route("/resumes", methods=["GET"])
-@limiter.limit("100 per minute")  # Limit to 10 requests per minute
+@limiter.limit("10 per minute")  # Limit to 10 requests per minute
 def getResumeRoute():
-    userId = verifyJWT(request)
-    if not userId:
-        return jsonify({"success": False, "error": "Unauthorized"}), 401
+    userId = g.userId
     resumes = getResumes(userId)
     if not resumes:
         return jsonify({"success": False, "error": "Resume not found"}), 404
@@ -39,11 +35,9 @@ def getResumeRoute():
 
 
 @resume_bp.route("/resume", methods=["POST"])
-@limiter.limit("100 per minute")  # Limit resume uploads to 100 per minute
+@limiter.limit("10 per minute")  # Limit resume uploads to 10 per minute
 def uploadResumeRoute():
-    userId = verifyJWT(request)
-    if not userId:
-        return jsonify({"success": False, "error": "Unauthorized"}), 401
+    userId = g.userId
     file = request.files.get("file")
     if not file:
         return jsonify({"success": False, "error": "No file uploaded"}), 400
@@ -145,11 +139,9 @@ def uploadResumeRoute():
 
 
 @resume_bp.route("/resume", methods=["DELETE"])
-@limiter.limit("100 per minute")  # Limit resume deletions to 100 per minute
+@limiter.limit("10 per minute")  # Limit resume deletions to 10 per minute
 def deleteUserResume():
-    userId = verifyJWT(request)
-    if not userId:
-        return jsonify({"success": False, "error": "Unauthorized"}), 401
+    userId = g.userId
     resumeId = request.args.get("resumeId")
     if not resumeId:
         return jsonify({"success": False, "error": "resumeId is required"}), 400

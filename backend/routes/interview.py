@@ -1,9 +1,8 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, g
 from service.interview import createInterview, getInterview, getSpecificInterview
 from service.ai import generateQuestions
 from service.resume import getResumeById
 import json
-from routes.auth import verifyJWT
 from utils.limiter import limiter
 from service.job import saveJob, getJobByHash, getSpecificJob
 from utils.normalizeText import normalizeText
@@ -12,11 +11,9 @@ interview_bp = Blueprint("interview", __name__)
 
 
 @interview_bp.route("/interview", methods=["POST"])
-@limiter.limit("100 per minute")  # Limit to 5 requests per minute
+@limiter.limit("10 per minute")  # Limit to 5 requests per minute
 def createInterviewRoute():
-    userId = verifyJWT(request)
-    if not userId:
-        return jsonify({"success": False, "error": "Unauthorized"}), 401
+    userId = g.userId  # Get userId from Flask's global context
     data = request.get_json()
     if not data:
         return jsonify({"success": False, "error": "No data provided"}), 400
@@ -105,11 +102,9 @@ def createInterviewRoute():
 
 
 @interview_bp.route("/interview", methods=["GET"])
-@limiter.limit("100 per minute")  # Limit to 10 requests per minute
+@limiter.limit("10 per minute")  # Limit to 10 requests per minute
 def getAllInterview():
-    userId = verifyJWT(request)
-    if not userId:
-        return jsonify({"success": False, "error": "Unauthorized"}), 401
+    userId = g.userId  # Get userId from Flask's global context
     page = request.args.get("page", default=1, type=int)
     limit = request.args.get("limit", default=9, type=int)
     status = request.args.get("status", default="all", type=str)
@@ -157,11 +152,9 @@ def getAllInterview():
 
 
 @interview_bp.route("/interview/<interviewId>", methods=["GET"])
-@limiter.limit("100 per minute")  # Limit to 10 requests per minute
+@limiter.limit("10 per minute")  # Limit to 10 requests per minute
 def getSpecificInterviewRoute(interviewId):
-    userId = verifyJWT(request)
-    if not userId:
-        return jsonify({"success": False, "error": "Unauthorized"}), 401
+    userId = g.userId
     try:
         interview = getSpecificInterview(interviewId)
         if not interview or interview["userId"] != userId:

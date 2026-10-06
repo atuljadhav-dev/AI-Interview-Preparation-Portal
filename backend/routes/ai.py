@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify,g
 import json
 from service.ai import (
     generateFeedback,
@@ -6,18 +6,15 @@ from service.ai import (
     generateApplicationEmail,
     generateATSfriendlyResume,
 )
-from routes.auth import verifyJWT
 from utils.limiter import limiter
 
 ai_bp = Blueprint("ai", __name__)
 
 
 @ai_bp.route("/feedback", methods=["POST"])
-@limiter.limit("100 per minute")  # Limit to 5 requests per minute
+@limiter.limit("10 per minute")  # Limit to 5 requests per minute
 def feedbackGeneration():
     """Generate feedback based on resume, questionAnswer, userAnswer, jobTitle, jobDescription, roundName"""
-    if not verifyJWT(request):  # prevent unauthorized access
-        return jsonify({"success": False, "error": "Unauthorized"}), 401
     data = request.get_json()
     if not data:
         return jsonify({"success": False, "error": "No data provided"}), 400
@@ -82,11 +79,10 @@ def feedbackGeneration():
 
 
 @ai_bp.route("/simulation", methods=["POST"])
-@limiter.limit("100 per minute")  # Limit to 10 requests per minute
+@limiter.limit("10 per minute")  # Limit to 10 requests per minute
 def interviewSimulation():
     """Generate interview simulation based on questions, resume, jobDescription, roundName, content"""
-    if not verifyJWT(request):
-        return jsonify({"success": False, "error": "Unauthorized"}), 401
+    
     data = request.get_json()
     if not data:
         return jsonify({"success": False, "error": "No data provided"}), 400
@@ -132,11 +128,9 @@ def interviewSimulation():
 
 
 @ai_bp.route("/email", methods=["POST"])
-@limiter.limit("100 per minute")  # Limit to 10 requests per minute
+@limiter.limit("10 per minute")  # Limit to 10 requests per minute
 def applicationEmail():
-    userId = verifyJWT(request)
-    if not userId:
-        return jsonify({"success": False, "error": "Unauthorized"}), 401
+    userId = g.userId
 
     data = request.get_json()
     if not data or "jobDescription" not in data:
@@ -174,11 +168,10 @@ def applicationEmail():
 
 
 @ai_bp.route("/resume", methods=["POST"])
-@limiter.limit("100 per minute")
+@limiter.limit("10 per minute")
 def buildATSfriendlyResume():
     """Generate ATS friendly resume based on resumeContent, jobDescription"""
-    if not verifyJWT(request):
-        return jsonify({"success": False, "error": "Unauthorized"}), 401
+    
     data = request.get_json()
     if not data:
         return jsonify({"success": False, "error": "No data provided"}), 400

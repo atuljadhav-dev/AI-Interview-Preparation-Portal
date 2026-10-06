@@ -1,42 +1,13 @@
-from flask import Blueprint, request, jsonify, make_response
+from flask import Blueprint, request, jsonify, make_response, g
 from pydantic import ValidationError
 from models.user import User
 from service.user import createUser, FindUserByEmail, SignIn, FindUserById
-import jwt, datetime, os
 from utils.limiter import limiter
-
+from utils.jwt import createJWT,verifyJWT
 auth_bp = Blueprint("auth", __name__)
 
-SECRET_KEY = os.getenv("JWT_SECRET")
-if not SECRET_KEY:
-    raise ValueError("Secret is Missing!")
-
-
-def createJWT(userId):
-    """Create a JWT token for the given user ID with a 2-day expiry."""
-    payload = {
-        "userId": str(userId),
-        "exp": datetime.datetime.utcnow() + datetime.timedelta(days=2),
-    }
-    return jwt.encode(payload, SECRET_KEY, algorithm="HS256")
-
-
-def verifyJWT(request):
-    """Verify the JWT token from the request cookies and return the user ID if valid."""
-    token = request.cookies.get("authToken")
-    if not token:
-        return None
-    try:
-        decoded = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-        return decoded["userId"]
-    except jwt.ExpiredSignatureError:
-        return None
-    except jwt.InvalidTokenError:
-        return None
-
-
 @auth_bp.route("/signup", methods=["POST"])
-@limiter.limit("100 per minute")  # Limit signup attempts
+@limiter.limit("10 per minute")  # Limit signup attempts
 def signup():
     data = request.get_json()
     if not data:
@@ -86,12 +57,13 @@ def signup():
 
 
 @auth_bp.route("/signin", methods=["POST"])
-@limiter.limit("100 per minute")  # Limit SignIn attempts
+@limiter.limit("10 per minute")  # Limit SignIn attempts
 def signin():
     data = request.get_json()
     if not data:
         return jsonify({"success": False, "error": "No data provided"}), 400
-
+    if "email" not in data or "password" not in data:
+        return jsonify({"success": False, "error": "Email and password are required"}), 400
     user = SignIn(data["email"], data["password"])
     if not user:
         return jsonify({"success": False, "error": "Wrong Credentials"}), 403
@@ -125,7 +97,7 @@ def signin():
 
 
 @auth_bp.route("/signout", methods=["POST"])
-@limiter.limit("100 per minute")  # Limit signout attempts
+@limiter.limit("10 per minute")  # Limit signout attempts
 def signout():
     response = make_response(
         jsonify({"success": True, "message": "User signed out successfully!"}), 200
@@ -137,23 +109,11 @@ def signout():
 
 
 @auth_bp.route("/verify", methods=["GET"])
-@limiter.limit("1100 per minute")  # Limit verification attempts
+@limiter.limit("10 per minute")  # Limit verification attempts
 def verify():
     """Verify the user's authentication status using the JWT token."""
-    authToken = request.cookies.get("authToken")
-    if not authToken:
-        return jsonify({"success": False, "message": "No user logged in "}), 200
-    decoded = verifyJWT(request)
-    if not decoded:
-        response = make_response(
-            jsonify({"success": False, "message": "Unauthorized"}), 403
-        )
-        response.set_cookie(
-            "authToken", "", expires=0, httponly=True, samesite="None", secure=True
-        )
-        return response
-
-    user = FindUserById(decoded)
+    userId = g.userId
+    user = FindUserById(userId)
     if not user:
         response = make_response(
             jsonify({"success": False, "message": "Unauthorized"}), 403
